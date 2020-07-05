@@ -611,8 +611,9 @@ class Soundfiles : MonoBehaviour {
 
 	public void Add(string name,int dataSize, byte[] data)
 	{
+		return; //FIXME: Wav почему то не работает, но и пофигу
 		WAV wav = new WAV(data);
-		AudioClip audioClip = AudioClip.Create(name,wav.SampleCount,wav.ChannelCount,wav.Frequency,false);
+ 		AudioClip audioClip = AudioClip.Create(name,wav.SampleCount,wav.ChannelCount,wav.Frequency,false);
 		audioClip.SetData(wav.LeftChannel,0);
 
 		wavs.Add(audioClip);

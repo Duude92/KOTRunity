@@ -4,12 +4,12 @@ using System.IO;
 
 public class SceneSaver : MonoBehaviour
 {
+    static BinaryWriter binaryWriter;// = new BinaryWriter(File.Create(path));
 
     public static void SaveScene(GameObject root, string path)
     {
+        binaryWriter = new BinaryWriter(File.Create(path));
 
-
-        BinaryWriter binaryWriter = new BinaryWriter(File.Create(path));
 
         try
         {
@@ -56,42 +56,41 @@ public class SceneSaver : MonoBehaviour
 
             binaryWriter.Close();
         }
+    }
 
-
-        void WriteObjectRecursive(GameObject gameObject)
+    static void WriteObjectRecursive(GameObject gameObject)
+    {
+        if (gameObject.name == "444")
         {
-            if (gameObject.name == "444")
-            {
-                binaryWriter.Write(444);
-                return;
-            }
-            else
-            {
-                BlockType bt = gameObject.GetComponent<BlockType>();
-                int type = bt.Type;
-                int matNum = bt.MatNum;
-                binaryWriter.Write(333);
-                byte[] blockName = new byte[32];
-                System.Text.Encoding.UTF8.GetBytes(gameObject.name, 0, gameObject.name.Length, blockName, 0);
-                binaryWriter.Write(blockName);
-                binaryWriter.Write(type);
-
-                binaryWriter.Write(bt.component.GetBytes());
-            }
-            binaryWriter.Write(gameObject.transform.childCount);
-            foreach (Transform gob in gameObject.transform)
-            {
-                WriteObjectRecursive(gob.gameObject);
-            }
-            binaryWriter.Write(555);
-
-
-
+            binaryWriter.Write(444);
+            return;
         }
+        else
+        {
+            BlockType bt = gameObject.GetComponent<BlockType>();
+            int type = bt.Type;
+            int matNum = bt.MatNum;
+            binaryWriter.Write(333);
+            byte[] blockName = new byte[32];
+            System.Text.Encoding.UTF8.GetBytes(gameObject.name, 0, gameObject.name.Length, blockName, 0);
+            binaryWriter.Write(blockName);
+            binaryWriter.Write(type);
+
+            binaryWriter.Write(bt.component.GetBytes());
+        }
+        binaryWriter.Write(gameObject.transform.childCount);
+        foreach (Transform gob in gameObject.transform)
+        {
+            WriteObjectRecursive(gob.gameObject);
+        }
+        binaryWriter.Write(555);
+
+
 
     }
 
-
-
-
 }
+
+
+
+

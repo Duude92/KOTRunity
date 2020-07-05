@@ -29,7 +29,7 @@ class KOTRManager : EditorWindow
     [MenuItem("Window/KOTR Loader")]
     static void Init()
     {
-        tc = PlayerPrefs.GetString("shader","");
+        tc = Shader.Find( PlayerPrefs.GetString("shader",""));
         KOTRManager km = (KOTRManager)EditorWindow.GetWindow(typeof(KOTRManager));
         km.Show();
         GameManager.TC = tc;
