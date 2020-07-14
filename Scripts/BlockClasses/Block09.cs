@@ -1,6 +1,8 @@
 using UnityEngine;
 class Block09 : MonoBehaviour, IBlocktype
-{
+{        UnityEngine.GameObject _thisObject;
+    public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
+
     public Vector4 xz4eEto;
     public Vector3 pos;
 
@@ -15,6 +17,11 @@ class Block09 : MonoBehaviour, IBlocktype
 
 		return buffer;
 
+    }
+
+    public void Read(byte[] buffer, ref int pos)
+    {
+        throw new System.NotImplementedException();
     }
 
     /*void Start () //аар3

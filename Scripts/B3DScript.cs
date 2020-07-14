@@ -18,6 +18,9 @@ public class B3DScript : MonoBehaviour
     public FileInfo file;
     public bool ready = false;
 
+    public List<Vector3> vertices = new List<Vector3>();
+    public List<Vector2> UV = new List<Vector2>();
+    public List<Vector3> normals = new List<Vector3>();
 
     public void Disable()
     {
@@ -88,9 +91,9 @@ public class B3DScript : MonoBehaviour
                 GameObject lastGameObject = null;
                 GameObject newObject = null;
                 GameObject rootObj = gameObject;
-                List<Vector3> vertices = new List<Vector3>();
-                List<Vector2> UV = new List<Vector2>();
-                List<Vector3> normals = new List<Vector3>();
+                vertices = new List<Vector3>();
+                UV = new List<Vector2>();
+                normals = new List<Vector3>();
                 for (; ; )
                 {
                     lvl++;
@@ -204,6 +207,7 @@ public class B3DScript : MonoBehaviour
                         if (type == 0)
                         {
                             bt.component = new Block00();
+                            bt.component.thisObject = newObject;
                             pos += 16;
                             pos += 28;
                         }
@@ -268,16 +272,11 @@ public class B3DScript : MonoBehaviour
                         }
                         else if (type == 5)
                         {
-                            pos += 16;
-                            byte[] JoinName = new byte[32];
-                            System.Array.Copy(resource, pos, JoinName, 0, 32);
-                            pos += 32;
-                            Block05 block = newObject.AddComponent<Block05>();
-                            bt.component = block;
-                            block.nameToJoin = System.Text.Encoding.UTF8.GetString(JoinName).Trim(new char[] { '\0' });
-                            //Blocks05.Add(newObject);
-                            pos += 4;
 
+                            Block05 block = newObject.AddComponent<Block05>();
+                            block.Read(resource, ref pos);
+                            bt.component = block;
+                            block.thisObject = newObject;
                         }
                         else if (type == 6)
                         {
@@ -295,191 +294,17 @@ public class B3DScript : MonoBehaviour
                         }
                         else if (type == 7)
                         {
-                            nrml0 = 0;
-                            nrml1 = 0;
-                            normals = null;
-                            pos += 16;
-                            pos += 32;
-                            int i_null = System.BitConverter.ToInt32(resource, pos);
-                            pos += 4;
-                            vertices = new List<Vector3>();
-                            UV = new List<Vector2>();
-
-                            for (int i = 0; i < i_null; i++)
-                            {
-                                byte[] newBuff = new byte[20];
-                                System.Array.Copy(resource, pos, newBuff, 0, 20);
-                                pos += 20;
-                                vertices.Add(new Vector3(System.BitConverter.ToSingle(newBuff, 0), System.BitConverter.ToSingle(newBuff, 8), System.BitConverter.ToSingle(newBuff, 4)));
-                                float u = System.BitConverter.ToSingle(newBuff, 12);
-                                float v = System.BitConverter.ToSingle(newBuff, 16);
-
-
-                                UV.Add(new Vector2(u, v));
-                            }
-                            pos += 4;
+                            bt.component = new Block07();
+                            ((Block07)bt.component).script = this;
+                            bt.component.Read(resource, ref pos);
                         }
                         else if (type == 8)
                         {
-                            //UV = new List<Vector2>();
-                            pos += 16;
-                            int i_null = System.BitConverter.ToInt32(resource, pos);
-                            pos += 4;
-                            int j_null, format;
-
-                            List<int> faces_all = new List<int>();
-
-                            List<int> matNum = new List<int>();
-                            Mesh curMesh = new Mesh();
-                            curMesh.Clear();
-                            curMesh.subMeshCount = i_null;
-                            List<Material> mats = new List<Material>();
-
-                            newObject.AddComponent<MeshFilter>();
-                            newObject.AddComponent<MeshRenderer>();
-
-
-                            for (int i = 0; i < i_null; i++)
-                            {
-                                //normals = null;
-                                List<int> faces = new List<int>();
-                                List<int> faces_old = new List<int>();
-                                format = System.BitConverter.ToInt32(resource, pos);
-                                pos += 4;
-                                pos += 8;
-
-
-                                matNum.Add(System.BitConverter.ToInt32(resource, pos));
-                                pos += 4;
-
-                                j_null = System.BitConverter.ToInt32(resource, pos);
-                                pos += 4;
-                                if ((format == 178) || (format == 50))
-                                {
-                                    for (int j = 0; j < j_null; j++)
-                                    {
-                                        int num = System.BitConverter.ToInt32(resource, pos);
-                                        vertices.Add(vertices[num]);
-                                        faces_old.Add(vertices.Count - 1);
-                                        pos += 4;
-                                        UV.Add(new Vector2(System.BitConverter.ToSingle(resource, pos + 0), System.BitConverter.ToSingle(resource, pos + 4)));
-                                        pos += 20;
-                                    }
-                                }
-                                else if ((format == 3) || (format == 2) || (format == 131))
-                                {
-                                    //List<int> faces3 = new List<int>();
-                                    for (int j = 0; j < j_null; j++)
-                                    {
-                                        int num = System.BitConverter.ToInt32(resource, pos);
-                                        vertices.Add(vertices[num]);
-                                        faces_old.Add(vertices.Count - 1);
-                                        pos += 4;
-                                        UV.Add(new Vector2(System.BitConverter.ToSingle(resource, pos + 0), System.BitConverter.ToSingle(resource, pos + 4)));
-                                        pos += 8;
-                                    }
-                                }
-                                else if ((format == 176) || (format == 48) || (format == 179) || (format == 51))
-                                {
-                                    for (int j = 0; j < j_null; j++)
-                                    {
-                                        faces_old.Add(System.BitConverter.ToInt32(resource, pos));
-                                        pos += 4;
-
-                                        pos += 12;
-                                    }
-                                }
-                                else if ((format == 177))
-                                {
-                                    for (int j = 0; j < j_null; j++)
-                                    {
-                                        faces_old.Add(System.BitConverter.ToInt32(resource, pos));
-                                        pos += 4;
-                                        pos += 4;
-
-                                    }
-                                }
-                                else
-                                {
-                                    for (int j = 0; j < j_null; j++)
-                                    {
-                                        faces_old.Add(System.BitConverter.ToInt32(resource, pos));
-                                        pos += 4;
-                                    }
-                                }
-
-
-                                if ((format == 178))
-                                {
-                                    faces.AddRange(new int[] { faces_old[0], faces_old[2], faces_old[1], faces_old[3], faces_old[1], faces_old[2] });
-                                }
-                                else
-                                    for (int k = 0; k < faces_old.Count - 2; k++)
-                                    {
-
-                                        if (k % 2 == 0)
-                                        {
-                                            if ((format == 178))
-                                            {
-                                                faces.Add(faces_old[k + 1]);
-                                                faces.Add(faces_old[k + 0]);
-                                                faces.Add(faces_old[k + 3]);
-
-                                            }
-                                            else if (format == 255)//debug
-                                            {
-                                                faces.Add(faces_old[k + 0]);
-                                                faces.Add(faces_old[k + 1]);
-                                                faces.Add(faces_old[k + 2]);
-                                            }
-
-                                            else
-                                            {
-                                                faces.Add(faces_old[k + 0]);
-                                                faces.Add(faces_old[k + 2]);
-                                                faces.Add(faces_old[k + 1]);
-
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if ((format == 0) || (format == 16) || (format == 1) || (format == 48) || (format == 50) || (format == 2))
-                                            {
-                                                faces.Add(faces_old[0]);
-                                                faces.Add(faces_old[k + 2]);
-                                                faces.Add(faces_old[k + 1]);
-                                            }
-                                            else if (format == 255)//debug
-                                            {
-                                                faces.Add(faces_old[k - 1]);
-                                                faces.Add(faces_old[k + 2]);
-                                                faces.Add(faces_old[k + 1]);
-                                            }
-                                            else
-                                            {
-                                                faces.Add(faces_old[k + 0]);
-                                                faces.Add(faces_old[k + 1]);
-                                                faces.Add(faces_old[k + 2]);
-                                            }
-                                        }
-                                    }
-                                mats.Add(GetComponent<Materials>().maths[TexInts[matNum[i]]]);
-                                curMesh.vertices = vertices.ToArray();
-                                curMesh.SetTriangles(faces, i);
-
-                                faces_all.AddRange(faces);
-                            }
-                            bt.MatNum = TexInts[matNum[matNum.Count - 1]];
-                            newObject.GetComponent<Renderer>().materials = mats.ToArray();
-
-                            if (normals != null)
-                                curMesh.normals = normals.ToArray();
-                            curMesh.uv = UV.ToArray();
-
-
-                            curMesh.RecalculateBounds();
-                            newObject.GetComponent<MeshFilter>().mesh = curMesh;
-
+                            bt.component = newObject.AddComponent<Block08>();
+                            ((Block08)bt.component).b3dObject = this;
+                            ((Block08)bt.component).vertices = vertices;
+                            ((Block08)bt.component).UV = UV;
+                            bt.component.Read(resource, ref pos);
                         }
                         else if (type == 9)
                         {
@@ -579,6 +404,7 @@ public class B3DScript : MonoBehaviour
                         {
                             Block19 block = newObject.AddComponent<Block19>();
                             bt.component = block;
+                            block.thisObject = newObject;
                             block.room = newObject;
                             rootObj.transform.parent.GetComponent<GameManager>().Rooms.Add(newObject);
                             Rooms.Add(newObject);
@@ -661,7 +487,7 @@ public class B3DScript : MonoBehaviour
                         }
                         else if (type == 23)
                         {
-							bt.component = new Block23();
+                            bt.component = new Block23();
                             bool truck = false;
                             //List<Mesh> meshe = new List<Mesh>();
                             if (rootObj.name == "TRUCKS")
@@ -777,6 +603,7 @@ public class B3DScript : MonoBehaviour
 
                             Block24 p = newObject.AddComponent<Block24>();
                             bt.component = p;
+                            bt.component.thisObject = newObject;
 
                             byte[] bts = new byte[12];
 
@@ -958,112 +785,9 @@ public class B3DScript : MonoBehaviour
                         }
                         else if (type == 35)
                         {
-                            pos += 16;
-                            System.Array.Copy(resource, pos, buff, 0, 4);
-                            pos += 4;
-                            int i_null = System.BitConverter.ToInt32(buff, 0);
-                            int matNum = System.BitConverter.ToInt32(resource, pos);
-                            pos += 4;//textureNum?
-                            bt.MatNum = matNum;
-                            int j_null, i_null2;
-                            System.Array.Copy(resource, pos, buff, 0, 4); pos += 4;
-                            j_null = System.BitConverter.ToInt32(buff, 0);
-                            //
-                            List<int> faces = new List<int>();
-                            //List<int> matNum = new List<int>();
-                            Mesh curMesh = new Mesh();
-                            curMesh.Clear();
-
-                            if (i_null < 3)
-                            {
-                                //faces = new int[j_null*3];
-                                for (int i = 0; i < j_null; i++)
-                                {
-                                    int[] face = new int[3];
-                                    System.Array.Copy(resource, pos, buff, 0, 4); pos += 4;
-                                    i_null2 = System.BitConverter.ToInt32(buff, 0);
-                                    if (i_null2 == 50)
-                                    {
-                                        byte[] newBuff = new byte[88];
-                                        //
-                                        System.Array.Copy(resource, pos, newBuff, 0, 88);
-                                        pos += 88;
-                                        face = new int[3] { System.BitConverter.ToInt32(newBuff, 16), System.BitConverter.ToInt32(newBuff, 64), System.BitConverter.ToInt32(newBuff, 40) };
-                                    }
-                                    else if (i_null2 == 49)
-                                    {
-                                        byte[] newBuff = new byte[40];
-                                        System.Array.Copy(resource, pos, newBuff, 0, 40);
-                                        pos += 40;
-                                        face = new int[3] { System.BitConverter.ToInt32(newBuff, 16), System.BitConverter.ToInt32(newBuff, 32), System.BitConverter.ToInt32(newBuff, 24) };
-                                    }
-                                    else if ((i_null2 == 1) || (i_null2 == 0))
-                                    {
-                                        byte[] newBuff = new byte[28];
-                                        System.Array.Copy(resource, pos, newBuff, 0, 28);
-                                        pos += 28;
-                                        face = new int[3] { System.BitConverter.ToInt32(newBuff, 16), System.BitConverter.ToInt32(newBuff, 24), System.BitConverter.ToInt32(newBuff, 20) };
-                                    }
-                                    else if ((i_null2 == 2) || (i_null2 == 3))
-                                    {
-                                        byte[] newBuff = new byte[52];
-                                        System.Array.Copy(resource, pos, newBuff, 0, 52);
-                                        pos += 52;
-                                        face = new int[3] { System.BitConverter.ToInt32(newBuff, 16), System.BitConverter.ToInt32(newBuff, 40), System.BitConverter.ToInt32(newBuff, 28) };
-                                    }
-                                    else
-                                    {
-                                        byte[] newBuff = new byte[64];
-                                        System.Array.Copy(resource, pos, newBuff, 0, 64);
-                                        pos += 64;
-                                        face = new int[3] { System.BitConverter.ToInt32(newBuff, 16), System.BitConverter.ToInt32(newBuff, 48), System.BitConverter.ToInt32(newBuff, 32) };
-                                    }
-                                    faces.AddRange(face);
-                                }
-
-                            }
-                            else if (i_null == 3)
-                            {
-                                for (int i = 0; i < j_null; i++)
-                                {
-                                    byte[] newBuff = new byte[32];
-
-                                    System.Array.Copy(resource, pos, newBuff, 0, 32);
-                                    pos += 32;
-                                    int[] face = new int[3] { System.BitConverter.ToInt32(newBuff, 20), System.BitConverter.ToInt32(newBuff, 28), System.BitConverter.ToInt32(newBuff, 24) };
-                                    faces.AddRange(face);
-                                }
-                            }
-
-                            newObject.AddComponent<MeshRenderer>();
-                            newObject.GetComponent<MeshRenderer>().material = GetComponent<Materials>().maths[TexInts[matNum]];// resOb.GetComponent<Materials>().maths[TexInts[matNum]];
-
-
-
-                            curMesh.vertices = vertices.ToArray();
-                            curMesh.triangles = faces.ToArray();
-                            if (normals != null)
-                            {
-                                if (normals.Count == curMesh.vertices.Length)
-                                {
-                                    curMesh.normals = normals.ToArray();
-                                }
-                                else
-                                {
-
-
-                                    nrml0 = nrml0 + nrml1;
-                                    nrml1 = nrml1 + curMesh.vertices.Length - 1;
-
-                                    curMesh.normals = normals.GetRange(nrml0, nrml1).ToArray();
-                                }
-                            }
-                            curMesh.uv = UV.ToArray();
-
-                            curMesh.RecalculateBounds();
-
-                            newObject.AddComponent<MeshFilter>().mesh = curMesh;
-
+                            bt.component = newObject.AddComponent<Block35>();
+                            ((Block35)bt.component).script = this;
+                            bt.component.Read(resource,ref pos);
                         }
                         else if (type == 36)
                         {
@@ -1143,80 +867,10 @@ public class B3DScript : MonoBehaviour
                         }
                         else if (type == 37)
                         {
-                            nrml0 = 0;
-                            nrml1 = 0;
-                            pos += 16;
-                            pos += 32;
-                            System.Array.Copy(resource, pos, buff, 0, 4); pos += 4;
-                            int i_null = System.BitConverter.ToInt32(buff, 0);
-                            //Debug.Log(i_null);
-                            int j_null;
-                            System.Array.Copy(resource, pos, buff, 0, 4); pos += 4;
-                            j_null = System.BitConverter.ToInt32(buff, 0);
-                            vertices = new List<Vector3>();
-                            UV = new List<Vector2>();
-                            normals = new List<Vector3>();
-                            //vertices = new List<Vector3>[j_null];
-                            if (i_null == 0)
-                            {
-                                ;
-                            }
-                            else if (i_null == 2)
-                            {
-                                for (int i = 0; i < j_null; i++)
-                                {
-                                    byte[] newBuff = new byte[32];
-                                    System.Array.Copy(resource, pos, newBuff, 0, 32); pos += 32;
-                                    vertices.Add(new Vector3(System.BitConverter.ToSingle(newBuff, 0), System.BitConverter.ToSingle(newBuff, 8), System.BitConverter.ToSingle(newBuff, 4)));
-                                    UV.Add(new Vector2(System.BitConverter.ToSingle(newBuff, 12), System.BitConverter.ToSingle(newBuff, 16)));
-                                    normals.Add(new Vector3(System.BitConverter.ToSingle(newBuff, 20), System.BitConverter.ToSingle(newBuff, 24), System.BitConverter.ToSingle(newBuff, 28)));
-                                    //pos+=32; 
-                                }
-                            }
-                            else if (i_null == 3)
-                            {
-                                for (int i = 0; i < j_null; i++)
-                                {
-                                    byte[] newBuff = new byte[24];
-                                    //
-                                    System.Array.Copy(resource, pos, newBuff, 0, 24);
-                                    pos += 24;
-                                    vertices.Add(new Vector3(System.BitConverter.ToSingle(newBuff, 0), System.BitConverter.ToSingle(newBuff, 8), System.BitConverter.ToSingle(newBuff, 4)));
-                                    UV.Add(new Vector2(System.BitConverter.ToSingle(newBuff, 12), System.BitConverter.ToSingle(newBuff, 16)));
-                                    //
-                                }
-                                normals = null;
-
-                            }
-                            else if (i_null == 514)
-                            {
-                                for (int i = 0; i < j_null; i++)
-                                {
-                                    byte[] newBuff = new byte[48];
-                                    //
-                                    System.Array.Copy(resource, pos, newBuff, 0, 48);
-                                    pos += 48;
-                                    vertices.Add(new Vector3(System.BitConverter.ToSingle(newBuff, 0), System.BitConverter.ToSingle(newBuff, 8), System.BitConverter.ToSingle(newBuff, 4)));
-                                    UV.Add(new Vector2(System.BitConverter.ToSingle(newBuff, 12), System.BitConverter.ToSingle(newBuff, 16)));
-                                    normals.Add(new Vector3(System.BitConverter.ToSingle(newBuff, 20), System.BitConverter.ToSingle(newBuff, 24), System.BitConverter.ToSingle(newBuff, 28)));
-                                    //
-                                }
-                            }
-                            else if ((i_null == 258) || (i_null == 515))
-                            {
-                                for (int i = 0; i < j_null; i++)
-                                {
-                                    byte[] newBuff = new byte[40];
-                                    //
-                                    System.Array.Copy(resource, pos, newBuff, 0, 40);
-                                    pos += 40;
-                                    vertices.Add(new Vector3(System.BitConverter.ToSingle(newBuff, 0), System.BitConverter.ToSingle(newBuff, 8), System.BitConverter.ToSingle(newBuff, 4)));
-                                    UV.Add(new Vector2(System.BitConverter.ToSingle(newBuff, 12), System.BitConverter.ToSingle(newBuff, 16)));
-                                    normals.Add(new Vector3(System.BitConverter.ToSingle(newBuff, 20), System.BitConverter.ToSingle(newBuff, 24), System.BitConverter.ToSingle(newBuff, 28)));
-                                    //
-                                }
-                            }
-                            pos += 4;
+                            bt.component = new Block37();
+                            bt.component.thisObject = newObject;
+                            ((Block37)bt.component).script = this;
+                            bt.component.Read(resource, ref pos);
                         }
                         else if (type == 39)
                         {
@@ -1332,7 +986,18 @@ public class B3DScript : MonoBehaviour
         br = null;
 
     }
-
+    public Transform GetParentVertices(Transform gameObject)
+    {
+        try
+        {
+            List<Mesh> mesh = ((VerticesBlock)gameObject.parent.GetComponent<BlockType>().component).mesh;
+            return gameObject.parent;
+        }
+        catch
+        {
+            return GetParentVertices(gameObject.parent);
+        }
+    }
     public void ClearB3D()
     {
         Debug.Log(this, gameObject);

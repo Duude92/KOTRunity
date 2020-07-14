@@ -1,5 +1,5 @@
 
-class Block06 : IBlocktype
+class Block06 : BlockType
 {
     public byte[] GetBytes()
     {

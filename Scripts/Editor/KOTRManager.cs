@@ -32,6 +32,10 @@ class KOTRManager : EditorWindow
         tc = Shader.Find( PlayerPrefs.GetString("shader",""));
         KOTRManager km = (KOTRManager)EditorWindow.GetWindow(typeof(KOTRManager));
         km.Show();
+        if (tc==null)
+        {
+            tc = Shader.Find("Standard");
+        }
         GameManager.TC = tc;
         GameManager.TCu = tc;
 

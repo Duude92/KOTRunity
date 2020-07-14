@@ -2,6 +2,8 @@ using UnityEngine;
 
 class Block24 : MonoBehaviour,IBlocktype {
 
+        UnityEngine.GameObject _thisObject;
+    public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
 
 	//public float[][] matrix = new float[3][];
 	public Vector3[] matrix = new Vector3[3];
@@ -22,6 +24,16 @@ class Block24 : MonoBehaviour,IBlocktype {
 		pos.CopyTo(buffer,40);
 
 
-		return buffer;
+        byte[] count = System.BitConverter.GetBytes(thisObject.transform.childCount);
+        byte[] buff2 = new byte[buffer.Length+4];
+        buffer.CopyTo(buff2,0);
+        count.CopyTo(buff2,buffer.Length-1);
+        buffer = buff2;
+        return buffer;
+    }
+
+    public void Read(byte[] buffer, ref int pos)
+    {
+        throw new System.NotImplementedException();
     }
 }

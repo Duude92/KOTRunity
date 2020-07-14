@@ -78,7 +78,7 @@ public class SceneSaver : MonoBehaviour
 
             binaryWriter.Write(bt.component.GetBytes());
         }
-        binaryWriter.Write(gameObject.transform.childCount);
+        //binaryWriter.Write(gameObject.transform.childCount);
         foreach (Transform gob in gameObject.transform)
         {
             WriteObjectRecursive(gob.gameObject);

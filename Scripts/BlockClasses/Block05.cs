@@ -1,11 +1,23 @@
 using UnityEngine;
 //joinBlock
 [ExecuteInEditMode]
-class Block05 : MonoBehaviour, IBlocktype, IDisableable
-{
+class Block05 : BlockType, IBlocktype, IDisableable
+{        UnityEngine.GameObject _thisObject;
+    public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
+
     public string nameToJoin;
     public GameObject obj;
     bool rendered = false;
+
+    public void Read(byte[] buffer, ref int pos)
+    {
+        pos += 16;
+        byte[] JoinName = new byte[32];
+        System.Array.Copy(buffer, pos, JoinName, 0, 32);
+        pos += 32;
+        nameToJoin = System.Text.Encoding.UTF8.GetString(JoinName).Trim(new char[] { '\0' });
+        pos += 4;
+    }
 
     void Start()
     {
@@ -26,6 +38,11 @@ class Block05 : MonoBehaviour, IBlocktype, IDisableable
         buf = new byte[32];
         System.Text.Encoding.UTF8.GetBytes(nameToJoin, 0, nameToJoin.Length, buf, 0);
         buf.CopyTo(buffer, 16);
+        byte[] count = System.BitConverter.GetBytes(thisObject.transform.childCount);
+        byte[] buff2 = new byte[buffer.Length+4];
+        buffer.CopyTo(buff2,0);
+        count.CopyTo(buff2,buffer.Length-1);
+        buffer = buff2;
         return buffer;
 
 
@@ -66,4 +83,5 @@ class Block05 : MonoBehaviour, IBlocktype, IDisableable
         this.obj = obj2;
         obj2.transform.SetParent(this.transform);
     }
+
 }

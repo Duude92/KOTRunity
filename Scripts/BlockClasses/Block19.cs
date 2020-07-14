@@ -2,14 +2,22 @@ using UnityEngine;
 using System.Collections.Generic;
 //rooms
 class Block19 : MonoBehaviour, IBlocktype
-{
+{        UnityEngine.GameObject _thisObject;
+    public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
+
     public GameObject room;
     public List<GameObject> hits = new List<GameObject>();
 
     public byte[] GetBytes()
     {
         //Debug.Log("19 block not implemented for GetBytes()");
-        return new byte[0];
+        byte[] buffer = new byte[0];
+        byte[] count = System.BitConverter.GetBytes(thisObject.transform.childCount);
+        byte[] buff2 = new byte[buffer.Length+4];
+        buffer.CopyTo(buff2,0);
+        count.CopyTo(buff2,buffer.Length);
+        buffer = buff2;
+        return buffer;
     }
 
     public void Init()
@@ -40,5 +48,10 @@ class Block19 : MonoBehaviour, IBlocktype
         {
             hits.Add(roadT.gameObject);
         }
+    }
+
+    public void Read(byte[] buffer, ref int pos)
+    {
+        throw new System.NotImplementedException();
     }
 }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 //LodManager10
 class Block10 : MonoBehaviour,IBlocktype
 {
+        UnityEngine.GameObject _thisObject;
+    public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
 
 	bool rendered = false;
 	LODCustom curLodObj = null;
@@ -82,5 +84,10 @@ class Block10 : MonoBehaviour,IBlocktype
 		Debug.Log("10 block not implemented for GetBytes()");
         return new byte[32];
 
+    }
+
+    public void Read(byte[] buffer, ref int pos)
+    {
+        throw new System.NotImplementedException();
     }
 }
