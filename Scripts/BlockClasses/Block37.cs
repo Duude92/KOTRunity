@@ -11,25 +11,52 @@ class Block37 : VerticesBlock, IBlocktype
         List<byte> buffer = new List<byte>();
         buffer.AddRange(Instruments.Vector3ToBytes(new Vector3()));
         buffer.AddRange(new byte[36]);
-        buffer.AddRange(System.BitConverter.GetBytes(2)); //Some value i_null
-        int loopCount = 0;
-        foreach(var _mesh in mesh)
+        int i_null = 0;
+        if (mesh[0].vertices.Length > mesh[0].normals.Length)
         {
-            loopCount+=_mesh.triangles.Length/3;
+            i_null = 3;
         }
-        buffer.AddRange(System.BitConverter.GetBytes(loopCount)); //Some value j_null
+        else
+        {
+            i_null = 2;
+        }
+        buffer.AddRange(System.BitConverter.GetBytes(i_null)); //Some value i_null
+        int vCount = 0;
         foreach (var _mesh in mesh)
         {
-            for (int i = 0; i < _mesh.triangles.Length/3; i++)
+            vCount += _mesh.vertices.Length;
+        }
+        buffer.AddRange(System.BitConverter.GetBytes(vCount)); //Some value j_null
+        foreach (var _mesh in mesh)
+        {
+            if (i_null == 2) //vertex + uv + normal
             {
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].x));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].z));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].y));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.uv[i].x));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.uv[i].y));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.normals[i].x));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.normals[i].z));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.normals[i].y));
+                for (int i = 0; i < vCount; i++)
+                {
+
+                    buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].x));
+                    buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].z));
+                    buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].y));
+                    buffer.AddRange(System.BitConverter.GetBytes(_mesh.uv[i].x));
+                    buffer.AddRange(System.BitConverter.GetBytes(_mesh.uv[i].y));
+                    buffer.AddRange(System.BitConverter.GetBytes(_mesh.normals[i].x));
+                    buffer.AddRange(System.BitConverter.GetBytes(_mesh.normals[i].z));
+                    buffer.AddRange(System.BitConverter.GetBytes(_mesh.normals[i].y));
+                }
+            }
+            else if (i_null == 3) //NO normals
+            {
+                for (int i = 0; i < vCount; i++)
+                {
+
+                    buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].x));
+                    buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].z));
+                    buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].y));
+                    buffer.AddRange(System.BitConverter.GetBytes(_mesh.uv[i].x));
+                    buffer.AddRange(System.BitConverter.GetBytes(_mesh.uv[i].y));
+                    buffer.AddRange(System.BitConverter.GetBytes(1f)); //TODO: Unknown data
+                }
+
             }
         }
         buffer.AddRange(System.BitConverter.GetBytes(thisObject.transform.childCount));
@@ -64,9 +91,12 @@ class Block37 : VerticesBlock, IBlocktype
                 byte[] newBuff = new byte[32];
                 System.Array.Copy(buffer, pos, newBuff, 0, 32);
                 pos += 32;
-                script.vertices.Add(Instruments.ReadV3(newBuff,0));
-                script.UV.Add(Instruments.ReadV2(newBuff,12));
-                script.normals.Add(Instruments.ReadV3(newBuff,20));
+                var vertex = Instruments.ReadV3(newBuff, 0);
+                var normal = Instruments.ReadV3(newBuff, 20);
+
+                script.vertices.Add(vertex);
+                script.UV.Add(Instruments.ReadV2(newBuff, 12));
+                script.normals.Add(normal);
                 //pos+=32; 
             }
         }
@@ -78,8 +108,8 @@ class Block37 : VerticesBlock, IBlocktype
                 //
                 System.Array.Copy(buffer, pos, newBuff, 0, 24);
                 pos += 24;
-                script.vertices.Add(Instruments.ReadV3(newBuff,0));
-                script.UV.Add(Instruments.ReadV2(newBuff,12));
+                script.vertices.Add(Instruments.ReadV3(newBuff, 0));
+                script.UV.Add(Instruments.ReadV2(newBuff, 12));
                 //
             }
             script.normals = null;
@@ -93,9 +123,12 @@ class Block37 : VerticesBlock, IBlocktype
                 //
                 System.Array.Copy(buffer, pos, newBuff, 0, 48);
                 pos += 48;
-                script.vertices.Add(Instruments.ReadV3(newBuff,0));
-                script.UV.Add(Instruments.ReadV2(newBuff,12));
-                script.normals.Add(Instruments.ReadV3(newBuff,20));
+                var vertex = Instruments.ReadV3(newBuff, 0);
+                var normal = Instruments.ReadV3(newBuff, 20);
+
+                script.vertices.Add(vertex);
+                script.UV.Add(Instruments.ReadV2(newBuff, 12));
+                script.normals.Add(normal);
                 //
             }
         }
@@ -107,9 +140,11 @@ class Block37 : VerticesBlock, IBlocktype
                 //
                 System.Array.Copy(buffer, pos, newBuff, 0, 40);
                 pos += 40;
-                script.vertices.Add(Instruments.ReadV3(newBuff,0));
-                script.UV.Add(Instruments.ReadV2(newBuff,12));
-                script.normals.Add(Instruments.ReadV3(newBuff,20));
+                var vertex = Instruments.ReadV3(newBuff, 0);
+                var normal = Instruments.ReadV3(newBuff, 28); //TODO: структура 258: вершина (3ф), ув(2ф), неизвестно(2ф), нормаль(3ф)
+                script.vertices.Add(vertex);
+                script.UV.Add(Instruments.ReadV2(newBuff, 12));
+                script.normals.Add(normal);
                 //
             }
         }

@@ -18,7 +18,7 @@ class GeneratorInvoker : MonoBehaviour {
 		{
 			
 			MeshFilter meshF = gameObject.AddComponent<MeshFilter>();
-			Mesh me = meshF.mesh;
+			Mesh me = new Mesh();
 			me.Clear();
 
 			//////Polygon of a treee
@@ -137,7 +137,7 @@ class GeneratorInvoker : MonoBehaviour {
 			
 			me.RecalculateBounds();
 			
-
+			meshF.mesh = me;
 		}
 		else if (invokeName == "$$GeneratorOfTerrain")
 		{

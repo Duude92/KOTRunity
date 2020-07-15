@@ -38,10 +38,11 @@ class Block05 : BlockType, IBlocktype, IDisableable
         buf = new byte[32];
         System.Text.Encoding.UTF8.GetBytes(nameToJoin, 0, nameToJoin.Length, buf, 0);
         buf.CopyTo(buffer, 16);
+        
         byte[] count = System.BitConverter.GetBytes(thisObject.transform.childCount);
         byte[] buff2 = new byte[buffer.Length+4];
         buffer.CopyTo(buff2,0);
-        count.CopyTo(buff2,buffer.Length-1);
+        count.CopyTo(buff2,buffer.Length);
         buffer = buff2;
         return buffer;
 

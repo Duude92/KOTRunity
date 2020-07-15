@@ -44,6 +44,7 @@ public class SceneSaver : MonoBehaviour
             {
                 WriteObjectRecursive(gob.gameObject);
             }
+            binaryWriter.Write(222);
 
 
             binaryWriter.Close();

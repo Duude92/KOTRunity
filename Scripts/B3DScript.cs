@@ -362,11 +362,10 @@ public class B3DScript : MonoBehaviour
                         }
                         else if (type == 14)
                         {
-                            pos += 16;
-                            pos += 16;
-                            pos += 4;
+                            bt.component = new Block14();
+                            bt.component.thisObject = newObject;
+                            bt.component.Read(resource, ref pos);
 
-                            pos += 8;
                         }
                         else if (type == 16)
                         {
@@ -380,25 +379,10 @@ public class B3DScript : MonoBehaviour
                         }
                         else if (type == 18)
                         {
-                            byte[] tempPosB = new byte[16];
-                            System.Array.Copy(resource, pos, tempPosB, 0, 16);
-                            pos += 16;
-                            Vector3 tempPos = new Vector3(System.BitConverter.ToSingle(tempPosB, 0), System.BitConverter.ToSingle(tempPosB, 8), System.BitConverter.ToSingle(tempPosB, 4));
-                            float scale = System.BitConverter.ToSingle(tempPosB, 12);
-                            byte[] newbuff = new byte[32];
-                            System.Array.Copy(resource, pos, newbuff, 0, 32);
-                            pos += 32;
-                            string space = System.Text.Encoding.UTF8.GetString(newbuff).Replace("\x0", string.Empty);
-                            System.Array.Copy(resource, pos, newbuff, 0, 32);
-                            pos += 32;
-                            string block = System.Text.Encoding.UTF8.GetString(newbuff).Replace("\x0", string.Empty);
-                            InvokeMe me = newObject.AddComponent<InvokeMe>();
-                            me.space = space;
-                            //me.tempSpace = tempPos;
-                            //me.tempScale = scale;
-                            me.blocks = block;
-                            me.GO = rootObj;
-                            InvokeBlocks.Add(newObject);
+                            bt.component = new Block18();
+                            bt.component.thisObject = newObject;
+                            ((Block18)bt.component).script = this;
+                            bt.component.Read(resource, ref pos);
                         }
                         else if (type == 19)
                         {
@@ -412,188 +396,134 @@ public class B3DScript : MonoBehaviour
                         }
                         else if (type == 20)
                         {
-                            pos += 16;
-                            int vertNum = System.BitConverter.ToInt32(resource, pos); pos += 4;
-                            List<Vector3> verticesCol = new List<Vector3>();
-                            List<int> faces = new List<int>();
-                            System.BitConverter.ToInt32(resource, pos); pos += 4;
-                            float height = 0;
-                            System.BitConverter.ToInt32(resource, pos); pos += 4;
-                            int newParam = System.BitConverter.ToInt32(resource, pos); pos += 4;
-                            MeshCollider col = newObject.AddComponent<MeshCollider>() as MeshCollider;
-                            Mesh me = new Mesh();
-                            for (int i = 0; i < newParam; i++)
-                            {
-                                if (i == 0)
-                                {
-                                    height = System.BitConverter.ToSingle(resource, pos);
-                                    pos += 4;
-                                }
-                                else
-                                    pos += 4;
-                            }
-                            int number = 0;
-                            for (int i = 0; i < vertNum; i++)
-                            {
-                                var vert = new Vector3(System.BitConverter.ToSingle(resource, pos), System.BitConverter.ToSingle(resource, pos + 4), System.BitConverter.ToSingle(resource, pos + 8));
-                                pos += 12;
-                                verticesCol.Add(new Vector3(vert.x, vert.z - 100, vert.y));
-                                if (height > 0)
-                                {
-                                    verticesCol.Add(new Vector3(vert.x + 0.1f, vert.z + (float)height, vert.y + 0.1f));
-                                }
-                                else
-                                {
-                                    height = 100;
-                                    verticesCol.Add(new Vector3(vert.x + 0.1f, vert.z + (float)height, vert.y + 0.1f));
-                                }
-                                if (i == 0)
-                                {
-                                    faces.AddRange(new int[] { 0, 2, 1 });
-                                    number += 2;
-                                }
-                                else
-                                {
-                                    if (i + 1 == vertNum)
-                                        faces.AddRange(new int[3] { (number), (number + 1), (number - 1) });
-                                    else
-                                        faces.AddRange(new int[3] { (number), (number + 1), (number - 1) });
-                                    number += 2;
-                                }
-
-                            }
-                            me.vertices = verticesCol.ToArray();
-                            me.triangles = faces.ToArray();
-
-                            col.sharedMesh = me;
+                            bt.component = new Block20();
+                            bt.component.thisObject = newObject;
+                            bt.component.Read(resource, ref pos);
 
 
                         }
                         else if (type == 21)
                         {
-                            newObject.AddComponent<MeshRenderer>();//sw -> OnWillRender()
-                            SwitchBlocks.Add(newObject);
-                            var sc = newObject.AddComponent<SphereCollider>();
-                            sc.center = new Vector3(System.BitConverter.ToSingle(resource, pos), System.BitConverter.ToSingle(resource, pos + 8), System.BitConverter.ToSingle(resource, pos + 4));
-                            sc.radius = System.BitConverter.ToSingle(resource, pos + 12);
-                            sc.isTrigger = true;
-                            pos += 16;
-                            BlockSwitcher sw = newObject.AddComponent<BlockSwitcher>();
-                            sw.groups = System.BitConverter.ToInt32(resource, pos);
-                            //sw.Initialize(System.BitConverter.ToInt32(resource,pos));
-                            pos += 4;
-                            pos += 4;
-                            pos += 4;
+                            bt.component = new Block21();
+                            ((Block21)bt.component).script = this;
+                            bt.component.thisObject = newObject;
+                            bt.component.Read(resource, ref pos);
+
+
+
                         }
                         else if (type == 23)
                         {
                             bt.component = new Block23();
-                            bool truck = false;
-                            //List<Mesh> meshe = new List<Mesh>();
-                            if (rootObj.name == "TRUCKS")
-                            {
-                                truck = true;
-                            }
+                            bt.component.thisObject = newObject;
+                            ((Block23)bt.component).script = this;
+                            bt.component.Read(resource, ref pos);
+                            // bool truck = false;
+                            // //List<Mesh> meshe = new List<Mesh>();
+                            // if (rootObj.name == "TRUCKS")
+                            // {
+                            //     truck = true;
+                            // }
 
 
-                            List<int> faces_all = new List<int>();
+                            // List<int> faces_all = new List<int>();
 
-                            pos += 8;
-                            List<Vector3> verticesCol = new List<Vector3>();
-                            List<int> faces = new List<int>();
-
-
-
-                            int i_null = System.BitConverter.ToInt32(resource, pos);
-                            pos += 4;
-                            for (int i = 0; i < i_null; i++)
-                            {
-                                pos += 4;
-                            }
-                            int triNum = System.BitConverter.ToInt32(resource, pos);
-                            pos += 4;
-                            int number = 0;
-                            for (int i = 0; i < triNum; i++)
-                            {
-                                int vertNum = System.BitConverter.ToInt32(resource, pos);
-                                pos += 4;
-                                if (vertNum == 3)
-                                {
-                                    faces.AddRange(new int[] { number, number + 2, number + 1 });
-                                    number += 3;
-                                }
-                                else if (vertNum == 4)
-                                {
-                                    faces.AddRange(new int[] { (number), (number + 2), (number + 1), (number + 3), (number + 2), (number) });
-                                    number += 4;
-                                }
-                                else
-                                {
-                                    for (int j = 0; j < vertNum - 2; j++)
-                                    {
-                                        faces.AddRange(new int[3] { number + j + 2, number + j + 1, number });
-
-                                    }
-                                    number += vertNum;
-
-                                }
-                                for (int j = 0; j < vertNum; j++)
-                                {
-                                    var vert = new Vector3(System.BitConverter.ToSingle(resource, pos), System.BitConverter.ToSingle(resource, pos + 8), System.BitConverter.ToSingle(resource, pos + 4));
-                                    /*var a = newObject.AddComponent<SphereCollider>();
-                                    a.center = vert;
-                                    a.radius = 0.1f;*/
-                                    pos += 12;
-                                    verticesCol.Add(vert);
-                                    /*var a = new GameObject();
-                                        a.transform.SetParent(newObject.transform);
-                                        a.transform.position = new Vector3(vert.x,vert.z,vert.y);	*/
-                                }
-                                if (truck)
-                                {
-                                    int Count = faces.Count / 3;
-                                    for (int j = 0; j < Count; j++)
-                                    {
-                                        List<Vector3> newTri = Extrude(verticesCol[faces[j]], verticesCol[faces[j + 1]], verticesCol[faces[j + 2]]);
-                                        verticesCol.AddRange(newTri);
-                                        faces.Add(verticesCol.Count - 3);
-                                        faces.Add(verticesCol.Count - 2);
-                                        faces.Add(verticesCol.Count - 1);
-
-                                    }
+                            // pos += 8;
+                            // List<Vector3> verticesCol = new List<Vector3>();
+                            // List<int> faces = new List<int>();
 
 
 
-                                    Mesh me = new Mesh();
-                                    MeshCollider col = newObject.AddComponent<MeshCollider>();
-                                    me.vertices = verticesCol.ToArray();
-                                    me.triangles = faces.ToArray();
-                                    me.name = ((DamageKey)i).ToString();
+                            // int i_null = System.BitConverter.ToInt32(resource, pos);
+                            // pos += 4;
+                            // for (int i = 0; i < i_null; i++)
+                            // {
+                            //     pos += 4;
+                            // }
+                            // int triNum = System.BitConverter.ToInt32(resource, pos);
+                            // pos += 4;
+                            // int number = 0;
+                            // for (int i = 0; i < triNum; i++)
+                            // {
+                            //     int vertNum = System.BitConverter.ToInt32(resource, pos);
+                            //     pos += 4;
+                            //     if (vertNum == 3)
+                            //     {
+                            //         faces.AddRange(new int[] { number, number + 2, number + 1 });
+                            //         number += 3;
+                            //     }
+                            //     else if (vertNum == 4)
+                            //     {
+                            //         faces.AddRange(new int[] { (number), (number + 2), (number + 1), (number + 3), (number + 2), (number) });
+                            //         number += 4;
+                            //     }
+                            //     else
+                            //     {
+                            //         for (int j = 0; j < vertNum - 2; j++)
+                            //         {
+                            //             faces.AddRange(new int[3] { number + j + 2, number + j + 1, number });
+
+                            //         }
+                            //         number += vertNum;
+
+                            //     }
+                            //     for (int j = 0; j < vertNum; j++)
+                            //     {
+                            //         var vert = new Vector3(System.BitConverter.ToSingle(resource, pos), System.BitConverter.ToSingle(resource, pos + 8), System.BitConverter.ToSingle(resource, pos + 4));
+                            //         /*var a = newObject.AddComponent<SphereCollider>();
+                            //         a.center = vert;
+                            //         a.radius = 0.1f;*/
+                            //         pos += 12;
+                            //         verticesCol.Add(vert);
+                            //         /*var a = new GameObject();
+                            //             a.transform.SetParent(newObject.transform);
+                            //             a.transform.position = new Vector3(vert.x,vert.z,vert.y);	*/
+                            //     }
+                            //     if (truck)
+                            //     {
+                            //         int Count = faces.Count / 3;
+                            //         for (int j = 0; j < Count; j++)
+                            //         {
+                            //             List<Vector3> newTri = Extrude(verticesCol[faces[j]], verticesCol[faces[j + 1]], verticesCol[faces[j + 2]]);
+                            //             verticesCol.AddRange(newTri);
+                            //             faces.Add(verticesCol.Count - 3);
+                            //             faces.Add(verticesCol.Count - 2);
+                            //             faces.Add(verticesCol.Count - 1);
+
+                            //         }
 
 
-                                    col.sharedMesh = me;
-                                    col.convex = true;
-                                    faces_all.AddRange(faces);
-                                    faces = new List<int>();
-                                }
+
+                            //         Mesh me = new Mesh();
+                            //         MeshCollider col = newObject.AddComponent<MeshCollider>();
+                            //         me.vertices = verticesCol.ToArray();
+                            //         me.triangles = faces.ToArray();
+                            //         me.name = ((DamageKey)i).ToString();
 
 
-                            }
-                            {//Mesh me conflict
-                                Mesh me = new Mesh();
-                                MeshCollider col = newObject.AddComponent<MeshCollider>();
-                                me.vertices = verticesCol.ToArray();
-                                if (!truck)
-                                {
-                                    me.triangles = faces.ToArray();
-                                    col.sharedMesh = me;
-                                }
-                            }
-                            /*else
-							{
-								me.triangles = faces_all.ToArray();
-								col.convex = true;
-							} */
+                            //         col.sharedMesh = me;
+                            //         col.convex = true;
+                            //         faces_all.AddRange(faces);
+                            //         faces = new List<int>();
+                            //     }
+
+
+                            // }
+                            // {//Mesh me conflict
+                            //     Mesh me = new Mesh();
+                            //     MeshCollider col = newObject.AddComponent<MeshCollider>();
+                            //     me.vertices = verticesCol.ToArray();
+                            //     if (!truck)
+                            //     {
+                            //         me.triangles = faces.ToArray();
+                            //         col.sharedMesh = me;
+                            //     }
+                            // }
+                            // /*else
+                            // {
+                            // 	me.triangles = faces_all.ToArray();
+                            // 	col.convex = true;
+                            // } */
 
 
 
@@ -757,19 +687,9 @@ public class B3DScript : MonoBehaviour
                         }
                         else if (type == 33)
                         {
-                            Light point = newObject.AddComponent<Light>();
-                            pos += 16;
-
-                            pos += 12;//
-                            byte[] newbuff = new byte[12];
-                            System.Array.Copy(resource, pos, newbuff, 0, 12); pos += 12; //position
-                            point.transform.position = new Vector3(System.BitConverter.ToSingle(newbuff, 0), System.BitConverter.ToSingle(newbuff, 8), System.BitConverter.ToSingle(newbuff, 4));
-
-                            pos += 36; //
-                            System.Array.Copy(resource, pos, newbuff, 0, 12); pos += 12; //color
-                            point.color = new Color(System.BitConverter.ToSingle(newbuff, 0), System.BitConverter.ToSingle(newbuff, 4), System.BitConverter.ToSingle(newbuff, 8));
-
-                            pos += 4; //child
+                            bt.component = new Block33();
+                            bt.component.thisObject = newObject;
+                            bt.component.Read(resource, ref pos);
                         }
                         else if (type == 34)
                         {
@@ -787,7 +707,7 @@ public class B3DScript : MonoBehaviour
                         {
                             bt.component = newObject.AddComponent<Block35>();
                             ((Block35)bt.component).script = this;
-                            bt.component.Read(resource,ref pos);
+                            bt.component.Read(resource, ref pos);
                         }
                         else if (type == 36)
                         {
@@ -867,6 +787,10 @@ public class B3DScript : MonoBehaviour
                         }
                         else if (type == 37)
                         {
+                            // bt.component = newObject.AddComponent<Block37>();
+                            // bt.component.thisObject = newObject;
+                            // ((Block37)bt.component).script = this;
+                            // bt.component.Read(resource,ref pos);
                             bt.component = new Block37();
                             bt.component.thisObject = newObject;
                             ((Block37)bt.component).script = this;
@@ -1021,7 +945,7 @@ public class B3DScript : MonoBehaviour
 
     }
 
-    List<Vector3> Extrude(Vector3 a, Vector3 b, Vector3 c)
+    public List<Vector3> Extrude(Vector3 a, Vector3 b, Vector3 c)
     {
         //mesh = GetComponent<MeshFilter>().sharedMesh;
 
