@@ -5,12 +5,14 @@ using System.Collections.Generic;
 [ExecuteInEditMode]
 class KOTRManager : EditorWindow
 {
+    public static Shader tc;
+
+
     private string _lastPath = "";
     private GameObject _root;
-    public static Shader tc;
     private GameObject _currentScene;
-
     private bool _isDisabled = false;
+    private GameObject target;
     private bool isDisabled
     {
         get { return _isDisabled; }
@@ -78,6 +80,39 @@ class KOTRManager : EditorWindow
             GameObject.DestroyImmediate(_root);
             ClearConsole();
         }
+        if (GUILayout.Button("Import Mesh to Scene"))
+        {
+            ImportObject();
+        }
+        target = (GameObject)EditorGUILayout.ObjectField("Target object:",(GameObject)target,typeof(GameObject),true);
+    }
+    void ImportObject()
+    {
+        MeshFilter meshFilter = target.GetComponent<MeshFilter>();
+        if (meshFilter== null)
+        {
+            Debug.LogError("Current object does not have mesh");
+            throw new System.NullReferenceException();
+        }
+        
+        GameObject b37 = new GameObject(target.name);
+
+        BlockType bt = b37.AddComponent<BlockType>();
+        bt.Type = 37;
+        bt.component = new Block37();
+        bt.component.thisObject = b37;
+        ((VerticesBlock)bt.component).mesh.Add(meshFilter.sharedMesh);
+
+        target.transform.parent = b37.transform;
+        bt = target.AddComponent<BlockType>();
+        bt.Type = 35;
+        bt.component = target.AddComponent<Block35>();
+
+
+    }
+    void OnSelectionChanged()
+    {
+        target = Selection.activeGameObject;
     }
     void OpenB3D(bool isCommon = false)
     {

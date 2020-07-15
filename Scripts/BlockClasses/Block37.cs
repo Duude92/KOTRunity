@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-class Block37 : VerticesBlock, IBlocktype
+public class Block37 : VerticesBlock, IBlocktype
 {
     public B3DScript script;
     GameObject _thisObject;
@@ -15,6 +15,10 @@ class Block37 : VerticesBlock, IBlocktype
         if (mesh[0].vertices.Length > mesh[0].normals.Length)
         {
             i_null = 3;
+        }
+        else if (mesh[0].uv2.Length > 0)
+        {
+            i_null = 258;
         }
         else
         {
@@ -43,6 +47,24 @@ class Block37 : VerticesBlock, IBlocktype
                     buffer.AddRange(System.BitConverter.GetBytes(_mesh.normals[i].z));
                     buffer.AddRange(System.BitConverter.GetBytes(_mesh.normals[i].y));
                 }
+            }
+            else if (i_null == 258)
+            {
+                for (int i = 0; i < vCount; i++)
+                {
+
+                    buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].x));
+                    buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].z));
+                    buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].y));
+                    buffer.AddRange(System.BitConverter.GetBytes(_mesh.uv[i].x));
+                    buffer.AddRange(System.BitConverter.GetBytes(_mesh.uv[i].y));
+                    buffer.AddRange(System.BitConverter.GetBytes(_mesh.uv2[i].x));
+                    buffer.AddRange(System.BitConverter.GetBytes(_mesh.uv2[i].y));
+                    buffer.AddRange(System.BitConverter.GetBytes(_mesh.normals[i].x));
+                    buffer.AddRange(System.BitConverter.GetBytes(_mesh.normals[i].z));
+                    buffer.AddRange(System.BitConverter.GetBytes(_mesh.normals[i].y));
+                }
+
             }
             else if (i_null == 3) //NO normals
             {
@@ -78,6 +100,7 @@ class Block37 : VerticesBlock, IBlocktype
         j_null = System.BitConverter.ToInt32(buff, 0);
         script.vertices = new List<Vector3>();
         script.UV = new List<Vector2>();
+        script.UV1 = new List<Vector2>();
         script.normals = new List<Vector3>();
         //script.vertices = new List<Vector3>[j_null];
         if (i_null == 0)
@@ -144,6 +167,7 @@ class Block37 : VerticesBlock, IBlocktype
                 var normal = Instruments.ReadV3(newBuff, 28); //TODO: структура 258: вершина (3ф), ув(2ф), неизвестно(2ф), нормаль(3ф)
                 script.vertices.Add(vertex);
                 script.UV.Add(Instruments.ReadV2(newBuff, 12));
+                script.UV1.Add(Instruments.ReadV2(newBuff, 20));
                 script.normals.Add(normal);
                 //
             }

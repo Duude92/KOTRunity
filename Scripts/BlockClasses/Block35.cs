@@ -8,6 +8,7 @@ public class Block35 : MonoBehaviour, IBlocktype
 
     GameObject _thisObject;
     public GameObject thisObject { get => _thisObject; set => _thisObject = value; }
+    public int matNum = 0;
 
     public byte[] GetBytes()
     {
@@ -16,7 +17,7 @@ public class Block35 : MonoBehaviour, IBlocktype
         buffer.AddRange(Instruments.Vector3ToBytes(new Vector3()));
         buffer.AddRange(new byte[4]);
         buffer.AddRange(System.BitConverter.GetBytes(3)); //Some value i_null
-        buffer.AddRange(System.BitConverter.GetBytes(2)); //Some value MatNum
+        buffer.AddRange(System.BitConverter.GetBytes(matNum)); //Some value MatNum
         int loopCount = mesh.triangles.Length / 3;
         buffer.AddRange(System.BitConverter.GetBytes(loopCount)); //Some value j_null
         for (int i = 0; i < loopCount; i++)
@@ -25,7 +26,7 @@ public class Block35 : MonoBehaviour, IBlocktype
             face.AddRange(System.BitConverter.GetBytes(16)); //UNKNOWN DATA
             face.AddRange(System.BitConverter.GetBytes(1f));
             face.AddRange(System.BitConverter.GetBytes(32767));
-            face.AddRange(System.BitConverter.GetBytes(15)); //TODO: MATNUM
+            face.AddRange(System.BitConverter.GetBytes(matNum)); //TODO: MATNUM
             face.AddRange(System.BitConverter.GetBytes(3)); //count vertices in face???
             face.AddRange(System.BitConverter.GetBytes(mesh.triangles[0+i*3]));
             face.AddRange(System.BitConverter.GetBytes(mesh.triangles[2+i*3]));
@@ -44,7 +45,7 @@ public class Block35 : MonoBehaviour, IBlocktype
         System.Array.Copy(buffer, pos, buff, 0, 4);
         pos += 4;
         int i_null = System.BitConverter.ToInt32(buff, 0);
-        int matNum = System.BitConverter.ToInt32(buffer, pos);
+        matNum = System.BitConverter.ToInt32(buffer, pos);
         pos += 4;//textureNum?
         int j_null, i_null2;
         System.Array.Copy(buffer, pos, buff, 0, 4);
@@ -141,6 +142,11 @@ public class Block35 : MonoBehaviour, IBlocktype
             }
         }
         curMesh.uv = script.UV.ToArray();
+        if(script.UV1.Count>0)
+        {
+            curMesh.uv2 = script.UV1.ToArray();
+            script.UV1 = new List<Vector2>();
+        }
 
         curMesh.RecalculateBounds();
 

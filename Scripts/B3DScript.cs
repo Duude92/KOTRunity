@@ -20,6 +20,7 @@ public class B3DScript : MonoBehaviour
 
     public List<Vector3> vertices = new List<Vector3>();
     public List<Vector2> UV = new List<Vector2>();
+    public List<Vector2> UV1 = new List<Vector2>();
     public List<Vector3> normals = new List<Vector3>();
 
     public void Disable()
