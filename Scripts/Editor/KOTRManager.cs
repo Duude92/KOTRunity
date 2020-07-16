@@ -88,6 +88,7 @@ class KOTRManager : EditorWindow
     }
     void ImportObject()
     {
+        Gigableh.MeshApplyTransform.ApplyTransformRecursive(target.transform,true,true,true);
         MeshFilter meshFilter = target.GetComponent<MeshFilter>();
         if (meshFilter== null)
         {
@@ -110,9 +111,10 @@ class KOTRManager : EditorWindow
 
 
     }
-    void OnSelectionChanged()
+    void OnSelectionChange()
     {
         target = Selection.activeGameObject;
+        Repaint();
     }
     void OpenB3D(bool isCommon = false)
     {
