@@ -9,29 +9,98 @@ public class Block35 : MonoBehaviour, IBlocktype
     GameObject _thisObject;
     public GameObject thisObject { get => _thisObject; set => _thisObject = value; }
     public int matNum = 0;
-
+    public int i_null;
+    public List<int> format = new List<int>();
     public byte[] GetBytes()
     {
         mesh = gameObject.GetComponent<MeshFilter>().sharedMesh;
         List<byte> buffer = new List<byte>();
         buffer.AddRange(Instruments.Vector3ToBytes(new Vector3()));
         buffer.AddRange(new byte[4]);
-        buffer.AddRange(System.BitConverter.GetBytes(3)); //Some value i_null
+        buffer.AddRange(System.BitConverter.GetBytes(i_null)); //Some value i_null
         buffer.AddRange(System.BitConverter.GetBytes(matNum)); //Some value MatNum
         int loopCount = mesh.triangles.Length / 3;
         buffer.AddRange(System.BitConverter.GetBytes(loopCount)); //Some value j_null
-        for (int i = 0; i < loopCount; i++)
+        if (i_null == 3)
+        {
+            for (int i = 0; i < loopCount; i++)
+            {
+                List<byte> face = new List<byte>();
+                face.AddRange(System.BitConverter.GetBytes(16)); //UNKNOWN DATA
+                face.AddRange(System.BitConverter.GetBytes(1f));
+                face.AddRange(System.BitConverter.GetBytes(32767));
+                face.AddRange(System.BitConverter.GetBytes(matNum)); //TODO: MATNUM
+                face.AddRange(System.BitConverter.GetBytes(3)); //count vertices in face???
+                face.AddRange(System.BitConverter.GetBytes(mesh.triangles[0 + i * 3]));
+                face.AddRange(System.BitConverter.GetBytes(mesh.triangles[2 + i * 3]));
+                face.AddRange(System.BitConverter.GetBytes(mesh.triangles[1 + i * 3]));
+                buffer.AddRange(face);
+
+            }
+        }
+        else if (i_null < 3)
         {
             List<byte> face = new List<byte>();
-            face.AddRange(System.BitConverter.GetBytes(16)); //UNKNOWN DATA
-            face.AddRange(System.BitConverter.GetBytes(1f));
-            face.AddRange(System.BitConverter.GetBytes(32767));
-            face.AddRange(System.BitConverter.GetBytes(matNum)); //TODO: MATNUM
-            face.AddRange(System.BitConverter.GetBytes(3)); //count vertices in face???
-            face.AddRange(System.BitConverter.GetBytes(mesh.triangles[0 + i * 3]));
-            face.AddRange(System.BitConverter.GetBytes(mesh.triangles[2 + i * 3]));
-            face.AddRange(System.BitConverter.GetBytes(mesh.triangles[1 + i * 3]));
-            buffer.AddRange(face);
+
+            int i = 0;
+            // for fmt in format
+
+            foreach (int fmt in format)
+            {
+                face.AddRange(System.BitConverter.GetBytes(fmt));
+                face.AddRange(System.BitConverter.GetBytes(1f));
+                face.AddRange(System.BitConverter.GetBytes(32767));
+                face.AddRange(System.BitConverter.GetBytes(matNum)); //TODO: MATNUM
+                face.AddRange(System.BitConverter.GetBytes(3));
+
+                if (fmt == 50)
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+                        face.AddRange(System.BitConverter.GetBytes(mesh.triangles[j + i * 3]));
+                        face.AddRange(new byte[24]);
+                    }
+                }
+                else if (fmt == 49)
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+
+                        face.AddRange(System.BitConverter.GetBytes(mesh.triangles[j + i * 3]));
+                        face.AddRange(new byte[24]);
+
+                    }
+                }
+                else if ((fmt == 1) || (fmt == 0))
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+
+                        face.AddRange(System.BitConverter.GetBytes(mesh.triangles[j + i * 3]));
+
+                    }
+                }
+                else if ((fmt == 2) || (fmt == 3))
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+
+                        face.AddRange(System.BitConverter.GetBytes(mesh.triangles[j + i * 3]));
+                        face.AddRange(new byte[12]);
+                    }
+                }
+                else
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+
+                        face.AddRange(System.BitConverter.GetBytes(mesh.triangles[j + i * 3]));
+                        face.AddRange(new byte[16]);
+                    }
+                }
+                buffer.AddRange(face);
+                i++;
+            }
 
         }
 
@@ -44,10 +113,10 @@ public class Block35 : MonoBehaviour, IBlocktype
         pos += 16;
         System.Array.Copy(buffer, pos, buff, 0, 4);
         pos += 4;
-        int i_null = System.BitConverter.ToInt32(buff, 0);
+        i_null = System.BitConverter.ToInt32(buff, 0);
         matNum = System.BitConverter.ToInt32(buffer, pos);
         pos += 4;//textureNum?
-        int j_null, i_null2;
+        int j_null;
         System.Array.Copy(buffer, pos, buff, 0, 4);
         pos += 4;
         j_null = System.BitConverter.ToInt32(buff, 0);
@@ -64,8 +133,8 @@ public class Block35 : MonoBehaviour, IBlocktype
             {
                 int[] face = new int[3];
                 System.Array.Copy(buffer, pos, buff, 0, 4); pos += 4;
-                i_null2 = System.BitConverter.ToInt32(buff, 0);
-                if (i_null2 == 50)
+                format.Add(System.BitConverter.ToInt32(buff, 0));
+                if (format[format.Count - 1] == 50)
                 {
                     byte[] newBuff = new byte[88];
                     //
@@ -73,21 +142,21 @@ public class Block35 : MonoBehaviour, IBlocktype
                     pos += 88;
                     face = new int[3] { System.BitConverter.ToInt32(newBuff, 16), System.BitConverter.ToInt32(newBuff, 64), System.BitConverter.ToInt32(newBuff, 40) };
                 }
-                else if (i_null2 == 49)
+                else if (format[format.Count - 1] == 49)
                 {
                     byte[] newBuff = new byte[40];
                     System.Array.Copy(buffer, pos, newBuff, 0, 40);
                     pos += 40;
                     face = new int[3] { System.BitConverter.ToInt32(newBuff, 16), System.BitConverter.ToInt32(newBuff, 32), System.BitConverter.ToInt32(newBuff, 24) };
                 }
-                else if ((i_null2 == 1) || (i_null2 == 0))
+                else if ((format[format.Count - 1] == 1) || (format[format.Count - 1] == 0))
                 {
                     byte[] newBuff = new byte[28];
                     System.Array.Copy(buffer, pos, newBuff, 0, 28);
                     pos += 28;
                     face = new int[3] { System.BitConverter.ToInt32(newBuff, 16), System.BitConverter.ToInt32(newBuff, 24), System.BitConverter.ToInt32(newBuff, 20) };
                 }
-                else if ((i_null2 == 2) || (i_null2 == 3))
+                else if ((format[format.Count - 1] == 2) || (format[format.Count - 1] == 3))
                 {
                     byte[] newBuff = new byte[52];
                     System.Array.Copy(buffer, pos, newBuff, 0, 52);

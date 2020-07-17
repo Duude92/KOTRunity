@@ -12,6 +12,7 @@ class Block08 : MonoBehaviour, IBlocktype
     public List<string> material = new List<string>();
     public List<string> loops = new List<string>();
     List<int> matNum;
+    int format;
 
 
     public byte[] GetBytes()
@@ -25,15 +26,25 @@ class Block08 : MonoBehaviour, IBlocktype
         buffer.AddRange(System.BitConverter.GetBytes(subMeshCount)); //Some value i_null
         for (int i = 0; i < subMeshCount; i++)
         {
-            int format = 68;
             buffer.AddRange(System.BitConverter.GetBytes(format));
-            buffer.AddRange(new byte[8]); //1f, 32767
+            buffer.AddRange(System.BitConverter.GetBytes(1f));
+            buffer.AddRange(System.BitConverter.GetBytes(32767));
+            //buffer.AddRange(new byte[8]); //1f, 32767
             List<byte> face = new List<byte>();
             face.AddRange(System.BitConverter.GetBytes(matNum[i])); //TODO: MATNUM
             int vCount = mesh.GetTriangles(i).Length;
             face.AddRange(System.BitConverter.GetBytes(vCount)); //count vertices in face???
             int[] faces = mesh.GetTriangles(i);
-            if (format == 50)
+            if ((format == 178) || (format == 50))
+            {
+                for (int j = 0; j < vCount; j++)
+                {
+                    face.AddRange(System.BitConverter.GetBytes(faces[j]));
+                    face.AddRange(Instruments.Vector2ToBytes(mesh.uv[faces[j]]));
+                    face.AddRange(new byte[12]);
+                }
+            }
+            else if ((format == 3) || (format == 2) || (format == 131))
             {
                 for (int j = 0; j < vCount; j++)
                 {
@@ -41,8 +52,25 @@ class Block08 : MonoBehaviour, IBlocktype
                     face.AddRange(Instruments.Vector2ToBytes(mesh.uv[faces[j]]));
                 }
             }
-            else if (format == 68)
+            else if ((format == 176) || (format == 48) || (format == 179) || (format == 51))
             {
+                for (int j = 0; j < vCount; j++)
+                {
+                    face.AddRange(System.BitConverter.GetBytes(faces[j]));
+                    face.AddRange(new byte[12]);
+                }
+            }
+            else if ((format == 177))
+            {
+                for (int j = 0; j < vCount; j++)
+                {
+                    face.AddRange(System.BitConverter.GetBytes(faces[j]));
+                    face.AddRange(new byte[4]);
+                }
+            }
+            else
+            {
+                format = 68;
                 for (int j = 0; j < vCount; j++)
                 {
                     face.AddRange(System.BitConverter.GetBytes(faces[j]));
@@ -62,7 +90,7 @@ class Block08 : MonoBehaviour, IBlocktype
         pos += 16;
         int submeshCount = System.BitConverter.ToInt32(buffer, pos);
         pos += 4;
-        int j_null, format;
+        int j_null;
 
         List<int> faces_all = new List<int>();
 
