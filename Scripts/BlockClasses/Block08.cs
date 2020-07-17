@@ -2,41 +2,81 @@ using System.Collections.Generic;
 using UnityEngine;
 
 class Block08 : MonoBehaviour, IBlocktype
-{        UnityEngine.GameObject _thisObject;
+{
+    UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
 
-    public B3DScript b3dObject;
+    public B3DScript script;
     public List<Vector3> vertices;
     public List<Vector2> UV;
     public List<string> material = new List<string>();
     public List<string> loops = new List<string>();
+    List<int> matNum;
+
 
     public byte[] GetBytes()
     {
-        throw new System.NotImplementedException();
+        Mesh mesh = gameObject.GetComponent<MeshFilter>().sharedMesh;
+        List<byte> buffer = new List<byte>();
+        buffer.AddRange(Instruments.Vector3ToBytes(new Vector3()));
+        buffer.AddRange(new byte[4]);
+
+        int subMeshCount = mesh.subMeshCount;
+        buffer.AddRange(System.BitConverter.GetBytes(subMeshCount)); //Some value i_null
+        for (int i = 0; i < subMeshCount; i++)
+        {
+            int format = 68;
+            buffer.AddRange(System.BitConverter.GetBytes(format));
+            buffer.AddRange(new byte[8]); //1f, 32767
+            List<byte> face = new List<byte>();
+            face.AddRange(System.BitConverter.GetBytes(matNum[i])); //TODO: MATNUM
+            int vCount = mesh.GetTriangles(i).Length;
+            face.AddRange(System.BitConverter.GetBytes(vCount)); //count vertices in face???
+            int[] faces = mesh.GetTriangles(i);
+            if (format == 50)
+            {
+                for (int j = 0; j < vCount; j++)
+                {
+                    face.AddRange(System.BitConverter.GetBytes(faces[j]));
+                    face.AddRange(Instruments.Vector2ToBytes(mesh.uv[faces[j]]));
+                }
+            }
+            else if (format == 68)
+            {
+                for (int j = 0; j < vCount; j++)
+                {
+                    face.AddRange(System.BitConverter.GetBytes(faces[j]));
+                }
+            }
+
+            buffer.AddRange(face);
+
+        }
+
+        return buffer.ToArray();
     }
 
     public void Read(byte[] buffer, ref int pos)
     {
         //UV = new List<Vector2>();
         pos += 16;
-        int i_null = System.BitConverter.ToInt32(buffer, pos);
+        int submeshCount = System.BitConverter.ToInt32(buffer, pos);
         pos += 4;
         int j_null, format;
 
         List<int> faces_all = new List<int>();
 
-        List<int> matNum = new List<int>();
+        matNum = new List<int>();
         Mesh curMesh = new Mesh();
         curMesh.Clear();
-        curMesh.subMeshCount = i_null;
+        curMesh.subMeshCount = submeshCount;
         List<Material> mats = new List<Material>();
 
         gameObject.AddComponent<MeshFilter>();
         gameObject.AddComponent<MeshRenderer>();
 
 
-        for (int i = 0; i < i_null; i++)
+        for (int i = 0; i < submeshCount; i++)
         {
             //normals = null;
             List<int> faces = new List<int>();
@@ -170,8 +210,8 @@ class Block08 : MonoBehaviour, IBlocktype
                         }
                     }
                 }
-            mats.Add(b3dObject.GetComponent<Materials>().maths[b3dObject.TexInts[matNum[i]]]);
-            material.Add(b3dObject.GetComponent<Materials>().material[b3dObject.TexInts[matNum[i]]]);
+            mats.Add(script.GetComponent<Materials>().maths[script.TexInts[matNum[i]]]);
+            material.Add(script.GetComponent<Materials>().material[script.TexInts[matNum[i]]]);
             curMesh.vertices = vertices.ToArray();
             curMesh.SetTriangles(faces, i);
 
@@ -187,5 +227,12 @@ class Block08 : MonoBehaviour, IBlocktype
 
         curMesh.RecalculateBounds();
         gameObject.GetComponent<MeshFilter>().mesh = curMesh;
+
+        Transform tr = script.GetParentVertices(transform);
+
+        BlockType bt1 = tr.GetComponent<BlockType>();
+
+        ((VerticesBlock)bt1.component).mesh.Add(curMesh); //ищет в каждом родительском обьекте компоненту verticesBlock рекурсивно    }
+
     }
 }

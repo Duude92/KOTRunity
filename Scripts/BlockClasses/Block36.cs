@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-public class Block37 : VerticesBlock, IBlocktype
+public class Block36 : VerticesBlock, IBlocktype
 {
     public B3DScript script;
     GameObject _thisObject;
@@ -11,17 +11,9 @@ public class Block37 : VerticesBlock, IBlocktype
         List<byte> buffer = new List<byte>();
         buffer.AddRange(Instruments.Vector3ToBytes(new Vector3()));
         buffer.AddRange(new byte[36]);
+        buffer.AddRange(new byte[32]);
         int i_null = 0;
-        if (mesh.Count == 0)
-        {
-            Debug.Log("This object have vertices block, but does not have faces", thisObject);
-
-            buffer.AddRange(System.BitConverter.GetBytes(3)); //Some value i_null
-            buffer.AddRange(System.BitConverter.GetBytes(0)); //vcount
-            buffer.AddRange(System.BitConverter.GetBytes(thisObject.transform.childCount));
-            return buffer.ToArray();
-
-        }
+        Debug.Log("", _thisObject);
         if (mesh[0].vertices.Length > mesh[0].normals.Length)
         {
             i_null = 3;
@@ -45,7 +37,7 @@ public class Block37 : VerticesBlock, IBlocktype
         {
             if (i_null == 2) //vertex + uv + normal
             {
-                for (int i = 0; i < _mesh.vertexCount; i++)
+                for (int i = 0; i < vCount; i++)
                 {
 
                     buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].x));
@@ -60,7 +52,7 @@ public class Block37 : VerticesBlock, IBlocktype
             }
             else if (i_null == 258)
             {
-                for (int i = 0; i < _mesh.vertexCount; i++)
+                for (int i = 0; i < vCount; i++)
                 {
 
                     buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].x));
@@ -78,7 +70,7 @@ public class Block37 : VerticesBlock, IBlocktype
             }
             else if (i_null == 3) //NO normals
             {
-                for (int i = 0; i < _mesh.vertexCount; i++)
+                for (int i = 0; i < vCount; i++)
                 {
 
                     buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].x));
@@ -100,6 +92,7 @@ public class Block37 : VerticesBlock, IBlocktype
         byte[] buff = new byte[4];
         pos += 16;
         pos += 32;
+        pos += 32;
         System.Array.Copy(buffer, pos, buff, 0, 4);
         pos += 4;
         int i_null = System.BitConverter.ToInt32(buff, 0);
@@ -109,9 +102,7 @@ public class Block37 : VerticesBlock, IBlocktype
         j_null = System.BitConverter.ToInt32(buff, 0);
         script.vertices = new List<Vector3>();
         script.UV = new List<Vector2>();
-        script.UV1 = new List<Vector2>();
         script.normals = new List<Vector3>();
-        //script.vertices = new List<Vector3>[j_null];
         if (i_null == 0)
         {
             ;
@@ -121,15 +112,10 @@ public class Block37 : VerticesBlock, IBlocktype
             for (int i = 0; i < j_null; i++)
             {
                 byte[] newBuff = new byte[32];
-                System.Array.Copy(buffer, pos, newBuff, 0, 32);
-                pos += 32;
-                var vertex = Instruments.ReadV3(newBuff, 0);
-                var normal = Instruments.ReadV3(newBuff, 20);
-
-                script.vertices.Add(vertex);
-                script.UV.Add(Instruments.ReadV2(newBuff, 12));
-                script.normals.Add(normal);
-                //pos+=32; 
+                System.Array.Copy(buffer, pos, newBuff, 0, 32); pos += 32;
+                script.vertices.Add(new Vector3(System.BitConverter.ToSingle(newBuff, 0), System.BitConverter.ToSingle(newBuff, 8), System.BitConverter.ToSingle(newBuff, 4)));
+                script.UV.Add(new Vector2(System.BitConverter.ToSingle(newBuff, 12), System.BitConverter.ToSingle(newBuff, 16)));
+                script.normals.Add(new Vector3(System.BitConverter.ToSingle(newBuff, 20), System.BitConverter.ToSingle(newBuff, 24), System.BitConverter.ToSingle(newBuff, 28)));
             }
         }
         else if (i_null == 3)
@@ -140,12 +126,10 @@ public class Block37 : VerticesBlock, IBlocktype
                 //
                 System.Array.Copy(buffer, pos, newBuff, 0, 24);
                 pos += 24;
-                script.vertices.Add(Instruments.ReadV3(newBuff, 0));
-                script.UV.Add(Instruments.ReadV2(newBuff, 12));
+                script.vertices.Add(new Vector3(System.BitConverter.ToSingle(newBuff, 0), System.BitConverter.ToSingle(newBuff, 8), System.BitConverter.ToSingle(newBuff, 4)));
+                script.UV.Add(new Vector2(System.BitConverter.ToSingle(newBuff, 12), System.BitConverter.ToSingle(newBuff, 16)));
                 //
             }
-            script.normals = null;
-
         }
         else if (i_null == 514)
         {
@@ -155,12 +139,9 @@ public class Block37 : VerticesBlock, IBlocktype
                 //
                 System.Array.Copy(buffer, pos, newBuff, 0, 48);
                 pos += 48;
-                var vertex = Instruments.ReadV3(newBuff, 0);
-                var normal = Instruments.ReadV3(newBuff, 20);
-
-                script.vertices.Add(vertex);
-                script.UV.Add(Instruments.ReadV2(newBuff, 12));
-                script.normals.Add(normal);
+                script.vertices.Add(new Vector3(System.BitConverter.ToSingle(newBuff, 0), System.BitConverter.ToSingle(newBuff, 8), System.BitConverter.ToSingle(newBuff, 4)));
+                script.UV.Add(new Vector2(System.BitConverter.ToSingle(newBuff, 12), System.BitConverter.ToSingle(newBuff, 16)));
+                script.normals.Add(new Vector3(System.BitConverter.ToSingle(newBuff, 20), System.BitConverter.ToSingle(newBuff, 24), System.BitConverter.ToSingle(newBuff, 28)));
                 //
             }
         }
@@ -172,17 +153,12 @@ public class Block37 : VerticesBlock, IBlocktype
                 //
                 System.Array.Copy(buffer, pos, newBuff, 0, 40);
                 pos += 40;
-                var vertex = Instruments.ReadV3(newBuff, 0);
-                var normal = Instruments.ReadV3(newBuff, 28); //TODO: структура 258: вершина (3ф), ув(2ф), неизвестно(2ф), нормаль(3ф)
-                script.vertices.Add(vertex);
-                script.UV.Add(Instruments.ReadV2(newBuff, 12));
-                script.UV1.Add(Instruments.ReadV2(newBuff, 20));
-                script.normals.Add(normal);
+                script.vertices.Add(new Vector3(System.BitConverter.ToSingle(newBuff, 0), System.BitConverter.ToSingle(newBuff, 8), System.BitConverter.ToSingle(newBuff, 4)));
+                script.UV.Add(new Vector2(System.BitConverter.ToSingle(newBuff, 12), System.BitConverter.ToSingle(newBuff, 16)));
+                script.normals.Add(new Vector3(System.BitConverter.ToSingle(newBuff, 20), System.BitConverter.ToSingle(newBuff, 24), System.BitConverter.ToSingle(newBuff, 28)));
                 //
             }
         }
-        int childCount = System.BitConverter.ToInt32(buffer,pos);
-        script.UV1Users = childCount;
         pos += 4;
 
 

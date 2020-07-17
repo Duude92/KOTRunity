@@ -62,7 +62,7 @@ class LoadTrigger : MonoBehaviour {
 		BC.isTrigger = true;*/
 		//GameObject newObject = new GameObject("BoxCollider 30 blk");
 		GameObject newObject = gameObject;
-		newObject.name = "BoxCollider 30 blk";
+		// newObject.name = "BoxCollider 30 blk";
 		newObject.transform.SetParent(transform);
 
 

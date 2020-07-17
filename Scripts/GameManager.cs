@@ -44,6 +44,7 @@ public class GameManager : MonoBehaviour, IDisableable
     GameObject trucks;
     bool DoOnce = false;
     public static GameObject common;
+    public static GameObject currentObject;
 
     static public void RegisterDisableale(IDisableable block)
     {

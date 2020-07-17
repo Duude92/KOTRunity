@@ -21,13 +21,28 @@ class Block20 : IBlocktype
         buffer.AddRange(System.BitConverter.GetBytes(a));//TODO: vCount?
         buffer.AddRange(System.BitConverter.GetBytes(b));//TODO: vCount?
         buffer.AddRange(System.BitConverter.GetBytes(c));//TODO: vCount?
-        if (c == 4)
+        for (int i = 0; i < c; i++)
         {
-            buffer.AddRange(System.BitConverter.GetBytes(d));
-            byte[] buff = new byte[12];
-            System.Text.Encoding.ASCII.GetBytes(keyName).CopyTo(buff,0);
-            buffer.AddRange(buff);
+            if (i == 0)
+            {
+                buffer.AddRange(System.BitConverter.GetBytes(d));
+            }
+            else
+            {
+                buffer.AddRange(System.BitConverter.GetBytes(0));
+            }
         }
+        // if (c == 4)
+        // {
+        //     buffer.AddRange(System.BitConverter.GetBytes(d));
+        //     byte[] buff = new byte[12];
+        //     System.Text.Encoding.ASCII.GetBytes(keyName).CopyTo(buff, 0);
+        //     buffer.AddRange(buff);
+        // }
+        // else if (c == 1)
+        // {
+        //     buffer.AddRange(System.BitConverter.GetBytes(10));//TODO: height?
+        // }
         foreach (var v in vertices)
         {
             buffer.AddRange(Instruments.Vector3ToBytes(v));
@@ -68,8 +83,6 @@ class Block20 : IBlocktype
         }
         else if (c == 0)
         {
-            int a = 1 + 1;
-            a += 2;
             for (int i = 0; i < newParam; i++)
             {
                 if (i == 0)
@@ -83,8 +96,6 @@ class Block20 : IBlocktype
         }
         else
         {
-            int a = 1 + 1;
-            a += 2;
             for (int i = 0; i < newParam; i++)
             {
                 if (i == 0)

@@ -1,11 +1,17 @@
 using System.Collections.Generic;
 using UnityEngine;
-class Block18 : IBlocktype
+class Block18 : IBlocktype, IDisableable
 {
     UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
     public B3DScript script;
     InvokeMe me;
+    public Block18()
+    {
+        GameManager.RegisterDisableale(this);
+
+    }
+
     public byte[] GetBytes()
     {
         List<byte> buffer = new List<byte>();
@@ -41,5 +47,15 @@ class Block18 : IBlocktype
         me.blocks = block;
         me.GO = script.gameObject;
         script.InvokeBlocks.Add(thisObject);
+    }
+
+    public void Disable()
+    {
+        me.Destroy();
+    }
+
+    public void Enable()
+    {
+        me.Invoke();
     }
 }

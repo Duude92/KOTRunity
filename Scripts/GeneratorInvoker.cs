@@ -6,18 +6,33 @@ using System.IO;
 class GeneratorInvoker : MonoBehaviour {
 	public string invokeName;
 	public float Scale;
-	public int Type,Type2;
+	public int Type;
 	public int hernja;
 	public GameObject resOb;
 
 	public List<float> Params = new List<float>();
+	MeshFilter meshFilter;
+	public void Destroy()
+	{
+		DestroyImmediate(meshFilter);
+		MeshRenderer mr = GetComponent<MeshRenderer>();
+		Collider collider = GetComponent<Collider>();
+		if(mr)
+		{
+			DestroyImmediate(mr);
+		}
+		if(collider)
+		{
+			DestroyImmediate(collider);
+		}
+	}
 
 	public void Generate()
 	{
 		if (invokeName == "$$TreeGenerator1")
 		{
 			
-			MeshFilter meshF = gameObject.AddComponent<MeshFilter>();
+			meshFilter = gameObject.AddComponent<MeshFilter>();
 			Mesh me = new Mesh();
 			me.Clear();
 
@@ -137,12 +152,12 @@ class GeneratorInvoker : MonoBehaviour {
 			
 			me.RecalculateBounds();
 			
-			meshF.mesh = me;
+			meshFilter.mesh = me;
 		}
 		else if (invokeName == "$$GeneratorOfTerrain")
 		{
-			MeshFilter meshF = gameObject.AddComponent<MeshFilter>();
-			Mesh me = meshF.mesh;
+			meshFilter = gameObject.AddComponent<MeshFilter>();
+			Mesh me = new Mesh();;
 			me.Clear();
 			int res = 257;
 			DirectoryInfo ENVpath = new DirectoryInfo(@"db2\ENV\");
@@ -193,6 +208,7 @@ class GeneratorInvoker : MonoBehaviour {
 			me.triangles = faces.ToArray();
 			me.uv = uvs.ToArray();
 			me.RecalculateNormals();
+			meshFilter.mesh = me;
 
 			gameObject.transform.localScale = new Vector3(4f,4f,4f);
 			gameObject.transform.position = new Vector3(2037,424.5f,-3992);
@@ -201,8 +217,8 @@ class GeneratorInvoker : MonoBehaviour {
 		}
 		else if (invokeName == "$$People")	
 		{
-			MeshFilter meshF = gameObject.AddComponent<MeshFilter>();
-			Mesh me = meshF.mesh;
+			meshFilter = gameObject.AddComponent<MeshFilter>();
+			Mesh me = new Mesh();
 			me.Clear();
 
 			List<Vector3> vertices = new List<Vector3>();
@@ -224,7 +240,7 @@ class GeneratorInvoker : MonoBehaviour {
 			
 
 			triangles.AddRange(new int[]{0,1,3,3,1,2});
-			gameObject.AddComponent<MeshRenderer>().material = resOb.GetComponent<Materials>().maths[resOb.GetComponent<Materials>().FindIndexByString("people"+Type2)];
+			gameObject.AddComponent<MeshRenderer>().material = resOb.GetComponent<Materials>().maths[resOb.GetComponent<Materials>().FindIndexByString("people"+Params[Params.Count-2])];
 
 
 			me.vertices = vertices.ToArray();
@@ -232,6 +248,7 @@ class GeneratorInvoker : MonoBehaviour {
 			me.triangles = triangles.ToArray();
 			
 			me.RecalculateBounds();
+			meshFilter.mesh = me;
 		}
 	}
 }

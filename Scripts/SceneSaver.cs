@@ -20,13 +20,18 @@ public class SceneSaver : MonoBehaviour
 
 
             binaryWriter.Write(buffer4b);
+            binaryWriter.Write(0);
+            binaryWriter.Write(6);
+            B3DScript script = root.GetComponent<B3DScript>();
 
+            binaryWriter.Write(script.TexInts.Count*8+1);
+            binaryWriter.Write(script.TexInts.Count*8+7);
+            
+            binaryWriter.Write(0);
+            binaryWriter.Write(script.TexInts.Count);
 
-
-            binaryWriter.Write("                   ");//TODO
 
             Materials math = root.GetComponent<Materials>();
-            binaryWriter.Write(math.material.Count);
 
             foreach (string mat in math.material)
             {

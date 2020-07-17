@@ -21,6 +21,7 @@ public class B3DScript : MonoBehaviour
     public List<Vector3> vertices = new List<Vector3>();
     public List<Vector2> UV = new List<Vector2>();
     public List<Vector2> UV1 = new List<Vector2>();
+    public int UV1Users = 0; //Необходимо для счета кол-ва юзеров ув1
     public List<Vector3> normals = new List<Vector3>();
 
     public void Disable()
@@ -232,43 +233,10 @@ public class B3DScript : MonoBehaviour
                         }
                         else if (type == 4)
                         {
-                            bt.component = new Block04();
-                            pos += 16;
-                            byte[] spcName = new byte[32];
-                            System.Array.Copy(resource, pos, spcName, 0, 32);
-                            pos += 32;
-
-                            string SpaceName = System.Text.Encoding.UTF8.GetString(spcName).Trim(new char[] { '\0' });
-
-
-                            GameObject SpcOb = GameObject.Find(SpaceName);
-
-                            if (SpcOb != null)
-                            {
-                                Block24 Spc = SpcOb.GetComponent<Block24>();
-                                newObject.transform.position = Spc.position;
-
-                                Vector3 rotation = new Vector3();
-                                float sy = Mathf.Sqrt(Spc.matrix[0][0] * Spc.matrix[0][0] + Spc.matrix[1][0] * Spc.matrix[1][0]);
-                                bool singular = sy < 1e-6;
-                                float rad = 180 / Mathf.PI;
-                                if (!singular)
-                                {
-                                    rotation.x = Mathf.Atan2(Spc.matrix[2][1], Spc.matrix[2][2]) * rad;
-                                    rotation.z = Mathf.Atan2(-Spc.matrix[2][0], sy) * rad;
-                                    rotation.y = Mathf.Atan2(Spc.matrix[1][0], Spc.matrix[0][0]) * rad;
-                                }
-                                else
-                                {
-                                    rotation.x = Mathf.Atan2(-Spc.matrix[1][2], Spc.matrix[1][1]) * rad;
-                                    rotation.z = Mathf.Atan2(-Spc.matrix[2][0], sy) * rad;
-                                    rotation.y = 0;
-                                }
-
-                                newObject.transform.eulerAngles = rotation;
-                            }
-
-                            pos += 36;
+                            Block04 block = newObject.AddComponent<Block04>();
+                            block.Read(resource, ref pos);
+                            bt.component = block;
+                            block.thisObject = newObject;
 
                         }
                         else if (type == 5)
@@ -281,85 +249,59 @@ public class B3DScript : MonoBehaviour
                         }
                         else if (type == 6)
                         {
-                            pos += 16;
-                            pos += 32;
-                            pos += 32;
-                            System.Array.Copy(resource, pos, buff, 0, 4);
-                            pos += 4;
-                            int i_null = System.BitConverter.ToInt32(buff, 0);
-                            for (int i = 0; i < i_null; i++)
-                            {
-                                pos += 20;
-                            }
-                            pos += 4;
+                            bt.component = new Block06();
+                            ((Block06)bt.component).script = this;
+                            bt.component.thisObject = newObject;
+                            bt.component.Read(resource, ref pos);
+
                         }
                         else if (type == 7)
                         {
                             bt.component = new Block07();
                             ((Block07)bt.component).script = this;
+                            bt.component.thisObject = newObject;
                             bt.component.Read(resource, ref pos);
+
                         }
                         else if (type == 8)
                         {
                             bt.component = newObject.AddComponent<Block08>();
-                            ((Block08)bt.component).b3dObject = this;
+                            ((Block08)bt.component).script = this;
                             ((Block08)bt.component).vertices = vertices;
                             ((Block08)bt.component).UV = UV;
                             bt.component.Read(resource, ref pos);
                         }
                         else if (type == 9)
                         {
-                            pos += 16;
+                            bt.component = newObject.AddComponent<Block09>();
+                            bt.component.thisObject = newObject;
 
-                            Block09 blk = newObject.AddComponent<Block09>();
-                            bt.component = blk;
-                            blk.xz4eEto = new Vector4(System.BitConverter.ToSingle(resource, pos), System.BitConverter.ToSingle(resource, pos + 8), System.BitConverter.ToSingle(resource, pos + 4), System.BitConverter.ToSingle(resource, pos + 12));
-                            pos += 16;
+                            bt.component.Read(resource, ref pos);
 
-                            pos += 4;//childCount
                         }
                         else if (type == 10)
                         {
-                            var a = newObject.AddComponent<Block10>();
-
-                            pos += 16;
-
-
-                            a.Center = new Vector3(System.BitConverter.ToSingle(resource, pos), System.BitConverter.ToSingle(resource, pos + 8), System.BitConverter.ToSingle(resource, pos + 4));
-                            a.Distance = System.BitConverter.ToSingle(resource, pos + 12);
-                            pos += 16;
-                            //System.Array.Copy(resource,pos,buff,0,4); 	
-                            pos += 4;
+                            bt.component = newObject.AddComponent<Block10>();
+                            bt.component.thisObject = newObject;
+                            bt.component.Read(resource, ref pos);
 
 
                         }
                         else if (type == 12)
                         {
-                            pos += 16;
-                            pos += 12;
-                            float height = System.BitConverter.ToSingle(resource, pos);
-                            pos += 4;
-                            newObject.AddComponent<BoxCollider>().size = new Vector3(10000f, 0f, 10000f);
+                            bt.component = new Block12();
+                            bt.component.thisObject = newObject;
+                            bt.component.Read(resource, ref pos);
 
-                            newObject.transform.position = new Vector3(0, height * -1, 0);
-                            pos += 12;
+
 
                         }
                         else if (type == 13)
                         {
-                            pos += 16;
-                            newObject.AddComponent<Block13>().a = System.BitConverter.ToInt32(resource, pos);
-                            newObject.GetComponent<Block13>().b = System.BitConverter.ToInt32(resource, pos + 4);
-                            int paramCount = System.BitConverter.ToInt32(resource, pos + 8);
-                            newObject.GetComponent<Block13>().paramCount = paramCount;
-                            pos += 4;
-                            pos += 8;
-                            //int i_null = System.BitConverter.ToInt32(buff,0);
-                            for (int i = 0; i < paramCount; i++)
-                            {
-                                newObject.GetComponent<Block13>().Params.Add(System.BitConverter.ToSingle(resource, pos));
-                                pos += 4;
-                            }
+                            bt.component = new Block13();
+                            bt.component.thisObject = newObject;
+                            bt.component.Read(resource, ref pos);
+
                         }
                         else if (type == 14)
                         {
@@ -656,23 +598,10 @@ public class B3DScript : MonoBehaviour
                         }
                         else if (type == 30)
                         {
-                            newObject.AddComponent<MeshRenderer>();//OnWillRender()
-                            pos += 16;
-                            byte[] name = new byte[32];
-                            //
-                            System.Array.Copy(resource, pos, name, 0, 32);
-                            pos += 32;
-
-                            LoadTrigger go = newObject.AddComponent<LoadTrigger>();
-                            go.roomName = System.Text.Encoding.UTF8.GetString(name).Replace("\x0", string.Empty);
-
-                            byte[] position = new byte[12];
-                            System.Array.Copy(resource, pos, position, 0, 12); pos += 12; //position
-                            go.point0 = new Vector3(System.BitConverter.ToSingle(position, 0), System.BitConverter.ToSingle(position, 8), System.BitConverter.ToSingle(position, 4));
-                            System.Array.Copy(resource, pos, position, 0, 12); pos += 12; //position
-                            go.point1 = new Vector3(System.BitConverter.ToSingle(position, 0), System.BitConverter.ToSingle(position, 8), System.BitConverter.ToSingle(position, 4));
-                            go.Trigger();
-                            LoadTriggers.Add(newObject); //аар1
+                            bt.component = new Block30();
+                            bt.component.thisObject = newObject;
+                            ((Block30)bt.component).script = this;
+                            bt.component.Read(resource, ref pos);
 
                         }
                         else if (type == 31)
@@ -712,78 +641,10 @@ public class B3DScript : MonoBehaviour
                         }
                         else if (type == 36)
                         {
-                            nrml0 = 0;
-                            nrml1 = 0;
-                            pos += 16;
-                            pos += 32;
-                            pos += 32;
-                            System.Array.Copy(resource, pos, buff, 0, 4);
-                            pos += 4;
-                            int i_null = System.BitConverter.ToInt32(buff, 0);
-                            int j_null;
-                            System.Array.Copy(resource, pos, buff, 0, 4);
-                            pos += 4;
-                            j_null = System.BitConverter.ToInt32(buff, 0);
-                            vertices = new List<Vector3>();
-                            UV = new List<Vector2>();
-                            normals = new List<Vector3>();
-                            if (i_null == 0)
-                            {
-                                ;
-                            }
-                            else if (i_null == 2)
-                            {
-                                for (int i = 0; i < j_null; i++)
-                                {
-                                    byte[] newBuff = new byte[32];
-                                    System.Array.Copy(resource, pos, newBuff, 0, 32); pos += 32;
-                                    vertices.Add(new Vector3(System.BitConverter.ToSingle(newBuff, 0), System.BitConverter.ToSingle(newBuff, 8), System.BitConverter.ToSingle(newBuff, 4)));
-                                    UV.Add(new Vector2(System.BitConverter.ToSingle(newBuff, 12), System.BitConverter.ToSingle(newBuff, 16)));
-                                    normals.Add(new Vector3(System.BitConverter.ToSingle(newBuff, 20), System.BitConverter.ToSingle(newBuff, 24), System.BitConverter.ToSingle(newBuff, 28)));
-                                }
-                            }
-                            else if (i_null == 3)
-                            {
-                                for (int i = 0; i < j_null; i++)
-                                {
-                                    byte[] newBuff = new byte[24];
-                                    //
-                                    System.Array.Copy(resource, pos, newBuff, 0, 24);
-                                    pos += 24;
-                                    vertices.Add(new Vector3(System.BitConverter.ToSingle(newBuff, 0), System.BitConverter.ToSingle(newBuff, 8), System.BitConverter.ToSingle(newBuff, 4)));
-                                    UV.Add(new Vector2(System.BitConverter.ToSingle(newBuff, 12), System.BitConverter.ToSingle(newBuff, 16)));
-                                    //
-                                }
-                            }
-                            else if (i_null == 514)
-                            {
-                                for (int i = 0; i < j_null; i++)
-                                {
-                                    byte[] newBuff = new byte[48];
-                                    //
-                                    System.Array.Copy(resource, pos, newBuff, 0, 48);
-                                    pos += 48;
-                                    vertices.Add(new Vector3(System.BitConverter.ToSingle(newBuff, 0), System.BitConverter.ToSingle(newBuff, 8), System.BitConverter.ToSingle(newBuff, 4)));
-                                    UV.Add(new Vector2(System.BitConverter.ToSingle(newBuff, 12), System.BitConverter.ToSingle(newBuff, 16)));
-                                    normals.Add(new Vector3(System.BitConverter.ToSingle(newBuff, 20), System.BitConverter.ToSingle(newBuff, 24), System.BitConverter.ToSingle(newBuff, 28)));
-                                    //
-                                }
-                            }
-                            else if ((i_null == 258) || (i_null == 515))
-                            {
-                                for (int i = 0; i < j_null; i++)
-                                {
-                                    byte[] newBuff = new byte[40];
-                                    //
-                                    System.Array.Copy(resource, pos, newBuff, 0, 40);
-                                    pos += 40;
-                                    vertices.Add(new Vector3(System.BitConverter.ToSingle(newBuff, 0), System.BitConverter.ToSingle(newBuff, 8), System.BitConverter.ToSingle(newBuff, 4)));
-                                    UV.Add(new Vector2(System.BitConverter.ToSingle(newBuff, 12), System.BitConverter.ToSingle(newBuff, 16)));
-                                    normals.Add(new Vector3(System.BitConverter.ToSingle(newBuff, 20), System.BitConverter.ToSingle(newBuff, 24), System.BitConverter.ToSingle(newBuff, 28)));
-                                    //
-                                }
-                            }
-                            pos += 4;
+                            bt.component = new Block36();
+                            bt.component.thisObject = newObject;
+                            ((Block36)bt.component).script = this;
+                            bt.component.Read(resource, ref pos);
 
                         }
                         else if (type == 37)
@@ -807,48 +668,10 @@ public class B3DScript : MonoBehaviour
                         }
                         else if (type == 40)
                         {
-                            GeneratorInvoker GI = newObject.AddComponent<GeneratorInvoker>();
-                            GI.resOb = rootObj;
-                            List<float> Params = new List<float>();
-
-                            byte[] newBuff = new byte[16];
-                            //
-                            System.Array.Copy(resource, pos, newBuff, 0, 16);
-                            pos += 16;
-
-                            Vector3 position = new Vector3(System.BitConverter.ToSingle(newBuff, 0), System.BitConverter.ToSingle(newBuff, 8), System.BitConverter.ToSingle(newBuff, 4));
-                            newObject.transform.position = position;
-                            GI.Scale = System.BitConverter.ToSingle(newBuff, 12);
-
-                            pos += 32;  //null
-
-                            byte[] GenBytes = new byte[32];
-                            //
-                            System.Array.Copy(resource, pos, GenBytes, 0, 32);
-                            pos += 32;
-
-                            string Generator = System.Text.Encoding.UTF8.GetString(GenBytes).Trim(new char[] { '\0' });
-
-                            int gType = System.BitConverter.ToInt32(resource, pos); pos += 4;
-                            int xz = System.BitConverter.ToInt32(resource, pos); pos += 4;
-                            int paramCount = System.BitConverter.ToInt32(resource, pos); pos += 4;
-                            for (int i = 0; i < paramCount - 2; i++)
-                            {
-                                Params.Add(System.BitConverter.ToSingle(resource, pos)); pos += 4;
-                            }
-                            int gType2 = System.BitConverter.ToInt32(resource, pos);
-                            pos += 4;
-
-
-                            pos += 4;
-
-                            GI.invokeName = Generator;
-                            GI.Type = gType;
-                            GI.hernja = xz;
-                            GI.Params = Params;
-                            GI.Type2 = gType2;
-                            //newObject.GetComponent<GeneratorInvoker>().Generate();
-                            GI.Generate();
+                            bt.component = new Block40();
+                            bt.component.thisObject = newObject;
+                            ((Block40)bt.component).script = this;
+                            bt.component.Read(resource, ref pos);
                         }
                         else
                         {
@@ -876,7 +699,7 @@ public class B3DScript : MonoBehaviour
                     else
                     {
 
-                        Debug.LogError("Case Error");
+                        Debug.LogError("Case Error",newObject);
                         break;
                     }
 

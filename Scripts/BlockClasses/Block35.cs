@@ -28,9 +28,9 @@ public class Block35 : MonoBehaviour, IBlocktype
             face.AddRange(System.BitConverter.GetBytes(32767));
             face.AddRange(System.BitConverter.GetBytes(matNum)); //TODO: MATNUM
             face.AddRange(System.BitConverter.GetBytes(3)); //count vertices in face???
-            face.AddRange(System.BitConverter.GetBytes(mesh.triangles[0+i*3]));
-            face.AddRange(System.BitConverter.GetBytes(mesh.triangles[2+i*3]));
-            face.AddRange(System.BitConverter.GetBytes(mesh.triangles[1+i*3]));
+            face.AddRange(System.BitConverter.GetBytes(mesh.triangles[0 + i * 3]));
+            face.AddRange(System.BitConverter.GetBytes(mesh.triangles[2 + i * 3]));
+            face.AddRange(System.BitConverter.GetBytes(mesh.triangles[1 + i * 3]));
             buffer.AddRange(face);
 
         }
@@ -142,11 +142,14 @@ public class Block35 : MonoBehaviour, IBlocktype
             }
         }
         curMesh.uv = script.UV.ToArray();
-        if(script.UV1.Count>0)
+        if (script.UV1Users > 0)
         {
             curMesh.uv2 = script.UV1.ToArray();
-            script.UV1 = new List<Vector2>();
+            script.UV1Users--;
+            if (script.UV1Users == 0)
+                script.UV1 = new List<Vector2>();
         }
+
 
         curMesh.RecalculateBounds();
 

@@ -11,25 +11,19 @@ class Block24 : MonoBehaviour,IBlocktype {
 
     public byte[] GetBytes()
     {
-        byte[] buffer = new byte[52];
-		byte[] pos = new byte[12];
-		pos = Instruments.Vector3ToBytes(matrix[0]);
-		pos.CopyTo(buffer,0);
-		pos = Instruments.Vector3ToBytes(matrix[1]);
-		pos.CopyTo(buffer,12);
-		pos = Instruments.Vector3ToBytes(matrix[2]);
-		pos.CopyTo(buffer,24);
+        System.Collections.Generic.List<byte> buffer = new System.Collections.Generic.List<byte>();
 
-		pos = Instruments.Vector3ToBytes(position);
-		pos.CopyTo(buffer,40);
+		buffer.AddRange(Instruments.Vector3ToBytes(matrix[0]));
+		buffer.AddRange(Instruments.Vector3ToBytes(matrix[1]));
+		buffer.AddRange(Instruments.Vector3ToBytes(matrix[2]));
+
+		buffer.AddRange(Instruments.Vector3ToBytesRevert(position));
 
 
-        byte[] count = System.BitConverter.GetBytes(thisObject.transform.childCount);
-        byte[] buff2 = new byte[buffer.Length+4];
-        buffer.CopyTo(buff2,0);
-        count.CopyTo(buff2,buffer.Length-1);
-        buffer = buff2;
-        return buffer;
+        buffer.AddRange(System.BitConverter.GetBytes(1));
+        buffer.AddRange(System.BitConverter.GetBytes(thisObject.transform.childCount));
+
+        return buffer.ToArray();
     }
 
     public void Read(byte[] buffer, ref int pos)

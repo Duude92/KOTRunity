@@ -46,12 +46,12 @@ class KOTRManager : EditorWindow
     }
     void OnGUI()
     {
-        tc = (Shader)EditorGUILayout.ObjectField(tc, typeof(Shader), false);
-        if(tc!=oldShader && tc!=null)
+        if (tc != oldShader && tc != null)
         {
             oldShader = tc;
-            PlayerPrefs.SetString("shader",tc.name);
+            PlayerPrefs.SetString("shader", tc.name);
         }
+        tc = (Shader)EditorGUILayout.ObjectField(tc, typeof(Shader), false);
         GameManager.TC = tc;
         GameManager.TCu = tc;
         if (!_root)
@@ -61,6 +61,10 @@ class KOTRManager : EditorWindow
             GameManager.instance = gm;
         }
 
+        if (GUILayout.Button("Open COMMON"))
+        {
+            OpenB3D(true);
+        }
 
         if (GUILayout.Button("Open B3D"))
         {
@@ -68,10 +72,7 @@ class KOTRManager : EditorWindow
                 OpenB3D();
 
         }
-        if (GUILayout.Button("Open COMMON"))
-        {
-            OpenB3D(true);
-        }
+
         if (GUILayout.Button("Save Scene"))
         {
             string path = EditorUtility.SaveFilePanel("Выберите B3D сцену", _lastPath, _lastPath, "b3d");
@@ -100,7 +101,7 @@ class KOTRManager : EditorWindow
     }
     void ImportRecursively(Transform transform)
     {
-        if(PrefabUtility.GetPrefabInstanceHandle(transform) != null || PrefabUtility.GetCorrespondingObjectFromSource(transform) != null)
+        if (PrefabUtility.GetPrefabInstanceHandle(transform) != null || PrefabUtility.GetCorrespondingObjectFromSource(transform) != null)
         {
             throw new System.Exception("Object is a prefab. Unpack before importing.");
         }
@@ -165,6 +166,10 @@ class KOTRManager : EditorWindow
                     GameManager.common = _currentScene;
                     _currentScene = null;
 
+                }
+                else
+                {
+                    GameManager.currentObject = _currentScene;
                 }
                 res.StartRes();
 

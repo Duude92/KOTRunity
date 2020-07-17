@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 //joinBlock
 [ExecuteInEditMode]
 public class Block05 : BlockType, IBlocktype, IDisableable
@@ -76,14 +77,55 @@ public class Block05 : BlockType, IBlocktype, IDisableable
         }
         rendered = true;
     }
-
     public void Enable()
     {
-        GameObject obj2 = GameObject.Find(nameToJoin).gameObject;
-        obj2.SetActive(false);
-        obj2 = GameObject.Instantiate(obj2);
-        this.obj = obj2;
-        obj2.transform.SetParent(this.transform);
+        if (nameToJoin == "hitAnmObj0241")
+        {
+            Debug.Log("hitAnmObj0241");
+        }
+        if (!string.IsNullOrEmpty(nameToJoin))
+        {
+            Debug.Log("", gameObject);
+            StartCoroutine(Enable(nameToJoin));
+        }
     }
+    IEnumerator Enable(string Name, bool common = false)
+    {
+        if (gameObject.activeSelf)
+        {
 
+
+            GameObject obj2;
+            Transform transform;
+            if (!common)
+            {
+                transform = GameManager.currentObject.transform.Find(Name);
+
+            }
+            else
+            {
+                transform = GameManager.common.transform.Find(Name);
+            }
+            if (!common && !transform)
+            {
+                yield return StartCoroutine(Enable(nameToJoin, true));
+
+            }
+            else
+            {
+                if (common && !transform)
+                {
+                    throw new System.Exception("ObjectName not found for object " + name);
+
+                }
+                obj2 = transform.gameObject;
+                obj2.SetActive(false);
+                obj2 = GameObject.Instantiate(obj2);
+                this.obj = obj2;
+                obj2.SetActive(true);
+                obj2.transform.SetParent(this.transform);
+            }
+        }
+        yield return null;
+    }
 }

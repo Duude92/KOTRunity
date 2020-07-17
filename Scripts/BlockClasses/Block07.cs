@@ -1,14 +1,39 @@
 using UnityEngine;
 using System.Collections.Generic;
 class Block07 : VerticesBlock, IBlocktype
-{        UnityEngine.GameObject _thisObject;
+{
+    UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
 
     public B3DScript script;
 
     public byte[] GetBytes()
     {
-        throw new System.NotImplementedException();
+        List<byte> buffer = new List<byte>();
+        buffer.AddRange(new byte[16]);
+        buffer.AddRange(new byte[32]);
+        int vCount = 0;
+        if(thisObject.name == "Plafon_9")
+        {
+            int a = 0;
+        }
+        vCount = mesh[0].vertexCount; //TODO: should this work?
+        List<Vector3> vertices = new List<Vector3>();
+        List<Vector2> UV = new List<Vector2>();
+        vertices.AddRange(mesh[0].vertices);
+        UV.AddRange(mesh[0].uv);
+
+        buffer.AddRange(System.BitConverter.GetBytes(vCount));
+        for(int i = 0; i<vCount;i++)
+        {
+            buffer.AddRange(Instruments.Vector3ToBytesRevert(vertices[i]));
+            buffer.AddRange(Instruments.Vector2ToBytes(UV[i]));
+            
+        }
+        buffer.AddRange(System.BitConverter.GetBytes(thisObject.transform.childCount));
+
+
+        return buffer.ToArray();
     }
 
     public void Read(byte[] buffer, ref int pos)

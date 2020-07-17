@@ -6,6 +6,8 @@ class Block03 : IBlocktype
     public byte[] GetBytes()
     {
         byte[] buffer = new byte[16];
+                UnityEngine.Debug.LogWarning("Export not implemented for object:",thisObject);
+
         return buffer;
     }
 

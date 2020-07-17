@@ -1,40 +1,45 @@
 using UnityEngine;
 class Block09 : MonoBehaviour, IBlocktype
-{        UnityEngine.GameObject _thisObject;
+{
+    UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
 
     public Vector4 xz4eEto;
-    public Vector3 pos;
+    public Vector4 position;
 
     public byte[] GetBytes()
     {
-        byte[] buffer = new byte[32];
-        byte[] bytes = new byte[16];
-		bytes = Instruments.Vector4ToBytes(xz4eEto);
-		bytes.CopyTo(buffer,0);
-		bytes = Instruments.Vector4ToBytes(pos);
-		bytes.CopyTo(buffer,16);
+        System.Collections.Generic.List<byte> buffer = new System.Collections.Generic.List<byte>();
+        buffer.AddRange(Instruments.Vector4ToBytes(position));
 
-		return buffer;
+        buffer.AddRange(Instruments.Vector4ToBytes(xz4eEto));
+		int childCount = 0;
+		foreach(Transform t in transform)
+		{
+			if(!t.name.Contains("444"))
+			{
+				childCount++;
+
+			}
+		}
+        buffer.AddRange(System.BitConverter.GetBytes(childCount));
+
+        return buffer.ToArray();
 
     }
 
     public void Read(byte[] buffer, ref int pos)
     {
-        throw new System.NotImplementedException();
-    }
+        position = Instruments.ReadV4(buffer, pos);
 
-    /*void Start () //аар3
-	{
-		GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-		pos = new Vector3(xz4eEto.x,xz4eEto.y,xz4eEto.z);
-		go.transform.localScale = (new Vector3(1,1,1) - new Vector3(Mathf.Abs(pos.x),Mathf.Abs(pos.y),Mathf.Abs(pos.z)))*10000;
-		pos = pos * xz4eEto.w;
-		pos = pos * -1;
-		go.transform.position = pos;
-		go.transform.SetParent(gameObject.transform);
-		Destroy(go.GetComponent<BoxCollider>());
-	}*/
+        pos += 16;
+        xz4eEto = Instruments.ReadV4(buffer, pos);
+
+
+        pos += 16;
+
+        pos += 4;//childCount
+    }
 
 
 }
