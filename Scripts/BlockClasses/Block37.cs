@@ -5,12 +5,16 @@ public class Block37 : VerticesBlock, IBlocktype
     public B3DScript script;
     GameObject _thisObject;
     public GameObject thisObject { get => _thisObject; set => _thisObject = value; }
+    public string collisionName;
 
     public byte[] GetBytes()
     {
         List<byte> buffer = new List<byte>();
         buffer.AddRange(Instruments.Vector3ToBytes(new Vector3()));
-        buffer.AddRange(new byte[36]);
+        byte[] colName = new byte[32];
+        System.Text.Encoding.ASCII.GetBytes(collisionName).CopyTo(colName,0);
+        buffer.AddRange(colName);
+        buffer.AddRange(new byte[4]);
         int i_null = 0;
         if (mesh.Count == 0)
         {
@@ -99,6 +103,9 @@ public class Block37 : VerticesBlock, IBlocktype
     {
         byte[] buff = new byte[4];
         pos += 16;
+        byte[] colName = new byte[32];
+        System.Array.Copy(buffer,pos,colName,0,32);
+        collisionName = System.Text.Encoding.UTF8.GetString(colName);
         pos += 32;
         System.Array.Copy(buffer, pos, buff, 0, 4);
         pos += 4;

@@ -47,6 +47,7 @@ public class Block35 : MonoBehaviour, IBlocktype
 
             foreach (int fmt in format)
             {
+                face = new List<byte>();
                 face.AddRange(System.BitConverter.GetBytes(fmt));
                 face.AddRange(System.BitConverter.GetBytes(1f));
                 face.AddRange(System.BitConverter.GetBytes(32767));
@@ -55,48 +56,45 @@ public class Block35 : MonoBehaviour, IBlocktype
 
                 if (fmt == 50)
                 {
-                    for (int j = 0; j < 3; j++)
-                    {
-                        face.AddRange(System.BitConverter.GetBytes(mesh.triangles[j + i * 3]));
-                        face.AddRange(new byte[24]);
-                    }
+                    face.AddRange(System.BitConverter.GetBytes(mesh.triangles[0 + i * 3]));
+                    face.AddRange(new byte[20]);
+                    face.AddRange(System.BitConverter.GetBytes(mesh.triangles[2 + i * 3]));
+                    face.AddRange(new byte[20]);
+                    face.AddRange(System.BitConverter.GetBytes(mesh.triangles[1 + i * 3]));
+                    face.AddRange(new byte[20]);
                 }
                 else if (fmt == 49)
                 {
-                    for (int j = 0; j < 3; j++)
-                    {
-
-                        face.AddRange(System.BitConverter.GetBytes(mesh.triangles[j + i * 3]));
-                        face.AddRange(new byte[24]);
-
-                    }
+                    face.AddRange(System.BitConverter.GetBytes(mesh.triangles[0 + i * 3]));
+                    face.AddRange(new byte[4]);
+                    face.AddRange(System.BitConverter.GetBytes(mesh.triangles[2 + i * 3]));
+                    face.AddRange(new byte[4]);
+                    face.AddRange(System.BitConverter.GetBytes(mesh.triangles[1 + i * 3]));
+                    face.AddRange(new byte[4]);
                 }
                 else if ((fmt == 1) || (fmt == 0))
                 {
-                    for (int j = 0; j < 3; j++)
-                    {
-
-                        face.AddRange(System.BitConverter.GetBytes(mesh.triangles[j + i * 3]));
-
-                    }
+                    face.AddRange(System.BitConverter.GetBytes(mesh.triangles[0 + i * 3]));
+                    face.AddRange(System.BitConverter.GetBytes(mesh.triangles[2 + i * 3]));
+                    face.AddRange(System.BitConverter.GetBytes(mesh.triangles[1 + i * 3]));
                 }
                 else if ((fmt == 2) || (fmt == 3))
                 {
-                    for (int j = 0; j < 3; j++)
-                    {
-
-                        face.AddRange(System.BitConverter.GetBytes(mesh.triangles[j + i * 3]));
-                        face.AddRange(new byte[12]);
-                    }
+                    face.AddRange(System.BitConverter.GetBytes(mesh.triangles[0 + i * 3]));
+                    face.AddRange(new byte[8]);
+                    face.AddRange(System.BitConverter.GetBytes(mesh.triangles[2 + i * 3]));
+                    face.AddRange(new byte[8]);
+                    face.AddRange(System.BitConverter.GetBytes(mesh.triangles[1 + i * 3]));
+                    face.AddRange(new byte[8]);
                 }
                 else
                 {
-                    for (int j = 0; j < 3; j++)
-                    {
-
-                        face.AddRange(System.BitConverter.GetBytes(mesh.triangles[j + i * 3]));
-                        face.AddRange(new byte[16]);
-                    }
+                    face.AddRange(System.BitConverter.GetBytes(mesh.triangles[0 + i * 3]));
+                    face.AddRange(new byte[12]);
+                    face.AddRange(System.BitConverter.GetBytes(mesh.triangles[2 + i * 3]));
+                    face.AddRange(new byte[12]);
+                    face.AddRange(System.BitConverter.GetBytes(mesh.triangles[1 + i * 3]));
+                    face.AddRange(new byte[12]);
                 }
                 buffer.AddRange(face);
                 i++;
