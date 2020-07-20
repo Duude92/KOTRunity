@@ -94,7 +94,6 @@ class Block08 : MonoBehaviour, IBlocktype
                     face.AddRange(System.BitConverter.GetBytes(faces[j]));
                 }
             }
-
             buffer.AddRange(face);
 
         }
@@ -121,12 +120,13 @@ class Block08 : MonoBehaviour, IBlocktype
         gameObject.AddComponent<MeshFilter>();
         gameObject.AddComponent<MeshRenderer>();
         Vector2[] uv_new = new Vector2[script.vertices.Count];
+        List<int> faces = new List<int>();
+        curMesh.vertices = script.vertices.ToArray();
 
 
         for (int i = 0; i < polygons; i++)
         {
             //normals = null;
-            List<int> faces = new List<int>();
             List<int> faces_old = new List<int>();
             format = System.BitConverter.ToInt32(buffer, pos);
             formats.Add(format);
@@ -208,92 +208,24 @@ class Block08 : MonoBehaviour, IBlocktype
             }
             loops.Add(loop);
 
+            //faces_old.Reverse(); //развернем полигоны вовнутрь
+            faces.AddRange(faces_old);
+            //faces.Reverse();
 
-            if (format == 32767) // 178) //FIXME: оставил что бы было наглядно
-            {
-                faces.AddRange(new int[] { faces_old[0], faces_old[2], faces_old[1], faces_old[3], faces_old[1], faces_old[2] });
-            }
-            else if ((format == 129) || (format == 178) || (format == 50))
-            {
-                faces.AddRange(faces_old); //TODO: if polygon are quad
-            }
-            else if (true)
-            {
-                faces.AddRange(faces_old); //TODO: if polygon are quad
-            }
-            else //TODO: legacy
-            {
-                for (int k = 0; k < faces_old.Count - 2; k++)
-                {
 
-                    if (k % 2 == 0)
-                    {
-                        if ((format == 178))
-                        {
-                            faces.Add(faces_old[k + 1]);
-                            faces.Add(faces_old[k + 0]);
-                            faces.Add(faces_old[k + 3]);
 
-                        }
-                        else if (format == 255)//debug
-                        {
-                            faces.Add(faces_old[k + 0]);
-                            faces.Add(faces_old[k + 1]);
-                            faces.Add(faces_old[k + 2]);
-                        }
-
-                        else
-                        {
-                            faces.Add(faces_old[k + 0]);
-                            faces.Add(faces_old[k + 2]);
-                            faces.Add(faces_old[k + 1]);
-
-                        }
-                    }
-                    else
-                    {
-                        if ((format == 0) || (format == 16) || (format == 1) || (format == 48) || (format == 50) || (format == 2))
-                        {
-                            faces.Add(faces_old[0]);
-                            faces.Add(faces_old[k + 2]);
-                            faces.Add(faces_old[k + 1]);
-                        }
-                        else if (format == 255)//debug
-                        {
-                            faces.Add(faces_old[k - 1]);
-                            faces.Add(faces_old[k + 2]);
-                            faces.Add(faces_old[k + 1]);
-                        }
-                        else
-                        {
-                            faces.Add(faces_old[k + 0]);
-                            faces.Add(faces_old[k + 1]);
-                            faces.Add(faces_old[k + 2]);
-                        }
-                    }
-                }
-            }
             mats.Add(script.GetComponent<Materials>().maths[script.TexInts[matNum[i]]]);
             material.Add(script.GetComponent<Materials>().material[script.TexInts[matNum[i]]]);
-            curMesh.vertices = vertices.ToArray();
-            if ((format == 129) || (format == 178) || (format == 50))
-            {
-                curMesh.SetIndices(faces.ToArray(), MeshTopology.Quads, i);//TODO: if polygon are quad
-            }
-            else if (true)
-            {
-                curMesh.SetIndices(faces.ToArray(), MeshTopology.Quads, i);//TODO: if polygon are quad
-                //curMesh.SetUVs(i, uv_new); //TODO: 08block uvs
 
-            }
-            else
-            {
-                curMesh.SetTriangles(faces, i);
-            }
+            curMesh.SetIndices(faces_old.ToArray(), MeshTopology.Quads, i);
 
-            faces_all.AddRange(faces);
-            curMesh.uv = uv_new;
+
         }
+
+
+
+        curMesh.uv = script.UV.ToArray();//uv_new;
+
         //bt.MatNum = b3dObject.TexInts[matNum[matNum.Count - 1]];
         gameObject.GetComponent<Renderer>().materials = mats.ToArray();
         if (script.normals.Count > 0)
