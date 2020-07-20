@@ -13,6 +13,7 @@ class Block08 : MonoBehaviour, IBlocktype
     public List<string> loops = new List<string>();
     List<int> matNum;
     int format;
+    List<int> formats = new List<int>();
 
 
     public byte[] GetBytes()
@@ -26,16 +27,24 @@ class Block08 : MonoBehaviour, IBlocktype
         buffer.AddRange(System.BitConverter.GetBytes(subMeshCount)); //Some value i_null
         for (int i = 0; i < subMeshCount; i++)
         {
-            buffer.AddRange(System.BitConverter.GetBytes(format));
+            buffer.AddRange(System.BitConverter.GetBytes(formats[i]));
             buffer.AddRange(System.BitConverter.GetBytes(1f));
             buffer.AddRange(System.BitConverter.GetBytes(32767));
             //buffer.AddRange(new byte[8]); //1f, 32767
             List<byte> face = new List<byte>();
             face.AddRange(System.BitConverter.GetBytes(matNum[i])); //TODO: MATNUM
-            int vCount = mesh.GetTriangles(i).Length;
-            face.AddRange(System.BitConverter.GetBytes(vCount)); //count vertices in face???
-            int[] faces = mesh.GetTriangles(i);
-            if ((format == 178) || (format == 50))
+            int vCount = mesh.GetIndices(i).Length;
+            if (true)//(formats[i] == 129) || (formats[i] == 178) || (formats[i] == 50))//TODO:legacy
+            {
+                face.AddRange(System.BitConverter.GetBytes(vCount)); //count vertices in face???
+            }
+            else
+            {
+                face.AddRange(System.BitConverter.GetBytes(vCount)); //count vertices in face???
+            }
+            //int[] faces = mesh.GetTriangles(i);
+            int[] faces = mesh.GetIndices(i);
+            if ((formats[i] == 178) || (formats[i] == 50))
             {
                 for (int j = 0; j < vCount; j++)
                 {
@@ -44,7 +53,7 @@ class Block08 : MonoBehaviour, IBlocktype
                     face.AddRange(new byte[12]);
                 }
             }
-            else if ((format == 3) || (format == 2) || (format == 131))
+            else if ((formats[i] == 3) || (formats[i] == 2) || (formats[i] == 131))
             {
                 for (int j = 0; j < vCount; j++)
                 {
@@ -52,7 +61,7 @@ class Block08 : MonoBehaviour, IBlocktype
                     face.AddRange(Instruments.Vector2ToBytes(mesh.uv[faces[j]]));
                 }
             }
-            else if ((format == 176) || (format == 48) || (format == 179) || (format == 51))
+            else if ((formats[i] == 176) || (formats[i] == 48) || (formats[i] == 179) || (formats[i] == 51))
             {
                 for (int j = 0; j < vCount; j++)
                 {
@@ -60,7 +69,7 @@ class Block08 : MonoBehaviour, IBlocktype
                     face.AddRange(new byte[12]);
                 }
             }
-            else if ((format == 177))
+            else if ((formats[i] == 177))
             {
                 for (int j = 0; j < vCount; j++)
                 {
@@ -68,9 +77,18 @@ class Block08 : MonoBehaviour, IBlocktype
                     face.AddRange(new byte[4]);
                 }
             }
+            else if ((formats[i] == 129))
+            {
+                for (int j = 0; j < vCount; j++)
+                {
+                    face.AddRange(System.BitConverter.GetBytes(faces[j]));
+                }
+
+
+            }
             else
             {
-                format = 68;
+                //format = 68;
                 for (int j = 0; j < vCount; j++)
                 {
                     face.AddRange(System.BitConverter.GetBytes(faces[j]));
@@ -110,6 +128,7 @@ class Block08 : MonoBehaviour, IBlocktype
             List<int> faces = new List<int>();
             List<int> faces_old = new List<int>();
             format = System.BitConverter.ToInt32(buffer, pos);
+            formats.Add(format);
             pos += 4;
             pos += 8;
 
@@ -125,8 +144,6 @@ class Block08 : MonoBehaviour, IBlocktype
                 for (int j = 0; j < j_null; j++)
                 {
                     int num = System.BitConverter.ToInt32(buffer, pos);
-                    //vertices.Add(vertices[num]);
-                    //faces_old.Add(vertices.Count - 1);
                     faces_old.Add(num);
                     pos += 4;
                     //UV.Add(new Vector2(System.BitConverter.ToSingle(buffer, pos + 0), System.BitConverter.ToSingle(buffer, pos + 4)));
@@ -186,11 +203,20 @@ class Block08 : MonoBehaviour, IBlocktype
             loops.Add(loop);
 
 
-            if ((format == 178))
+            if (format == 32767) // 178) //FIXME: оставил что бы было наглядно
             {
                 faces.AddRange(new int[] { faces_old[0], faces_old[2], faces_old[1], faces_old[3], faces_old[1], faces_old[2] });
             }
-            else
+            else if ((format == 129) || (format == 178) || (format == 50))
+            {
+                faces.AddRange(faces_old); //TODO: if polygon are quad
+            }
+            else if (true)
+            {
+                faces.AddRange(faces_old); //TODO: if polygon are quad
+            }
+            else //TODO: legacy
+            {
                 for (int k = 0; k < faces_old.Count - 2; k++)
                 {
 
@@ -240,10 +266,23 @@ class Block08 : MonoBehaviour, IBlocktype
                         }
                     }
                 }
+            }
             mats.Add(script.GetComponent<Materials>().maths[script.TexInts[matNum[i]]]);
             material.Add(script.GetComponent<Materials>().material[script.TexInts[matNum[i]]]);
             curMesh.vertices = vertices.ToArray();
-            curMesh.SetTriangles(faces, i);
+            if ((format == 129) || (format == 178) || (format == 50))
+            {
+                curMesh.SetIndices(faces.ToArray(), MeshTopology.Quads, i);//TODO: if polygon are quad
+            }
+            else if (true)
+            {
+                curMesh.SetIndices(faces.ToArray(), MeshTopology.Quads, i);//TODO: if polygon are quad
+
+            }
+            else
+            {
+                curMesh.SetTriangles(faces, i);
+            }
 
             faces_all.AddRange(faces);
         }
