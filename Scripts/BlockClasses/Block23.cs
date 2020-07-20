@@ -12,19 +12,29 @@ class Block23 : IBlocktype
         buffer.AddRange(System.BitConverter.GetBytes(1));
         buffer.AddRange(System.BitConverter.GetBytes(1));
         buffer.AddRange(System.BitConverter.GetBytes(0));
+
         int loops = 1;
+        loops = me.vertexCount/3; 
         buffer.AddRange(System.BitConverter.GetBytes(loops));
         for (int i = 0; i < loops; i++)
         {
+            
+            //buffer.AddRange(System.BitConverter.GetBytes(me.vertices.Length));
+            buffer.AddRange(System.BitConverter.GetBytes(3));
 
-            buffer.AddRange(System.BitConverter.GetBytes(me.vertices.Length));
+            List<byte> buff = new List<byte>();
+            buff.AddRange(Instruments.Vector3ToBytesRevert(me.vertices[0+i*3]));
+            buff.AddRange(Instruments.Vector3ToBytesRevert(me.vertices[2+i*3]));
+            buff.AddRange(Instruments.Vector3ToBytesRevert(me.vertices[1+i*3]));
+            
 
-            foreach (var v in me.vertices)
-            {
-                buffer.AddRange(System.BitConverter.GetBytes(v.x));
-                buffer.AddRange(System.BitConverter.GetBytes(v.z));
-                buffer.AddRange(System.BitConverter.GetBytes(v.y));
-            }
+            // foreach (var v in me.vertices)
+            // {
+            //     buffer.AddRange(System.BitConverter.GetBytes(v.x));
+            //     buffer.AddRange(System.BitConverter.GetBytes(v.z));
+            //     buffer.AddRange(System.BitConverter.GetBytes(v.y));
+            // }
+            buffer.AddRange(buff);
 
         }
         return buffer.ToArray();
