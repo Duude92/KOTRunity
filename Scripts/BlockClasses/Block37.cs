@@ -11,10 +11,11 @@ public class Block37 : VerticesBlock, IBlocktype
     {
         List<byte> buffer = new List<byte>();
         buffer.AddRange(Instruments.Vector3ToBytes(new Vector3()));
+        buffer.AddRange(new byte[4]);
+
         byte[] colName = new byte[32];
         System.Text.Encoding.ASCII.GetBytes(collisionName).CopyTo(colName, 0);
         buffer.AddRange(colName);
-        buffer.AddRange(new byte[4]);
         int i_null = 0;
         if (mesh.Count == 0)
         {

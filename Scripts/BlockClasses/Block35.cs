@@ -189,7 +189,6 @@ public class Block35 : MonoBehaviour, IBlocktype
         gameObject.GetComponent<MeshRenderer>().material = script.GetComponent<Materials>().maths[script.TexInts[matNum]];// resOb.GetComponent<Materials>().maths[TexInts[matNum]];
 
 
-Debug.Log(gameObject,gameObject);
         curMesh.vertices = script.vertices.ToArray();
         curMesh.triangles = faces.ToArray();
         curMesh.uv = script.UV.ToArray();

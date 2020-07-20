@@ -203,7 +203,10 @@ public class B3DScript : MonoBehaviour
                             lastGameObject = rootObj;
                         }
 
-
+        if(newObject.name == "hit_road_ap_048")
+        {
+            int a = 0;
+        }
 
 
                         if (type == 0)

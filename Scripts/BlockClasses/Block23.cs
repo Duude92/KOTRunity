@@ -42,6 +42,7 @@ class Block23 : IBlocktype
 
     public void Read(byte[] buffer, ref int pos)
     {
+
         bool truck = false;
         //List<Mesh> meshe = new List<Mesh>();
         if (script.gameObject.name == "TRUCKS")
@@ -67,10 +68,14 @@ class Block23 : IBlocktype
         int loopCount = System.BitConverter.ToInt32(buffer, pos);
         pos += 4;
         int number = 0;
+        me = new Mesh();
+        me.subMeshCount = loopCount;
+
         for (int i = 0; i < loopCount; i++)
         {
             int vCount = System.BitConverter.ToInt32(buffer, pos);
             pos += 4;
+            List<int> polygon = new List<int>();
 
 
             // if (false) //LEGACY
@@ -99,7 +104,7 @@ class Block23 : IBlocktype
             faces.Add(new int[vCount]);
             for (int j = 0; j < vCount; j++)
             {
-                faces[i][j] = (i*3)+j;
+                faces[i][j] = number;
                 number += 1;
                 var vert = new Vector3(System.BitConverter.ToSingle(buffer, pos), System.BitConverter.ToSingle(buffer, pos + 8), System.BitConverter.ToSingle(buffer, pos + 4));
                 /*var a = newObject.AddComponent<SphereCollider>();
@@ -111,7 +116,6 @@ class Block23 : IBlocktype
                     a.transform.SetParent(newObject.transform);
                     a.transform.position = new Vector3(vert.x,vert.z,vert.y);	*/
             }
-
             if (truck)
             {
                 List<int> faces1 = new List<int>();
@@ -144,10 +148,8 @@ class Block23 : IBlocktype
 
         }
         {//Mesh me conflict
-            me = new Mesh();
             MeshCollider col = thisObject.AddComponent<MeshCollider>();
             me.vertices = verticesCol.ToArray();
-            me.subMeshCount = loopCount;
             if (!truck)
             {
                 for (int i = 0; i < faces.Count; i++)
