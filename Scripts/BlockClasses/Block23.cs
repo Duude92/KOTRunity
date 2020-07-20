@@ -14,19 +14,20 @@ class Block23 : IBlocktype
         buffer.AddRange(System.BitConverter.GetBytes(0));
 
         int loops = 1;
-        loops = me.vertexCount/3; 
+        loops = me.subMeshCount;
         buffer.AddRange(System.BitConverter.GetBytes(loops));
         for (int i = 0; i < loops; i++)
         {
-            
-            //buffer.AddRange(System.BitConverter.GetBytes(me.vertices.Length));
-            buffer.AddRange(System.BitConverter.GetBytes(3));
 
-            List<byte> buff = new List<byte>();
-            buff.AddRange(Instruments.Vector3ToBytesRevert(me.vertices[0+i*3]));
-            buff.AddRange(Instruments.Vector3ToBytesRevert(me.vertices[2+i*3]));
-            buff.AddRange(Instruments.Vector3ToBytesRevert(me.vertices[1+i*3]));
-            
+            //buffer.AddRange(System.BitConverter.GetBytes(me.vertices.Length));
+            int[] indices = me.GetIndices(i);
+            buffer.AddRange(System.BitConverter.GetBytes(indices.Length));
+
+            for (int j = 0; j < indices.Length; j++)
+            {
+                buffer.AddRange(Instruments.Vector3ToBytesRevert(me.vertices[indices[j]]));
+            }
+
 
             // foreach (var v in me.vertices)
             // {
@@ -34,7 +35,6 @@ class Block23 : IBlocktype
             //     buffer.AddRange(System.BitConverter.GetBytes(v.z));
             //     buffer.AddRange(System.BitConverter.GetBytes(v.y));
             // }
-            buffer.AddRange(buff);
 
         }
         return buffer.ToArray();
@@ -54,7 +54,7 @@ class Block23 : IBlocktype
 
         pos += 8;
         List<Vector3> verticesCol = new List<Vector3>();
-        List<int> faces = new List<int>();
+        List<int[]> faces = new List<int[]>();
 
 
 
@@ -64,35 +64,43 @@ class Block23 : IBlocktype
         {
             pos += 4;
         }
-        int triNum = System.BitConverter.ToInt32(buffer, pos);
+        int loopCount = System.BitConverter.ToInt32(buffer, pos);
         pos += 4;
         int number = 0;
-        for (int i = 0; i < triNum; i++)
+        for (int i = 0; i < loopCount; i++)
         {
-            int vertNum = System.BitConverter.ToInt32(buffer, pos);
+            int vCount = System.BitConverter.ToInt32(buffer, pos);
             pos += 4;
-            if (vertNum == 3)
-            {
-                faces.AddRange(new int[] { number, number + 2, number + 1 });
-                number += 3;
-            }
-            else if (vertNum == 4)
-            {
-                faces.AddRange(new int[] { (number), (number + 2), (number + 1), (number + 3), (number + 2), (number) });
-                number += 4;
-            }
-            else
-            {
-                for (int j = 0; j < vertNum - 2; j++)
-                {
-                    faces.AddRange(new int[3] { number + j + 2, number + j + 1, number });
 
-                }
-                number += vertNum;
 
-            }
-            for (int j = 0; j < vertNum; j++)
+            // if (false) //LEGACY
+            // {
+            //     if (vCount == 3)
+            //     {
+            //         faces.AddRange(new int[] { number, number + 2, number + 1 });
+            //         number += 3;
+            //     }
+            //     else if (vCount == 4)
+            //     {
+            //         faces.AddRange(new int[] { (number), (number + 2), (number + 1), (number + 3), (number + 2), (number) });
+            //         number += 4;
+            //     }
+            //     else
+            //     {
+            //         for (int j = 0; j < vCount - 2; j++)
+            //         {
+            //             faces.AddRange(new int[3] { number + j + 2, number + j + 1, number });
+
+            //         }
+            //         number += vCount;
+
+            //     }
+            // }
+            faces.Add(new int[vCount]);
+            for (int j = 0; j < vCount; j++)
             {
+                faces[i][j] = (i*3)+j;
+                number += 1;
                 var vert = new Vector3(System.BitConverter.ToSingle(buffer, pos), System.BitConverter.ToSingle(buffer, pos + 8), System.BitConverter.ToSingle(buffer, pos + 4));
                 /*var a = newObject.AddComponent<SphereCollider>();
                 a.center = vert;
@@ -103,16 +111,18 @@ class Block23 : IBlocktype
                     a.transform.SetParent(newObject.transform);
                     a.transform.position = new Vector3(vert.x,vert.z,vert.y);	*/
             }
+
             if (truck)
             {
-                int Count = faces.Count / 3;
+                List<int> faces1 = new List<int>();
+                int Count = faces1.Count / 3;
                 for (int j = 0; j < Count; j++)
                 {
-                    List<Vector3> newTri = script.Extrude(verticesCol[faces[j]], verticesCol[faces[j + 1]], verticesCol[faces[j + 2]]);
+                    List<Vector3> newTri = script.Extrude(verticesCol[faces1[j]], verticesCol[faces1[j + 1]], verticesCol[faces1[j + 2]]);
                     verticesCol.AddRange(newTri);
-                    faces.Add(verticesCol.Count - 3);
-                    faces.Add(verticesCol.Count - 2);
-                    faces.Add(verticesCol.Count - 1);
+                    faces1.Add(verticesCol.Count - 3);
+                    faces1.Add(verticesCol.Count - 2);
+                    faces1.Add(verticesCol.Count - 1);
 
                 }
 
@@ -121,14 +131,14 @@ class Block23 : IBlocktype
                 me = new Mesh();
                 MeshCollider col = thisObject.AddComponent<MeshCollider>();
                 me.vertices = verticesCol.ToArray();
-                me.triangles = faces.ToArray();
+                me.triangles = faces[0]; // legacy
                 me.name = ((DamageKey)i).ToString();
 
 
                 col.sharedMesh = me;
                 col.convex = true;
-                faces_all.AddRange(faces);
-                faces = new List<int>();
+                faces_all.AddRange(faces[0]); // legacy
+                faces = new List<int[]>();
             }
 
 
@@ -137,9 +147,14 @@ class Block23 : IBlocktype
             me = new Mesh();
             MeshCollider col = thisObject.AddComponent<MeshCollider>();
             me.vertices = verticesCol.ToArray();
+            me.subMeshCount = loopCount;
             if (!truck)
             {
-                me.triangles = faces.ToArray();
+                for (int i = 0; i < faces.Count; i++)
+                {
+                    //me.triangles = faces.ToArray();
+                    me.SetIndices(faces[i], MeshTopology.Quads, i);
+                }
                 col.sharedMesh = me;
             }
         }

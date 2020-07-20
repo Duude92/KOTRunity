@@ -43,7 +43,7 @@ class Block06 : VerticesBlock, IBlocktype
     public void Read(byte[] buffer, ref int pos)
     {
 
-        script.normals = null;
+        script.normals = new List<Vector3>();
         pos += 16;
         pos += 32;
         pos += 32;

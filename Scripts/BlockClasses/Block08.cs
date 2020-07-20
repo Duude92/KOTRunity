@@ -120,6 +120,7 @@ class Block08 : MonoBehaviour, IBlocktype
 
         gameObject.AddComponent<MeshFilter>();
         gameObject.AddComponent<MeshRenderer>();
+        Vector2[] uv_new = new Vector2[script.vertices.Count];
 
 
         for (int i = 0; i < polygons; i++)
@@ -146,7 +147,9 @@ class Block08 : MonoBehaviour, IBlocktype
                     int num = System.BitConverter.ToInt32(buffer, pos);
                     faces_old.Add(num);
                     pos += 4;
-                    //UV.Add(new Vector2(System.BitConverter.ToSingle(buffer, pos + 0), System.BitConverter.ToSingle(buffer, pos + 4)));
+                    Vector2 uv = new Vector2(System.BitConverter.ToSingle(buffer, pos + 0), System.BitConverter.ToSingle(buffer, pos + 4));
+                    //UV.Add(uv);
+                    uv_new[num] = uv;
                     pos += 8;
                     loop += faces_old[faces_old.Count - 1] + ' ' + UV[UV.Count - 1].ToString() + ' ' + System.BitConverter.ToSingle(buffer, pos + 0) + ' ' + System.BitConverter.ToSingle(buffer, pos + 4) + ' ' + System.BitConverter.ToSingle(buffer, pos + 8) + " ";
                     pos += 12;
@@ -163,7 +166,10 @@ class Block08 : MonoBehaviour, IBlocktype
                     // faces_old.Add(vertices.Count - 1);
                     faces_old.Add(num);
                     pos += 4;
-                    //UV.Add(new Vector2(System.BitConverter.ToSingle(buffer, pos + 0), System.BitConverter.ToSingle(buffer, pos + 4))); //FIXME: УВ для каждой вершины каждого полигона
+                    Vector2 uv = new Vector2(System.BitConverter.ToSingle(buffer, pos + 0), System.BitConverter.ToSingle(buffer, pos + 4)); //FIXME: УВ для каждой вершины каждого полигона
+                    //UV.Add(uv);
+                    uv_new[num] = uv;
+
                     pos += 8;
                     loop += faces_old[faces_old.Count - 1] + ' ' + UV[UV.Count - 1].ToString() + " ";
 
@@ -277,6 +283,7 @@ class Block08 : MonoBehaviour, IBlocktype
             else if (true)
             {
                 curMesh.SetIndices(faces.ToArray(), MeshTopology.Quads, i);//TODO: if polygon are quad
+                //curMesh.SetUVs(i, uv_new); //TODO: 08block uvs
 
             }
             else
@@ -285,13 +292,25 @@ class Block08 : MonoBehaviour, IBlocktype
             }
 
             faces_all.AddRange(faces);
+            curMesh.uv = uv_new;
         }
         //bt.MatNum = b3dObject.TexInts[matNum[matNum.Count - 1]];
         gameObject.GetComponent<Renderer>().materials = mats.ToArray();
+        if (script.normals.Count > 0)
+        {
+            curMesh.normals = script.normals.ToArray();
+        }
 
-        //if (normals != null)
-        // curMesh.normals = normals.ToArray();
-        curMesh.uv = UV.ToArray();
+
+        if (script.UV1Users > 0)
+        {
+            curMesh.uv2 = script.UV1.ToArray();
+            script.UV1Users--;
+            if (script.UV1Users == 0)
+            {
+                script.UV1 = new List<Vector2>();
+            }
+        }
 
 
         curMesh.RecalculateBounds();

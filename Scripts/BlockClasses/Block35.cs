@@ -189,32 +189,24 @@ public class Block35 : MonoBehaviour, IBlocktype
         gameObject.GetComponent<MeshRenderer>().material = script.GetComponent<Materials>().maths[script.TexInts[matNum]];// resOb.GetComponent<Materials>().maths[TexInts[matNum]];
 
 
-
+Debug.Log(gameObject,gameObject);
         curMesh.vertices = script.vertices.ToArray();
         curMesh.triangles = faces.ToArray();
-        if (script.normals != null)
-        {
-            if (script.normals.Count == curMesh.vertices.Length)
-            {
-                curMesh.normals = script.normals.ToArray();
-            }
-            else
-            {
-
-
-                nrml0 = nrml0 + nrml1;
-                nrml1 = nrml1 + curMesh.vertices.Length - 1;
-
-                curMesh.normals = script.normals.GetRange(nrml0, nrml1).ToArray();
-            }
-        }
         curMesh.uv = script.UV.ToArray();
+
+        if (script.normals.Count > 0)
+        {
+            curMesh.normals = script.normals.ToArray();
+        }
         if (script.UV1Users > 0)
         {
             curMesh.uv2 = script.UV1.ToArray();
             script.UV1Users--;
             if (script.UV1Users == 0)
+            {
                 script.UV1 = new List<Vector2>();
+                script.UV = new List<Vector2>();
+            }
         }
 
 

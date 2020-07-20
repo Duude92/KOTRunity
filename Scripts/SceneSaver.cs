@@ -24,9 +24,9 @@ public class SceneSaver : MonoBehaviour
             binaryWriter.Write(6);
             B3DScript script = root.GetComponent<B3DScript>();
 
-            binaryWriter.Write(script.TexInts.Count*8+1);
-            binaryWriter.Write(script.TexInts.Count*8+7);
-            
+            binaryWriter.Write(script.TexInts.Count * 8 + 1);
+            binaryWriter.Write(script.TexInts.Count * 8 + 7);
+
             binaryWriter.Write(0);
             binaryWriter.Write(script.TexInts.Count);
 
@@ -66,23 +66,30 @@ public class SceneSaver : MonoBehaviour
 
     static void WriteObjectRecursive(GameObject gameObject)
     {
-        if (gameObject.name == "444")
+        try
         {
-            binaryWriter.Write(444);
-            return;
-        }
-        else
-        {
-            BlockType bt = gameObject.GetComponent<BlockType>();
-            int type = bt.Type;
-            int matNum = bt.MatNum;
-            binaryWriter.Write(333);
-            byte[] blockName = new byte[32];
-            System.Text.Encoding.UTF8.GetBytes(gameObject.name, 0, gameObject.name.Length, blockName, 0);
-            binaryWriter.Write(blockName);
-            binaryWriter.Write(type);
+            if (gameObject.name == "444")
+            {
+                binaryWriter.Write(444);
+                return;
+            }
+            else
+            {
+                BlockType bt = gameObject.GetComponent<BlockType>();
+                int type = bt.Type;
+                int matNum = bt.MatNum;
+                binaryWriter.Write(333);
+                byte[] blockName = new byte[32];
+                System.Text.Encoding.UTF8.GetBytes(gameObject.name, 0, gameObject.name.Length, blockName, 0);
+                binaryWriter.Write(blockName);
+                binaryWriter.Write(type);
 
-            binaryWriter.Write(bt.component.GetBytes());
+                binaryWriter.Write(bt.component.GetBytes());
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError(e, gameObject);
         }
         //binaryWriter.Write(gameObject.transform.childCount);
         foreach (Transform gob in gameObject.transform)
