@@ -490,7 +490,9 @@ public class B3DScript : MonoBehaviour
                             p.matrix[2] = new Vector3(System.BitConverter.ToSingle(bts, 0), System.BitConverter.ToSingle(bts, 4), System.BitConverter.ToSingle(bts, 8));
                             System.Array.Copy(resource, pos, bts, 0, 12); pos += 12;
                             p.position = new Vector3(System.BitConverter.ToSingle(bts, 0), System.BitConverter.ToSingle(bts, 8), System.BitConverter.ToSingle(bts, 4));
-                            pos += 8;
+							System.Array.Copy(resource, pos, buff, 0, 4);
+							p.flag = System.BitConverter.ToInt32(resource, pos); pos += 4;
+                            pos += 4;
                         }
                         else if (type == 25)
                         {

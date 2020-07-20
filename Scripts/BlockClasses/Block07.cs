@@ -13,11 +13,7 @@ class Block07 : VerticesBlock, IBlocktype
         buffer.AddRange(new byte[16]);
         buffer.AddRange(new byte[32]);
         int vCount = 0;
-        if(thisObject.name == "Plafon_9")
-        {
-            int a = 0;
-        }
-        vCount = mesh[0].vertexCount; //TODO: should this work?
+        vCount = mesh[0].vertices.Length; //TODO: should this work?
         List<Vector3> vertices = new List<Vector3>();
         List<Vector2> UV = new List<Vector2>();
         vertices.AddRange(mesh[0].vertices);
@@ -42,12 +38,12 @@ class Block07 : VerticesBlock, IBlocktype
         script.normals = null;
         pos += 16;
         pos += 32;
-        int i_null = System.BitConverter.ToInt32(buffer, pos);
+        int vCount = System.BitConverter.ToInt32(buffer, pos);
         pos += 4;
         script.vertices = new List<Vector3>();
         script.UV = new List<Vector2>();
 
-        for (int i = 0; i < i_null; i++)
+        for (int i = 0; i < vCount; i++)
         {
             byte[] newBuff = new byte[20];
             System.Array.Copy(buffer, pos, newBuff, 0, 20);

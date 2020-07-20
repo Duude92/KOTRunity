@@ -88,7 +88,7 @@ class Block08 : MonoBehaviour, IBlocktype
     {
         //UV = new List<Vector2>();
         pos += 16;
-        int submeshCount = System.BitConverter.ToInt32(buffer, pos);
+        int polygons = System.BitConverter.ToInt32(buffer, pos);
         pos += 4;
         int j_null;
 
@@ -97,14 +97,14 @@ class Block08 : MonoBehaviour, IBlocktype
         matNum = new List<int>();
         Mesh curMesh = new Mesh();
         curMesh.Clear();
-        curMesh.subMeshCount = submeshCount;
+        curMesh.subMeshCount = polygons;
         List<Material> mats = new List<Material>();
 
         gameObject.AddComponent<MeshFilter>();
         gameObject.AddComponent<MeshRenderer>();
 
 
-        for (int i = 0; i < submeshCount; i++)
+        for (int i = 0; i < polygons; i++)
         {
             //normals = null;
             List<int> faces = new List<int>();
@@ -125,10 +125,11 @@ class Block08 : MonoBehaviour, IBlocktype
                 for (int j = 0; j < j_null; j++)
                 {
                     int num = System.BitConverter.ToInt32(buffer, pos);
-                    vertices.Add(vertices[num]);
-                    faces_old.Add(vertices.Count - 1);
+                    //vertices.Add(vertices[num]);
+                    //faces_old.Add(vertices.Count - 1);
+                    faces_old.Add(num);
                     pos += 4;
-                    UV.Add(new Vector2(System.BitConverter.ToSingle(buffer, pos + 0), System.BitConverter.ToSingle(buffer, pos + 4)));
+                    //UV.Add(new Vector2(System.BitConverter.ToSingle(buffer, pos + 0), System.BitConverter.ToSingle(buffer, pos + 4)));
                     pos += 8;
                     loop += faces_old[faces_old.Count - 1] + ' ' + UV[UV.Count - 1].ToString() + ' ' + System.BitConverter.ToSingle(buffer, pos + 0) + ' ' + System.BitConverter.ToSingle(buffer, pos + 4) + ' ' + System.BitConverter.ToSingle(buffer, pos + 8) + " ";
                     pos += 12;
@@ -141,10 +142,11 @@ class Block08 : MonoBehaviour, IBlocktype
                 for (int j = 0; j < j_null; j++)
                 {
                     int num = System.BitConverter.ToInt32(buffer, pos);
-                    vertices.Add(vertices[num]);
-                    faces_old.Add(vertices.Count - 1);
+                    // vertices.Add(vertices[num]); //Это правильно, но УВ для каждой вершины каждого полигона
+                    // faces_old.Add(vertices.Count - 1);
+                    faces_old.Add(num);
                     pos += 4;
-                    UV.Add(new Vector2(System.BitConverter.ToSingle(buffer, pos + 0), System.BitConverter.ToSingle(buffer, pos + 4)));
+                    //UV.Add(new Vector2(System.BitConverter.ToSingle(buffer, pos + 0), System.BitConverter.ToSingle(buffer, pos + 4))); //FIXME: УВ для каждой вершины каждого полигона
                     pos += 8;
                     loop += faces_old[faces_old.Count - 1] + ' ' + UV[UV.Count - 1].ToString() + " ";
 

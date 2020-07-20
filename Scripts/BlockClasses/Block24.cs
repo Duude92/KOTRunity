@@ -8,6 +8,7 @@ class Block24 : MonoBehaviour,IBlocktype {
 	//public float[][] matrix = new float[3][];
 	public Vector3[] matrix = new Vector3[3];
 	public Vector3 position = new Vector3();
+	public int flag = 0;
 
     public byte[] GetBytes()
     {
@@ -20,7 +21,8 @@ class Block24 : MonoBehaviour,IBlocktype {
 		buffer.AddRange(Instruments.Vector3ToBytesRevert(position));
 
 
-        buffer.AddRange(System.BitConverter.GetBytes(1));
+        //buffer.AddRange(System.BitConverter.GetBytes(1));
+		buffer.AddRange(System.BitConverter.GetBytes(flag));
         buffer.AddRange(System.BitConverter.GetBytes(thisObject.transform.childCount));
 
         return buffer.ToArray();
