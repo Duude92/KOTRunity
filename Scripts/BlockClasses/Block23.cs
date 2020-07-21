@@ -10,7 +10,7 @@ class Block23 : IBlocktype
     {
         List<byte> buffer = new List<byte>();
         buffer.AddRange(System.BitConverter.GetBytes(1));
-        buffer.AddRange(System.BitConverter.GetBytes(1));
+        buffer.AddRange(System.BitConverter.GetBytes(2)); //unknown data
         buffer.AddRange(System.BitConverter.GetBytes(0));
 
         int loops = 1;
@@ -28,14 +28,6 @@ class Block23 : IBlocktype
                 buffer.AddRange(Instruments.Vector3ToBytesRevert(me.vertices[indices[j]]));
             }
 
-
-            // foreach (var v in me.vertices)
-            // {
-            //     buffer.AddRange(System.BitConverter.GetBytes(v.x));
-            //     buffer.AddRange(System.BitConverter.GetBytes(v.z));
-            //     buffer.AddRange(System.BitConverter.GetBytes(v.y));
-            // }
-
         }
         return buffer.ToArray();
     }
@@ -44,14 +36,11 @@ class Block23 : IBlocktype
     {
 
         bool truck = false;
-        //List<Mesh> meshe = new List<Mesh>();
         if (script.gameObject.name == "TRUCKS")
         {
             truck = true;
         }
-
-
-        List<int> faces_all = new List<int>();
+        truck = false;
 
         pos += 8;
         List<Vector3> verticesCol = new List<Vector3>();
@@ -75,46 +64,15 @@ class Block23 : IBlocktype
         {
             int vCount = System.BitConverter.ToInt32(buffer, pos);
             pos += 4;
-            List<int> polygon = new List<int>();
 
-
-            // if (false) //LEGACY
-            // {
-            //     if (vCount == 3)
-            //     {
-            //         faces.AddRange(new int[] { number, number + 2, number + 1 });
-            //         number += 3;
-            //     }
-            //     else if (vCount == 4)
-            //     {
-            //         faces.AddRange(new int[] { (number), (number + 2), (number + 1), (number + 3), (number + 2), (number) });
-            //         number += 4;
-            //     }
-            //     else
-            //     {
-            //         for (int j = 0; j < vCount - 2; j++)
-            //         {
-            //             faces.AddRange(new int[3] { number + j + 2, number + j + 1, number });
-
-            //         }
-            //         number += vCount;
-
-            //     }
-            // }
             faces.Add(new int[vCount]);
             for (int j = 0; j < vCount; j++)
             {
                 faces[i][j] = number;
                 number += 1;
                 var vert = new Vector3(System.BitConverter.ToSingle(buffer, pos), System.BitConverter.ToSingle(buffer, pos + 8), System.BitConverter.ToSingle(buffer, pos + 4));
-                /*var a = newObject.AddComponent<SphereCollider>();
-                a.center = vert;
-                a.radius = 0.1f;*/
                 pos += 12;
                 verticesCol.Add(vert);
-                /*var a = new GameObject();
-                    a.transform.SetParent(newObject.transform);
-                    a.transform.position = new Vector3(vert.x,vert.z,vert.y);	*/
             }
             if (truck)
             {
@@ -141,13 +99,13 @@ class Block23 : IBlocktype
 
                 col.sharedMesh = me;
                 col.convex = true;
-                faces_all.AddRange(faces[0]); // legacy
+                //faces_all.AddRange(faces[0]); // legacy
                 faces = new List<int[]>();
             }
 
 
         }
-        {//Mesh me conflict
+        {
             MeshCollider col = thisObject.AddComponent<MeshCollider>();
             me.vertices = verticesCol.ToArray();
             if (!truck)
@@ -159,11 +117,9 @@ class Block23 : IBlocktype
                 }
                 col.sharedMesh = me;
             }
+            // thisObject.AddComponent<MeshFilter>().sharedMesh = me;
+            // thisObject.AddComponent<MeshRenderer>();
         }
-        /*else
-        {
-            me.triangles = faces_all.ToArray();
-            col.convex = true;
-        } */
+
     }
 }
