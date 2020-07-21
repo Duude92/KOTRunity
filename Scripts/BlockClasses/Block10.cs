@@ -85,7 +85,7 @@ class Block10 : MonoBehaviour, IBlocktype
         buffer.AddRange(Instruments.Vector3ToBytes(new Vector3()));
         buffer.AddRange(new byte[4]);
 
-        buffer.AddRange(Instruments.Vector3ToBytes(Center));
+        buffer.AddRange(Instruments.Vector3ToBytesRevert(Center));
         buffer.AddRange(System.BitConverter.GetBytes(Distance));
         int childCount = 0;
         foreach (Transform ob in transform)

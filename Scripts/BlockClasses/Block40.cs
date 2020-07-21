@@ -14,7 +14,7 @@ class Block40 : IBlocktype, IDisableable
     public byte[] GetBytes()
     {
         List<byte> buffer = new List<byte>();
-        buffer.AddRange(Instruments.Vector3ToBytes(thisObject.transform.position));
+        buffer.AddRange(Instruments.Vector3ToBytesRevert(thisObject.transform.position));
         buffer.AddRange(System.BitConverter.GetBytes(GI.Scale));
 
         buffer.AddRange(new byte[32]);

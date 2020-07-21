@@ -34,22 +34,16 @@ public class Block08 : MonoBehaviour, IBlocktype
             List<byte> face = new List<byte>();
             face.AddRange(System.BitConverter.GetBytes(matNum[i])); //TODO: MATNUM
             int vCount = mesh.GetIndices(i).Length;
-            if (true)//(formats[i] == 129) || (formats[i] == 178) || (formats[i] == 50))//TODO:legacy
-            {
-                face.AddRange(System.BitConverter.GetBytes(vCount)); //count vertices in face???
-            }
-            else
-            {
-                face.AddRange(System.BitConverter.GetBytes(vCount)); //count vertices in face???
-            }
-            //int[] faces = mesh.GetTriangles(i);
+
+            face.AddRange(System.BitConverter.GetBytes(vCount)); //count vertices in face???
+
             int[] faces = mesh.GetIndices(i);
             if ((formats[i] == 178) || (formats[i] == 50))
             {
                 for (int j = 0; j < vCount; j++)
                 {
-                    face.AddRange(System.BitConverter.GetBytes(faces[j]));
-                    face.AddRange(Instruments.Vector2ToBytes(mesh.uv[faces[j]]));
+                    face.AddRange(System.BitConverter.GetBytes(faces[vCount-1-j]));//TODO: Похоже что везде нужно vCount-1-j, но не факт
+                    face.AddRange(Instruments.Vector2ToBytes(mesh.uv[faces[vCount-1-j]]));
                     face.AddRange(new byte[12]);
                 }
             }
@@ -82,7 +76,7 @@ public class Block08 : MonoBehaviour, IBlocktype
                 //format = 68;
                 for (int j = 0; j < vCount; j++)
                 {
-                    face.AddRange(System.BitConverter.GetBytes(faces[j]));
+                    face.AddRange(System.BitConverter.GetBytes(faces[vCount-1-j]));
                 }
             }
             buffer.AddRange(face);
@@ -239,7 +233,7 @@ public class Block08 : MonoBehaviour, IBlocktype
             loops.Add(loop);
 
             faces_old.Reverse(); //развернем полигоны вовнутрь
-            if (((format == 144) || (format == 129))&&false)
+            if (((format == 144) || (format == 129)) && false)
             {
                 curMesh.subMeshCount = curMesh.subMeshCount + facesOfFaces.Count - 1;
                 int j = 0;
@@ -252,7 +246,7 @@ public class Block08 : MonoBehaviour, IBlocktype
             }
             else
             {
-                curMesh.SetIndices(faces_old.ToArray(), mt, i,true);
+                curMesh.SetIndices(faces_old.ToArray(), mt, i, true);
 
             }
             //faces.Reverse();

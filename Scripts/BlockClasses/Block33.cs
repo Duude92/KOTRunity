@@ -12,7 +12,7 @@ class Block33 : IBlocktype
         buffer.AddRange(Instruments.Vector3ToBytes(new Vector3()));
         buffer.AddRange(new byte[4]);
         buffer.AddRange(new byte[12]); //TODO: UNKNOWN DATA 1i 1i 131072i
-        buffer.AddRange(Instruments.Vector3ToBytes(point.transform.position));
+        buffer.AddRange(Instruments.Vector3ToBytesRevert(point.transform.position));
         buffer.AddRange(new byte[36]); //TODO: UNKNOWN DATA
         buffer.AddRange(System.BitConverter.GetBytes(point.color.r));
         buffer.AddRange(System.BitConverter.GetBytes(point.color.g));
