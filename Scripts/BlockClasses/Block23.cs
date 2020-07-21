@@ -6,11 +6,19 @@ class Block23 : IBlocktype
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
     public B3DScript script;
     Mesh me;
+    private collisionType colType;
+    enum collisionType
+    {
+        unknown,
+        nonRoad,
+        Road
+        
+    }
     public byte[] GetBytes()
     {
         List<byte> buffer = new List<byte>();
         buffer.AddRange(System.BitConverter.GetBytes(1));
-        buffer.AddRange(System.BitConverter.GetBytes(2)); //unknown data
+        buffer.AddRange(System.BitConverter.GetBytes((int)colType)); //unknown data
         buffer.AddRange(System.BitConverter.GetBytes(0));
 
         int loops = 1;
@@ -22,6 +30,7 @@ class Block23 : IBlocktype
             //buffer.AddRange(System.BitConverter.GetBytes(me.vertices.Length));
             int[] indices = me.GetIndices(i);
             buffer.AddRange(System.BitConverter.GetBytes(indices.Length));
+            List<Vector3> faces = new List<Vector3>();
 
             for (int j = 0; j < indices.Length; j++)
             {
@@ -42,7 +51,10 @@ class Block23 : IBlocktype
         }
         truck = false;
 
-        pos += 8;
+        pos += 4;
+        colType = (collisionType)System.BitConverter.ToInt32(buffer, pos);
+        pos += 4;
+        
         List<Vector3> verticesCol = new List<Vector3>();
         List<int[]> faces = new List<int[]>();
 

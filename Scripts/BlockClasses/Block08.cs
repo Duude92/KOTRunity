@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-class Block08 : MonoBehaviour, IBlocktype
+public class Block08 : MonoBehaviour, IBlocktype
 {
     UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
@@ -77,15 +77,6 @@ class Block08 : MonoBehaviour, IBlocktype
                     face.AddRange(new byte[4]);
                 }
             }
-            else if ((formats[i] == 129))
-            {
-                for (int j = 0; j < vCount; j++)
-                {
-                    face.AddRange(System.BitConverter.GetBytes(faces[j]));
-                }
-
-
-            }
             else
             {
                 //format = 68;
@@ -128,6 +119,7 @@ class Block08 : MonoBehaviour, IBlocktype
         {
             //normals = null;
             List<int> faces_old = new List<int>();
+            List<List<int>> facesOfFaces = new List<List<int>>();
             format = System.BitConverter.ToInt32(buffer, pos);
             formats.Add(format);
             pos += 4;
@@ -140,6 +132,7 @@ class Block08 : MonoBehaviour, IBlocktype
             j_null = System.BitConverter.ToInt32(buffer, pos);
             pos += 4;
             string loop = "f: " + format + " | ";
+            MeshTopology mt = MeshTopology.Quads;
             if ((format == 178) || (format == 50))
             {
                 for (int j = 0; j < j_null; j++)
@@ -197,6 +190,43 @@ class Block08 : MonoBehaviour, IBlocktype
 
                 }
             }
+            else if (((format == 144) || (format == 129)))
+            {
+                for (int j = 0; j < j_null; j++)
+                {
+                    faces_old.Add(System.BitConverter.ToInt32(buffer, pos));
+                    pos += 4;
+                    loop += faces_old[faces_old.Count - 1] + " ";
+                }
+                faces = new List<int>();
+                if (false)
+                    for (int j = 0; j < faces_old.Count / 4; j++)
+                    {
+                        facesOfFaces.Add(new List<int> { faces_old[j * 4 + 2], faces_old[j * 4 + 3], faces_old[j * 4 + 1], faces_old[j * 4 + 0] });
+                    }
+                if (false)
+                    for (int k = 0; k < faces_old.Count - 2; k++)
+                    {
+
+
+                        if (k % 2 == 0)
+                        {
+                            faces.Add(faces_old[k + 0]);
+                            faces.Add(faces_old[k + 2]);
+                            faces.Add(faces_old[k + 1]);
+
+                        }
+                        else
+                        {
+                            faces.Add(faces_old[k + 1]);
+                            faces.Add(faces_old[k + 2]);
+                            faces.Add(faces_old[k + 0]);
+                        }
+                    }
+                //faces_old = faces;
+                mt = MeshTopology.LineStrip;
+
+            }
             else
             {
                 for (int j = 0; j < j_null; j++)
@@ -208,8 +238,23 @@ class Block08 : MonoBehaviour, IBlocktype
             }
             loops.Add(loop);
 
-            //faces_old.Reverse(); //развернем полигоны вовнутрь
-            faces.AddRange(faces_old);
+            faces_old.Reverse(); //развернем полигоны вовнутрь
+            if (((format == 144) || (format == 129))&&false)
+            {
+                curMesh.subMeshCount = curMesh.subMeshCount + facesOfFaces.Count - 1;
+                int j = 0;
+                foreach (var a in facesOfFaces)
+                {
+                    curMesh.SetIndices(a.ToArray(), mt, i + j);
+                    j++;
+                }
+
+            }
+            else
+            {
+                curMesh.SetIndices(faces_old.ToArray(), mt, i,true);
+
+            }
             //faces.Reverse();
 
 
@@ -217,7 +262,6 @@ class Block08 : MonoBehaviour, IBlocktype
             mats.Add(script.GetComponent<Materials>().maths[script.TexInts[matNum[i]]]);
             material.Add(script.GetComponent<Materials>().material[script.TexInts[matNum[i]]]);
 
-            curMesh.SetIndices(faces_old.ToArray(), MeshTopology.Quads, i);
 
 
         }

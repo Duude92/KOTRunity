@@ -69,9 +69,9 @@ public static class Instruments
         byte[] bytes = System.BitConverter.GetBytes(vector.x);
         bytes.CopyTo(buffer, 0);
         bytes = System.BitConverter.GetBytes(vector.y);
-        bytes.CopyTo(buffer, 4);
-        bytes = System.BitConverter.GetBytes(vector.z);
         bytes.CopyTo(buffer, 8);
+        bytes = System.BitConverter.GetBytes(vector.z);
+        bytes.CopyTo(buffer, 4);
         bytes = System.BitConverter.GetBytes(vector.w);
         bytes.CopyTo(buffer, 12);
         return buffer;

@@ -14,6 +14,7 @@ class KOTRManager : EditorWindow
     private GameObject _currentScene;
     private bool _isDisabled = false;
     private GameObject target;
+    private int submesh;
     private bool isDisabled
     {
         get { return _isDisabled; }
@@ -26,8 +27,15 @@ class KOTRManager : EditorWindow
             }
         }
     }
+    void OnEnable()
+    {
+        SceneView.onSceneGUIDelegate += OnSceneGUI;
+    }
 
-
+    void OnDisable()
+    {
+        SceneView.onSceneGUIDelegate -= OnSceneGUI;
+    }
 
     [MenuItem("Window/KOTR Loader")]
     static void Init()
@@ -46,6 +54,7 @@ class KOTRManager : EditorWindow
     }
     void OnGUI()
     {
+
         if (tc != oldShader && tc != null)
         {
             oldShader = tc;
@@ -92,6 +101,77 @@ class KOTRManager : EditorWindow
             ImportObject();
         }
         target = (GameObject)EditorGUILayout.ObjectField("Target object:", (GameObject)target, typeof(GameObject), true);
+        submesh = EditorGUILayout.IntField("Get Submesh:", submesh);
+        if (target)
+        {
+            Block08 block = target.GetComponent<Block08>();
+            if (block)
+            {
+
+                if (GUILayout.Button("GetSubmesh"))
+                {
+                    Mesh me = target.GetComponent<MeshFilter>().sharedMesh;
+                    Mesh newMesh = new Mesh();
+                    newMesh.vertices = me.vertices;
+                    if (submesh >= me.subMeshCount)
+                    {
+                        Debug.LogWarning("There is only " + submesh + " submeshes");
+                        return;
+                    }
+                    newMesh.SetIndices(me.GetIndices(submesh), MeshTopology.Quads, 0);
+                    GameObject newObject = new GameObject();
+                    MeshRenderer mr = newObject.AddComponent<MeshRenderer>();
+                    mr.materials = new Material[1];
+                    newObject.AddComponent<MeshFilter>().mesh = newMesh;
+                    newObject.transform.position = target.transform.position + Vector3.up;
+                    newObject.transform.parent = target.transform.parent;
+
+                }
+
+            }
+        }
+    }
+    Material m_LineMaterial;
+    Material m_QuadMaterial;
+    private void InitMaterial(bool writeDepth)
+    {
+        if (!m_LineMaterial)
+        {
+            var shader = Shader.Find("Hidden/InternalLineColorful");
+            m_LineMaterial = new Material(shader);
+            m_LineMaterial.hideFlags = HideFlags.DontSave;
+            var shader2 = Shader.Find("Hidden/InternalQuadColorful");
+            m_QuadMaterial = new Material(shader2);
+            m_QuadMaterial.hideFlags = HideFlags.DontSave;
+        }
+        // Set external depth on/off
+        m_LineMaterial.SetInt("_ZTest", writeDepth ? 4 : 0);
+        m_QuadMaterial.SetInt("_ZTest", writeDepth ? 4 : 0);
+    }
+    public void OnSceneGUI(SceneView view)
+    {
+        if (false)//(target)
+        {
+            Block08 block = target.GetComponent<Block08>();
+            if (block)
+            {
+                foreach (Vector3 vector in block.vertices)
+                {
+                    Mesh now = new Mesh();
+                    now.vertices = new Vector3[4] { new Vector3(0, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 0, 1), new Vector3(1, 0, 1) };
+                    now.triangles = new int[6] { 0, 2, 1, 3, 1, 2 };
+                    now.uv = new Vector2[4] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 1), new Vector2(1, 1) };
+
+                    now.RecalculateBounds();
+                    if (!m_QuadMaterial)
+                    {
+                        InitMaterial(true);
+                    }
+                    m_QuadMaterial.SetPass(0);
+                    Graphics.DrawMeshNow(now, vector, Quaternion.Euler(-Vector3.up), 0);
+                }
+            }
+        }
     }
     void ImportObject()
     {
@@ -186,6 +266,12 @@ class KOTRManager : EditorWindow
         }
         yield return null; // this is required to wait for an additional frame, without this clearing doesn't work (at least for me)
         Debug.ClearDeveloperConsole();
+    }
+
+    void OnDrawGizmos()
+    {
+
+
     }
 
 }

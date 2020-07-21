@@ -55,6 +55,7 @@ class Block07 : VerticesBlock, IBlocktype
 
             script.UV.Add(new Vector2(u, v));
         }
+
         pos += 4;
     }
 }
