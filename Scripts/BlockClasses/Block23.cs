@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-class Block23 : IBlocktype
+public class Block23 : BlockType, IBlocktype
 {
     UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
@@ -12,10 +12,23 @@ class Block23 : IBlocktype
         unknown,
         nonRoad,
         Road
-        
+
     }
     public byte[] GetBytes()
     {
+        if (!me)
+        {
+            MeshFilter mf = thisObject.gameObject.GetComponent<MeshFilter>();
+            if (mf)
+            {
+                me = mf.sharedMesh;
+            }
+            else
+            {
+                throw new System.Exception("У Блока нет meshFilter");
+            }
+        }
+
         List<byte> buffer = new List<byte>();
         buffer.AddRange(System.BitConverter.GetBytes(1));
         buffer.AddRange(System.BitConverter.GetBytes((int)colType)); //unknown data
@@ -43,6 +56,7 @@ class Block23 : IBlocktype
 
     public void Read(byte[] buffer, ref int pos)
     {
+        this.Type = 23;
 
         bool truck = false;
         if (script.gameObject.name == "TRUCKS")
@@ -54,7 +68,7 @@ class Block23 : IBlocktype
         pos += 4;
         colType = (collisionType)System.BitConverter.ToInt32(buffer, pos);
         pos += 4;
-        
+
         List<Vector3> verticesCol = new List<Vector3>();
         List<int[]> faces = new List<int[]>();
 

@@ -203,11 +203,6 @@ public class B3DScript : MonoBehaviour
                             lastGameObject = rootObj;
                         }
 
-        if(newObject.name == "hit_road_ap_048")
-        {
-            int a = 0;
-        }
-
 
                         if (type == 0)
                         {
@@ -360,119 +355,12 @@ public class B3DScript : MonoBehaviour
                         }
                         else if (type == 23)
                         {
-                            bt.component = new Block23();
+                            DestroyImmediate(bt);
+                            bt = newObject.AddComponent<Block23>();
+                            bt.component = (IBlocktype)bt;
                             bt.component.thisObject = newObject;
                             ((Block23)bt.component).script = this;
                             bt.component.Read(resource, ref pos);
-                            // bool truck = false;
-                            // //List<Mesh> meshe = new List<Mesh>();
-                            // if (rootObj.name == "TRUCKS")
-                            // {
-                            //     truck = true;
-                            // }
-
-
-                            // List<int> faces_all = new List<int>();
-
-                            // pos += 8;
-                            // List<Vector3> verticesCol = new List<Vector3>();
-                            // List<int> faces = new List<int>();
-
-
-
-                            // int i_null = System.BitConverter.ToInt32(resource, pos);
-                            // pos += 4;
-                            // for (int i = 0; i < i_null; i++)
-                            // {
-                            //     pos += 4;
-                            // }
-                            // int triNum = System.BitConverter.ToInt32(resource, pos);
-                            // pos += 4;
-                            // int number = 0;
-                            // for (int i = 0; i < triNum; i++)
-                            // {
-                            //     int vertNum = System.BitConverter.ToInt32(resource, pos);
-                            //     pos += 4;
-                            //     if (vertNum == 3)
-                            //     {
-                            //         faces.AddRange(new int[] { number, number + 2, number + 1 });
-                            //         number += 3;
-                            //     }
-                            //     else if (vertNum == 4)
-                            //     {
-                            //         faces.AddRange(new int[] { (number), (number + 2), (number + 1), (number + 3), (number + 2), (number) });
-                            //         number += 4;
-                            //     }
-                            //     else
-                            //     {
-                            //         for (int j = 0; j < vertNum - 2; j++)
-                            //         {
-                            //             faces.AddRange(new int[3] { number + j + 2, number + j + 1, number });
-
-                            //         }
-                            //         number += vertNum;
-
-                            //     }
-                            //     for (int j = 0; j < vertNum; j++)
-                            //     {
-                            //         var vert = new Vector3(System.BitConverter.ToSingle(resource, pos), System.BitConverter.ToSingle(resource, pos + 8), System.BitConverter.ToSingle(resource, pos + 4));
-                            //         /*var a = newObject.AddComponent<SphereCollider>();
-                            //         a.center = vert;
-                            //         a.radius = 0.1f;*/
-                            //         pos += 12;
-                            //         verticesCol.Add(vert);
-                            //         /*var a = new GameObject();
-                            //             a.transform.SetParent(newObject.transform);
-                            //             a.transform.position = new Vector3(vert.x,vert.z,vert.y);	*/
-                            //     }
-                            //     if (truck)
-                            //     {
-                            //         int Count = faces.Count / 3;
-                            //         for (int j = 0; j < Count; j++)
-                            //         {
-                            //             List<Vector3> newTri = Extrude(verticesCol[faces[j]], verticesCol[faces[j + 1]], verticesCol[faces[j + 2]]);
-                            //             verticesCol.AddRange(newTri);
-                            //             faces.Add(verticesCol.Count - 3);
-                            //             faces.Add(verticesCol.Count - 2);
-                            //             faces.Add(verticesCol.Count - 1);
-
-                            //         }
-
-
-
-                            //         Mesh me = new Mesh();
-                            //         MeshCollider col = newObject.AddComponent<MeshCollider>();
-                            //         me.vertices = verticesCol.ToArray();
-                            //         me.triangles = faces.ToArray();
-                            //         me.name = ((DamageKey)i).ToString();
-
-
-                            //         col.sharedMesh = me;
-                            //         col.convex = true;
-                            //         faces_all.AddRange(faces);
-                            //         faces = new List<int>();
-                            //     }
-
-
-                            // }
-                            // {//Mesh me conflict
-                            //     Mesh me = new Mesh();
-                            //     MeshCollider col = newObject.AddComponent<MeshCollider>();
-                            //     me.vertices = verticesCol.ToArray();
-                            //     if (!truck)
-                            //     {
-                            //         me.triangles = faces.ToArray();
-                            //         col.sharedMesh = me;
-                            //     }
-                            // }
-                            // /*else
-                            // {
-                            // 	me.triangles = faces_all.ToArray();
-                            // 	col.convex = true;
-                            // } */
-
-
-
                         }
                         else if (type == 24)
                         {
@@ -493,8 +381,8 @@ public class B3DScript : MonoBehaviour
                             p.matrix[2] = new Vector3(System.BitConverter.ToSingle(bts, 0), System.BitConverter.ToSingle(bts, 4), System.BitConverter.ToSingle(bts, 8));
                             System.Array.Copy(resource, pos, bts, 0, 12); pos += 12;
                             p.position = new Vector3(System.BitConverter.ToSingle(bts, 0), System.BitConverter.ToSingle(bts, 8), System.BitConverter.ToSingle(bts, 4));
-							System.Array.Copy(resource, pos, buff, 0, 4);
-							p.flag = System.BitConverter.ToInt32(resource, pos); pos += 4;
+                            System.Array.Copy(resource, pos, buff, 0, 4);
+                            p.flag = System.BitConverter.ToInt32(resource, pos); pos += 4;
                             pos += 4;
                         }
                         else if (type == 25)
@@ -506,83 +394,12 @@ public class B3DScript : MonoBehaviour
                         }
                         else if (type == 28)
                         {
-                            List<int> faces = new List<int>();
-                            List<Vector2> uvs = new List<Vector2>();
-                            faces.AddRange(new int[] { 0, 1, 2, 3, 0, 2 });
-
-                            Mesh me = new Mesh();
-                            me.Clear();
-                            me.vertices = vertices.ToArray();
-                            me.triangles = faces.ToArray();
-                            uvs.Add(new Vector2(0, 0));
-                            uvs.Add(new Vector2(1, 0));
-                            uvs.Add(new Vector2(0, 1));
-                            uvs.Add(new Vector2(1, 1));
-                            me.uv = uvs.ToArray();
-                            me.RecalculateBounds();
-                            int tex = 0;
-
-
-                            newObject.AddComponent<MeshRenderer>();
-                            pos += 16;
-                            pos += 12;
-                            System.Array.Copy(resource, pos, buff, 0, 4);
-                            pos += 4;
-                            int i_null = System.BitConverter.ToInt32(buff, 0);
-                            int j_null, i_null2;
-
-                            if (i_null == 1)
-                            {
-                                System.Array.Copy(resource, pos, buff, 0, 4);
-                                pos += 4;
-                                j_null = System.BitConverter.ToInt32(buff, 0);
-                                pos += 8;
-                                tex = System.BitConverter.ToInt32(resource, pos);
-                                pos += 4;
-                                System.Array.Copy(resource, pos, buff, 0, 4);
-                                pos += 4;
-                                i_null2 = System.BitConverter.ToInt32(buff, 0);
-
-                                if (j_null > 1)
-                                {
-                                    for (int i = 0; i < i_null2; i++)
-                                    {
-                                        pos += 16;
-                                    }
-                                }
-                                else
-                                {
-                                    pos += 32;
-                                }
-                            }
-                            else if (i_null == 2)
-                            {
-                                pos += 20;
-                                for (int i = 0; i < 4; i++)
-                                {
-                                    pos += 28;
-                                }
-
-                                pos += 4;
-                            }
-                            else if ((i_null == 10) || (i_null == 6))
-                            {
-                                for (int i = 0; i < i_null; i++)
-                                {
-                                    pos += 16;
-                                    System.Array.Copy(resource, pos, buff, 0, 4); pos += 4;
-                                    i_null2 = System.BitConverter.ToInt32(buff, 0);
-                                    for (int j = 0; j < i_null2; j++)
-                                    {
-                                        pos += 8;
-                                    }
-                                }
-                            }
-
-                            newObject.AddComponent<MeshFilter>().mesh = me;
-                            newObject.GetComponent<MeshRenderer>().material = GetComponent<Materials>().maths[TexInts[tex]];
-                            //newObject.AddComponent<rotationSprite>().camer = rootObj.transform.parent.GetComponent<GameManager>().currentCamera;
-
+                            DestroyImmediate(bt);
+                            bt = newObject.AddComponent<Block28>();
+                            bt.component = (IBlocktype)bt;
+                            bt.component.thisObject = newObject;
+                            ((Block28)bt).script = this;
+                            bt.component.Read(resource, ref pos);
                         }
                         else if (type == 29)
                         {
@@ -628,14 +445,13 @@ public class B3DScript : MonoBehaviour
                         }
                         else if (type == 34)
                         {
-                            pos += 16;
-                            pos += 4;
-                            System.Array.Copy(resource, pos, buff, 0, 4); pos += 4;
-                            int i_null = System.BitConverter.ToInt32(buff, 0);
-                            for (int i = 0; i < i_null; i++)
-                            {
-                                pos += 16;
-                            }
+                            DestroyImmediate(bt);
+                            bt = newObject.AddComponent<Block34>();
+                            bt.component = (IBlocktype)bt;
+                            bt.component.thisObject = newObject;
+                            ((Block34)bt).script = this;
+                            bt.component.Read(resource, ref pos);
+
 
                         }
                         else if (type == 35)
@@ -704,7 +520,7 @@ public class B3DScript : MonoBehaviour
                     else
                     {
 
-                        Debug.LogError("Case Error",newObject);
+                        Debug.LogError("Case Error", newObject);
                         break;
                     }
 

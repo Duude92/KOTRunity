@@ -2,3 +2,4 @@
 Plugins/*
 *.asset
 *.FBX
+*.prefab

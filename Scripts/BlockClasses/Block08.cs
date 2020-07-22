@@ -51,8 +51,8 @@ public class Block08 : MonoBehaviour, IBlocktype
             {
                 for (int j = 0; j < vCount; j++)
                 {
-                    face.AddRange(System.BitConverter.GetBytes(faces[j]));
-                    face.AddRange(Instruments.Vector2ToBytes(mesh.uv[faces[j]]));
+                    face.AddRange(System.BitConverter.GetBytes(faces[vCount-1-j]));
+                    face.AddRange(Instruments.Vector2ToBytes(mesh.uv[faces[vCount-1-j]]));
                 }
             }
             else if ((formats[i] == 176) || (formats[i] == 48) || (formats[i] == 179) || (formats[i] == 51))

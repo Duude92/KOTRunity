@@ -38,6 +38,10 @@ public class Block05 : BlockType, IBlocktype, IDisableable
         buf = Instruments.Vector3ToBytes(transform.position);
         buf.CopyTo(buffer, 0);
         buf = new byte[32];
+        if(string.IsNullOrEmpty(nameToJoin))
+        {
+            nameToJoin = "";
+        }
         System.Text.Encoding.UTF8.GetBytes(nameToJoin, 0, nameToJoin.Length, buf, 0);
         buf.CopyTo(buffer, 16);
 

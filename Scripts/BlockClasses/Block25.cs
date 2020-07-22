@@ -6,6 +6,7 @@ class Block25 : IBlocktype
 
     public byte[] GetBytes()
     {
+        throw new System.NotImplementedException();
         byte[] buffer = new byte[40];
         return buffer;
     }

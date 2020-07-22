@@ -265,7 +265,7 @@ namespace Gigableh
 			foreach (Transform child in transform)
 			{
 				if (applyTranslation)
-					child.Translate(transform.localPosition);
+					child.Translate(transform.localPosition,Space.World);
 
 				if (applyRotation)
 				{

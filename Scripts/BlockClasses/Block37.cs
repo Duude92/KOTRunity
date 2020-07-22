@@ -6,6 +6,8 @@ public class Block37 : VerticesBlock, IBlocktype
     GameObject _thisObject;
     public GameObject thisObject { get => _thisObject; set => _thisObject = value; }
     public string collisionName;
+    [SerializeField] private int i_null;
+    [SerializeField] private bool bumped = false;
 
     public byte[] GetBytes()
     {
@@ -14,6 +16,10 @@ public class Block37 : VerticesBlock, IBlocktype
         buffer.AddRange(new byte[4]);
 
         byte[] colName = new byte[32];
+        if (string.IsNullOrEmpty(collisionName))
+        {
+            collisionName = "";
+        }
         System.Text.Encoding.ASCII.GetBytes(collisionName).CopyTo(colName, 0);
         buffer.AddRange(colName);
         int i_null = 0;
@@ -27,7 +33,11 @@ public class Block37 : VerticesBlock, IBlocktype
             return buffer.ToArray();
 
         }
-        if (mesh[0].vertices.Length > mesh[0].normals.Length)
+        if (bumped == true)
+        {
+            i_null = 514;
+        }
+        else if (mesh[0].vertices.Length > mesh[0].normals.Length)
         {
             i_null = 3;
         }
@@ -76,6 +86,26 @@ public class Block37 : VerticesBlock, IBlocktype
             }
 
         }
+        else if (i_null == 514)
+        {
+            for (int i = 0; i < _mesh.vertexCount; i++)
+            {
+
+                buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].x));
+                buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].z));
+                buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].y));
+                buffer.AddRange(System.BitConverter.GetBytes(_mesh.uv[i].x));
+                buffer.AddRange(System.BitConverter.GetBytes(_mesh.uv[i].y));
+                buffer.AddRange(System.BitConverter.GetBytes(_mesh.uv2[i].x));
+                buffer.AddRange(System.BitConverter.GetBytes(_mesh.uv2[i].y));
+                buffer.AddRange(System.BitConverter.GetBytes(0f));
+                buffer.AddRange(System.BitConverter.GetBytes(0f));
+                buffer.AddRange(System.BitConverter.GetBytes(_mesh.normals[i].x));
+                buffer.AddRange(System.BitConverter.GetBytes(_mesh.normals[i].z));
+                buffer.AddRange(System.BitConverter.GetBytes(_mesh.normals[i].y));
+            }
+
+        }
         else if (i_null == 3) //NO normals
         {
             for (int i = 0; i < _mesh.vertexCount; i++)
@@ -105,7 +135,7 @@ public class Block37 : VerticesBlock, IBlocktype
         pos += 32;
         System.Array.Copy(buffer, pos, buff, 0, 4);
         pos += 4;
-        int i_null = System.BitConverter.ToInt32(buff, 0);
+        i_null = System.BitConverter.ToInt32(buff, 0);
         int j_null;
         System.Array.Copy(buffer, pos, buff, 0, 4);
         pos += 4;
@@ -152,17 +182,20 @@ public class Block37 : VerticesBlock, IBlocktype
         }
         else if (i_null == 514)
         {
+            bumped = true;
             for (int i = 0; i < j_null; i++)
             {
                 byte[] newBuff = new byte[48];
                 //
-                System.Array.Copy(buffer, pos, newBuff, 0, 48);
+                System.Array.Copy(buffer, pos, newBuff, 0, 48); //TODO: структура 514: вершина 3ф, ув 2ф, ув2 2ф, нормаль ли? 3ф, неизвестно 2ф
                 pos += 48;
                 var vertex = Instruments.ReadV3(newBuff, 0);
-                var normal = Instruments.ReadV3(newBuff, 20);
+                var normal = Instruments.ReadV3(newBuff, 34);
 
                 script.vertices.Add(vertex);
                 script.UV.Add(Instruments.ReadV2(newBuff, 12));
+                script.UV1.Add(Instruments.ReadV2(newBuff, 20));
+
                 script.normals.Add(normal);
                 //
             }
@@ -176,7 +209,7 @@ public class Block37 : VerticesBlock, IBlocktype
                 System.Array.Copy(buffer, pos, newBuff, 0, 40);
                 pos += 40;
                 var vertex = Instruments.ReadV3(newBuff, 0);
-                var normal = Instruments.ReadV3(newBuff, 28); //TODO: структура 258: вершина (3ф), ув(2ф), неизвестно(2ф), нормаль(3ф)
+                var normal = Instruments.ReadV3(newBuff, 28); //TODO: структура 258: вершина (3ф), ув(2ф), ув2(2ф), нормаль(3ф)
                 script.vertices.Add(vertex);
                 script.UV.Add(Instruments.ReadV2(newBuff, 12));
                 script.UV1.Add(Instruments.ReadV2(newBuff, 20));
