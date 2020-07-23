@@ -13,6 +13,7 @@ public class Block05 : BlockType, IBlocktype, IDisableable
 
     public void Read(byte[] buffer, ref int pos)
     {
+        this.unknownVector = Instruments.ReadV3(buffer,pos);
         pos += 16;
         byte[] JoinName = new byte[32];
         System.Array.Copy(buffer, pos, JoinName, 0, 32);

@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-class Block20 : IBlocktype
+class Block20 : BlockType, IBlocktype
 {
     UnityEngine.GameObject _thisObject;
     //public B3DScript script;
@@ -9,7 +9,7 @@ class Block20 : IBlocktype
     List<Vector3> vertices = new List<Vector3>();
     int a = 0, b = 0, c = 0;
     float d = 0;
-    char[] keyName = new char[12];
+    [SerializeField] private char[] keyName = new char[12];
     public byte[] GetBytes()
     {
         List<byte> buffer = new List<byte>();
@@ -55,7 +55,8 @@ class Block20 : IBlocktype
 
     public void Read(byte[] buffer, ref int pos)
     {
-
+        this.Type = 20;
+        this.unknownVector = Instruments.ReadV3(buffer,pos);
         pos += 16;
         int vertNum = System.BitConverter.ToInt32(buffer, pos);
         pos += 4;

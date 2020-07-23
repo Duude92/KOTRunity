@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 class Block09 : BlockType, IBlocktype
 {
     UnityEngine.GameObject _thisObject;
@@ -6,6 +7,7 @@ class Block09 : BlockType, IBlocktype
 
     [SerializeField] private Vector3 Direction;
     [SerializeField] private float Distance;
+    public B3DScript script;
 
 
     public Vector4 position;
@@ -57,7 +59,30 @@ class Block09 : BlockType, IBlocktype
         pos += 4;
 
 
+        script.triggerBox.Add(Direction*-Distance);
+        if(false)//(script.triggerBox.Count==4)
+        {
+            TriggerBox();
+        }
+
         pos += 4;//childCount
+    }
+
+    private void TriggerBox()
+    {
+        List<Vector3> vertices = new List<Vector3>();
+        foreach(Vector3 vector in script.triggerBox)
+        {
+            foreach(Vector3 vector1 in script.triggerBox)
+            {
+                //if (vect)
+            }
+        }
+        
+    }
+    public override void ClosingEvent()
+    {
+        script.triggerBox.RemoveAt(script.triggerBox.Count-1);
     }
 
 

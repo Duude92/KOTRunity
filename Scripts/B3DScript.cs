@@ -6,8 +6,7 @@ using System.IO;
 
 public class B3DScript : MonoBehaviour
 {
-
-    Stream s;
+    public List<Vector3> triggerBox = new List<Vector3>();
     BinaryReader br;
     public List<int> TexInts = new List<int>();
     public List<GameObject> SwitchBlocks = new List<GameObject>();
@@ -159,6 +158,7 @@ public class B3DScript : MonoBehaviour
                     }
                     else if (Ccase == 555)
                     {
+                        lastGameObject.GetComponent<BlockType>().ClosingEvent();
 
 
                         if ((curLodObj == lastGameObject))
@@ -186,9 +186,8 @@ public class B3DScript : MonoBehaviour
                         int type = System.BitConverter.ToInt32(resource, pos);
                         pos += 4;
                         newObject = new GameObject(s);
-                        BlockType bt = newObject.AddComponent<BlockType>();
+                        BlockType bt = newObject.AddComponent<DefaultBlock>();
                         bt.Type = type;
-                        bt.MatNum = 0;
 
                         if (lastGameObject != null)
                         {
@@ -272,6 +271,7 @@ public class B3DScript : MonoBehaviour
                             bt = newObject.AddComponent<Block09>();
                             bt.component = (IBlocktype)bt;
                             bt.component.thisObject = newObject;
+                            ((Block09)bt.component).script = this;
                             bt.component.Read(resource, ref pos);
                         }
                         else if (type == 10)
@@ -336,10 +336,11 @@ public class B3DScript : MonoBehaviour
                         }
                         else if (type == 20)
                         {
-                            bt.component = new Block20();
+                            DestroyImmediate(bt);
+                            bt = newObject.AddComponent<Block20>();
+                            bt.component = (IBlocktype)bt;
                             bt.component.thisObject = newObject;
                             bt.component.Read(resource, ref pos);
-
 
                         }
                         else if (type == 21)

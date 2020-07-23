@@ -77,7 +77,6 @@ public class SceneSaver : MonoBehaviour
             {
                 BlockType bt = gameObject.GetComponent<BlockType>();
                 int type = bt.Type;
-                int matNum = bt.MatNum;
                 binaryWriter.Write(333);
                 byte[] blockName = new byte[32];
                 System.Text.Encoding.UTF8.GetBytes(gameObject.name, 0, gameObject.name.Length, blockName, 0);

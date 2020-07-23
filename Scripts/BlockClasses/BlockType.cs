@@ -1,8 +1,10 @@
 using UnityEngine;
-public class BlockType : MonoBehaviour {
+public abstract class BlockType : MonoBehaviour {
 	public int Type;
-	public int MatNum;
+	public Vector4 unknownVector;
 	public IBlocktype component;
 
+	public virtual void ClosingEvent(){} //should be abstract?
+	public void ComaEvent(){}
 
 }
