@@ -42,7 +42,6 @@ public class GameManager : MonoBehaviour, IDisableable
     string StartCar = "Zil";
     Vector3 StartPosition = new Vector3(-3060, 30, -4645);
     GameObject trucks;
-    bool DoOnce = false;
     public static GameObject common;
     public static GameObject currentObject;
 
@@ -471,7 +470,7 @@ public class GameManager : MonoBehaviour, IDisableable
 
 class CarNode : MonoBehaviour
 {
-    public GameObject CarObject;
+    //public GameObject CarObject;
 }
 
 

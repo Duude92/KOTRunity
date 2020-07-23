@@ -62,9 +62,6 @@ public class B3DScript : MonoBehaviour
             short lodCnt = 0;
             List<LOD> lods = new List<LOD>();
             List<Renderer> rends = new List<Renderer>();
-            int nrml0 = 0;
-            int nrml1 = 0;
-            //bool LodOpened = false;
 
 
             for (int i = 0; i < TexNum; i++)
@@ -271,11 +268,11 @@ public class B3DScript : MonoBehaviour
                         }
                         else if (type == 9)
                         {
-                            bt.component = newObject.AddComponent<Block09>();
+                            DestroyImmediate(bt);
+                            bt = newObject.AddComponent<Block09>();
+                            bt.component = (IBlocktype)bt;
                             bt.component.thisObject = newObject;
-
                             bt.component.Read(resource, ref pos);
-
                         }
                         else if (type == 10)
                         {
@@ -296,7 +293,9 @@ public class B3DScript : MonoBehaviour
                         }
                         else if (type == 13)
                         {
-                            bt.component = new Block13();
+                            DestroyImmediate(bt);
+                            bt = newObject.AddComponent<Block13>();
+                            bt.component = (IBlocktype)bt;
                             bt.component.thisObject = newObject;
                             bt.component.Read(resource, ref pos);
 
@@ -658,14 +657,14 @@ class test : MonoBehaviour
 
 
 
-class rotationSprite : MonoBehaviour
-{
-    public GameObject camer;
-    void Update()
-    {
-        transform.LookAt(camer.transform, new Vector3(0, 1, 0));
-    }
-}
+// class rotationSprite : MonoBehaviour
+// {
+//     public GameObject camer;
+//     void Update()
+//     {
+//         transform.LookAt(camer.transform, new Vector3(0, 1, 0));
+//     }
+// }
 
 
 enum DamageKey

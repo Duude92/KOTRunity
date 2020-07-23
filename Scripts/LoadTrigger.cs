@@ -9,7 +9,6 @@ class LoadTrigger : MonoBehaviour {
 	public Vector3 point1;
 	public GameObject roomObject;
 	Renderer obR;
-	bool active = true;
 
 	void Start()
 	{

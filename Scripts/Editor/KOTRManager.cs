@@ -29,12 +29,12 @@ class KOTRManager : EditorWindow
     }
     void OnEnable()
     {
-        SceneView.onSceneGUIDelegate += OnSceneGUI;
+        SceneView.duringSceneGui += OnSceneGUI;
     }
 
     void OnDisable()
     {
-        SceneView.onSceneGUIDelegate -= OnSceneGUI;
+        SceneView.duringSceneGui -= OnSceneGUI;
     }
 
     [MenuItem("Window/KOTR Loader")]
@@ -251,9 +251,9 @@ class KOTRManager : EditorWindow
             bt = transform.gameObject.AddComponent<BlockType>();
             bt.Type = 35;
             bt.component = transform.gameObject.AddComponent<Block35>();
+            ((Block35)bt.component).i_null = 3;
             transform.name = ""; // Просто придержимся традиции софтклаба - не оставлять имена 35 блока
 
-            transform.GetComponent<MeshCollider>().sharedMesh = transform.GetComponent<MeshFilter>().sharedMesh; //апдейтнуть
         }
         else if (transform.GetComponent<MeshCollider>())
         {
@@ -262,6 +262,7 @@ class KOTRManager : EditorWindow
             bt.component = (Block23)bt;
             bt.component.thisObject = transform.gameObject;
 
+            transform.GetComponent<MeshCollider>().sharedMesh = transform.GetComponent<MeshFilter>().sharedMesh; //апдейтнуть
 
 
         }

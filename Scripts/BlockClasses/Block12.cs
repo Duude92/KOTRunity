@@ -2,8 +2,6 @@ using UnityEngine;
 using System.Collections.Generic;
 class Block12 : IBlocktype
 {
-    public int a, b, paramCount;
-    public List<float> Params = new List<float>();
     GameObject _thisObject;
     public GameObject thisObject { get => _thisObject; set => _thisObject = value; }
     Vector3 direction;

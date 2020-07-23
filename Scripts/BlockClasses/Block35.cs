@@ -3,7 +3,6 @@ using System.Collections.Generic;
 public class Block35 : MonoBehaviour, IBlocktype
 {
     public B3DScript script;
-    private int nrml0 = 0, nrml1 = 0;
     private Mesh mesh;
 
     GameObject _thisObject;
