@@ -13,7 +13,7 @@ class InvokeMe : MonoBehaviour
     public string blocks;
     //public Vector3 tempSpace;
     //public float tempScale;
-    public GameObject GO;
+    public Transform GO;
     //public GameObject SpcOb;
     bool notfound = false;
     GameObject ind;
@@ -46,7 +46,7 @@ class InvokeMe : MonoBehaviour
         }
         else
         {
-            meT = GO.transform.Find(blocks);
+            meT = GO.Find(blocks);
             if (meT)
                 me = meT.gameObject;
             else
@@ -67,7 +67,7 @@ class InvokeMe : MonoBehaviour
 
         if (space != "$$world")
         {
-            SpcOb = GO.transform.Find(space).gameObject;
+            SpcOb = GO.Find(space).gameObject;
         }
         else
         {

@@ -44,7 +44,7 @@ class Block18 : BlockType, IBlocktype, IDisableable
         //me.tempSpace = tempPos;
         //me.tempScale = scale;
         me.blocks = block;
-        me.GO = script.gameObject;
+        me.GO = script.transform;
         script.InvokeBlocks.Add(thisObject);
     }
 

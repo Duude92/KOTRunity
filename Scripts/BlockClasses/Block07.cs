@@ -7,6 +7,7 @@ class Block07 : BlockType, IVerticesBlock, IBlocktype
 
     private List<Mesh> _mesh = new List<Mesh>();
     public List<Mesh> mesh { get => _mesh; set => _mesh = value; }
+    public List<Vector2> UV = new List<Vector2>();
 
     public byte[] GetBytes()
     {
@@ -49,12 +50,12 @@ class Block07 : BlockType, IVerticesBlock, IBlocktype
             byte[] newBuff = new byte[20];
             System.Array.Copy(buffer, pos, newBuff, 0, 20);
             pos += 20;
-            script.vertices.Add(new Vector3(System.BitConverter.ToSingle(newBuff, 0), System.BitConverter.ToSingle(newBuff, 8), System.BitConverter.ToSingle(newBuff, 4)));
-            float u = System.BitConverter.ToSingle(newBuff, 12);
-            float v = System.BitConverter.ToSingle(newBuff, 16);
+            script.vertices.Add(Instruments.ReadV3(newBuff,0));
+            Vector2 uv = Instruments.ReadV2(newBuff,12);
+            UV.Add(uv);
 
 
-            script.UV.Add(new Vector2(u, v));
+            script.UV.Add(uv);
         }
 
         pos += 4;

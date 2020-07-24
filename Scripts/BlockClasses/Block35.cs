@@ -9,6 +9,7 @@ public class Block35 : BlockType, IBlocktype
     public int matNum = 0;
     public int i_null;
     public List<int> format = new List<int>();
+    public List<Vector2> UV = new List<Vector2>();
     public byte[] GetBytes()
     {
         mesh = gameObject.GetComponent<MeshFilter>().sharedMesh;
@@ -137,6 +138,7 @@ public class Block35 : BlockType, IBlocktype
                     System.Array.Copy(buffer, pos, newBuff, 0, 88);
                     pos += 88;
                     face = new int[3] { System.BitConverter.ToInt32(newBuff, 16), System.BitConverter.ToInt32(newBuff, 64), System.BitConverter.ToInt32(newBuff, 40) };
+
                 }
                 else if (format[format.Count - 1] == 49)
                 {
@@ -190,6 +192,7 @@ public class Block35 : BlockType, IBlocktype
         curMesh.vertices = script.vertices.ToArray();
         curMesh.triangles = faces.ToArray();
         curMesh.uv = script.UV.ToArray();
+        UV.AddRange(script.UV);
 
         if (script.normals.Count > 0)
         {
