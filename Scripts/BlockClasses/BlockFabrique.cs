@@ -12,15 +12,12 @@ public static class BlockFabrique
 
     public static BlockType GetBlock(GameObject gameObject, int type)
     {
-
-
-        string classString = "Block" + (type > 9 ? type.ToString() : ("0" + type));
+        string classString = "Block" + (type > 9 ? type.ToString() : ("0" + type)); 
         Type blType = Type.GetType(classString, true);
         BlockType bt;
         Component cmp = gameObject.AddComponent(blType);
         bt = cmp as BlockType;
-        bt.component = (IBlocktype)bt;
-        bt.component.thisObject = gameObject;
+        ((IBlocktype)bt).thisObject = gameObject;
         bt.script = script;
         bt.Type = type;
         return bt;

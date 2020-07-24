@@ -82,7 +82,7 @@ public class SceneSaver : MonoBehaviour
                 System.Text.Encoding.UTF8.GetBytes(gameObject.name, 0, gameObject.name.Length, blockName, 0);
                 binaryWriter.Write(blockName);
                 binaryWriter.Write(type);
-                IBlocktype component = bt.component;
+                IBlocktype component = (IBlocktype)bt;
                 if (component == null)
                 {
                     switch (bt.Type)

@@ -289,7 +289,7 @@ public class Block08 : BlockType, IBlocktype
 
         BlockType bt1 = tr.GetComponent<BlockType>();
 
-        ((IVerticesBlock)bt1.component).mesh.Add(curMesh); //ищет в каждом родительском обьекте компоненту verticesBlock рекурсивно    }
+        ((IVerticesBlock)bt1).mesh.Add(curMesh); //ищет в каждом родительском обьекте компоненту verticesBlock рекурсивно    }
 
     }
 }

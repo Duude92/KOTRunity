@@ -229,8 +229,8 @@ class KOTRManager : EditorWindow
         {
             BlockType bt = transform.gameObject.AddComponent<BlockType>();
             bt.Type = 5;
-            bt.component = transform.gameObject.AddComponent<Block05>();
-            bt.component.thisObject = transform.gameObject;
+            bt = transform.gameObject.AddComponent<Block05>();
+            ((IBlocktype)bt).thisObject = transform.gameObject;
         }
         else if (transform.GetComponent<MeshRenderer>())
         {
@@ -243,15 +243,15 @@ class KOTRManager : EditorWindow
 
             BlockType bt = b37.AddComponent<BlockType>();
             bt.Type = 37;
-            bt.component = new Block37();
-            bt.component.thisObject = b37;
-            ((IVerticesBlock)bt.component).mesh.Add(meshFilter.sharedMesh);
+            bt = new Block37();
+            ((IBlocktype)bt).thisObject = b37;
+            ((IVerticesBlock)bt).mesh.Add(meshFilter.sharedMesh);
 
             transform.parent = b37.transform;
             bt = transform.gameObject.AddComponent<BlockType>();
             bt.Type = 35;
-            bt.component = transform.gameObject.AddComponent<Block35>();
-            ((Block35)bt.component).i_null = 3;
+            bt = transform.gameObject.AddComponent<Block35>();
+            ((Block35)bt).i_null = 3;
             transform.name = ""; // Просто придержимся традиции софтклаба - не оставлять имена 35 блока
 
         }
@@ -259,8 +259,8 @@ class KOTRManager : EditorWindow
         {
             BlockType bt = transform.gameObject.AddComponent<Block23>();
             bt.Type = 23;
-            bt.component = (Block23)bt;
-            bt.component.thisObject = transform.gameObject;
+            bt = (Block23)bt;
+            ((IBlocktype)bt).thisObject = transform.gameObject;
 
             transform.GetComponent<MeshCollider>().sharedMesh = transform.GetComponent<MeshFilter>().sharedMesh; //апдейтнуть
 

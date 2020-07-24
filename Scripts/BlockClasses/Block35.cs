@@ -214,7 +214,7 @@ public class Block35 : BlockType, IBlocktype
         Transform tr = script.GetParentVertices(transform);
         BlockType bt1 = tr.GetComponent<BlockType>();
 
-        IVerticesBlock vb = ((IVerticesBlock)bt1.component);
+        IVerticesBlock vb = ((IVerticesBlock)bt1);
 
         vb.mesh.Add(curMesh); //ищет в каждом родительском обьекте компоненту verticesBlock рекурсивно    }
 
