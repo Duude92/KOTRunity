@@ -44,15 +44,17 @@ class Block13 : BlockType, IBlocktype
     public void Read(byte[] buffer, ref int pos)
     {
         this.Type = 13;
+        this.unknownVector = Instruments.ReadV4(buffer, pos);
+
         pos += 16;
         int a = System.BitConverter.ToInt32(buffer, pos);
-        if(System.Enum.IsDefined(typeof(EventType),a))
+        if (System.Enum.IsDefined(typeof(EventType), a))
         {
             eventType = (EventType)a;
         }
         else
         {
-            Debug.LogWarning("no "+a+" event for ",gameObject);
+            Debug.LogWarning("no " + a + " event for ", gameObject);
         }
         b = System.BitConverter.ToInt32(buffer, pos + 4);
         int paramCount2 = System.BitConverter.ToInt32(buffer, pos + 8);
@@ -66,5 +68,12 @@ class Block13 : BlockType, IBlocktype
             pos += 4;
         }
 
+    }
+    public override void ClosingEvent()
+    {
+        foreach (Vector3 vector in script.triggerBox)
+        {
+
+        }
     }
 }

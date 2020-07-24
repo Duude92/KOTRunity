@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-class Block33 : IBlocktype
+class Block33 : BlockType, IBlocktype
 {
     UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
@@ -28,7 +28,7 @@ class Block33 : IBlocktype
 
         pos += 12;//
         byte[] newbuff = new byte[12];
-        System.Array.Copy(buffer, pos, newbuff, 0, 12); 
+        System.Array.Copy(buffer, pos, newbuff, 0, 12);
         pos += 12; //position
         point.transform.position = new Vector3(System.BitConverter.ToSingle(newbuff, 0), System.BitConverter.ToSingle(newbuff, 8), System.BitConverter.ToSingle(newbuff, 4));
 

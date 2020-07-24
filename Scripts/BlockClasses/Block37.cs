@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
-public class Block37 : VerticesBlock, IBlocktype
+public class Block37 : BlockType, IVerticesBlock, IBlocktype
 {
-    public B3DScript script;
     GameObject _thisObject;
     public GameObject thisObject { get => _thisObject; set => _thisObject = value; }
+    private List<Mesh> _mesh = new List<Mesh>();
+    public List<Mesh> mesh { get => _mesh; set => _mesh = value; }
+
     public string collisionName;
     [SerializeField] private int i_null;
     [SerializeField] private bool bumped = false;
@@ -128,6 +130,7 @@ public class Block37 : VerticesBlock, IBlocktype
     public void Read(byte[] buffer, ref int pos)
     {
         byte[] buff = new byte[4];
+        this.unknownVector = Instruments.ReadV4(buffer, pos);
         pos += 16;
         byte[] colName = new byte[32];
         System.Array.Copy(buffer, pos, colName, 0, 32);

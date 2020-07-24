@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 //LodManager10
-class Block10 : MonoBehaviour, IBlocktype
+class Block10 : BlockType, IBlocktype
 {
     UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
@@ -104,6 +104,8 @@ class Block10 : MonoBehaviour, IBlocktype
 
     public void Read(byte[] buffer, ref int pos)
     {
+        this.Type = 10;
+        this.unknownVector = Instruments.ReadV4(buffer,pos);
         pos += 16;
 
 

@@ -1,11 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
-class Block06 : VerticesBlock, IBlocktype
+class Block06 : BlockType, IVerticesBlock, IBlocktype
 {
     UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
 
-    public B3DScript script;
+    private List<Mesh> _mesh = new List<Mesh>();
+    public List<Mesh> mesh { get => _mesh; set => _mesh = value; }
 
     public byte[] GetBytes()
     {
@@ -28,11 +29,11 @@ class Block06 : VerticesBlock, IBlocktype
             UV.AddRange(_mesh.uv);
         }
         buffer.AddRange(System.BitConverter.GetBytes(vCount));
-        for(int i = 0; i<vCount;i++)
+        for (int i = 0; i < vCount; i++)
         {
             buffer.AddRange(Instruments.Vector3ToBytes(vertices[i]));
             buffer.AddRange(Instruments.Vector2ToBytes(UV[i]));
-            
+
         }
         buffer.AddRange(System.BitConverter.GetBytes(thisObject.transform.childCount));
 

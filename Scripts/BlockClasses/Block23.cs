@@ -4,7 +4,6 @@ public class Block23 : BlockType, IBlocktype
 {
     UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
-    public B3DScript script;
     Mesh me;
     private collisionType colType;
     enum collisionType

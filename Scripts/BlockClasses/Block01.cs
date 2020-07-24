@@ -1,6 +1,7 @@
 
-class Block01 : IBlocktype
-{        UnityEngine.GameObject _thisObject;
+class Block01 : BlockType, IBlocktype
+{
+    UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
 
     public byte[] GetBytes()
@@ -11,6 +12,8 @@ class Block01 : IBlocktype
 
     public void Read(byte[] buffer, ref int pos)
     {
-        throw new System.NotImplementedException();
+
+        pos += 32;
+        pos += 32;
     }
 }

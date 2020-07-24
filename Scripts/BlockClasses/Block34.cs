@@ -4,7 +4,6 @@ class Block34 : BlockType, IBlocktype
 {
     UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
-    [HideInInspector] public B3DScript script;
     [SerializeField] int vCount;
     [SerializeField] int j_null;
     [SerializeField] int materialNum;

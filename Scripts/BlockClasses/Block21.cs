@@ -1,9 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
-class Block21 : IBlocktype
+class Block21 : BlockType, IBlocktype
 {
     UnityEngine.GameObject _thisObject;
-    public B3DScript script;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
     BlockSwitcher switcher;
     SphereCollider sc;
@@ -14,7 +13,7 @@ class Block21 : IBlocktype
         buffer.AddRange(System.BitConverter.GetBytes(sc.radius));
         buffer.AddRange(System.BitConverter.GetBytes(switcher.groups));
         buffer.AddRange(System.BitConverter.GetBytes(new int())); //TODO: UNKNOWN INT
-        buffer.AddRange(System.BitConverter.GetBytes(thisObject.transform.childCount-switcher.groups+1)); //FIXME:444
+        buffer.AddRange(System.BitConverter.GetBytes(thisObject.transform.childCount - switcher.groups + 1)); //FIXME:444
         return buffer.ToArray();
     }
 

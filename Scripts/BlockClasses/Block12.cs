@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-class Block12 : IBlocktype
+class Block12 : BlockType, IBlocktype
 {
     GameObject _thisObject;
     public GameObject thisObject { get => _thisObject; set => _thisObject = value; }

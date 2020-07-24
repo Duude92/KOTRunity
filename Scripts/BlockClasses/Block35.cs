@@ -1,8 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
-public class Block35 : MonoBehaviour, IBlocktype
+public class Block35 : BlockType, IBlocktype
 {
-    public B3DScript script;
     private Mesh mesh;
 
     GameObject _thisObject;
@@ -215,8 +214,9 @@ public class Block35 : MonoBehaviour, IBlocktype
         Transform tr = script.GetParentVertices(transform);
         BlockType bt1 = tr.GetComponent<BlockType>();
 
+        IVerticesBlock vb = ((IVerticesBlock)bt1.component);
 
-        ((VerticesBlock)bt1.component).mesh.Add(curMesh); //ищет в каждом родительском обьекте компоненту verticesBlock рекурсивно    }
+        vb.mesh.Add(curMesh); //ищет в каждом родительском обьекте компоненту verticesBlock рекурсивно    }
 
 
     }

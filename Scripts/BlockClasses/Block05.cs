@@ -13,7 +13,9 @@ public class Block05 : BlockType, IBlocktype, IDisableable
 
     public void Read(byte[] buffer, ref int pos)
     {
-        this.unknownVector = Instruments.ReadV3(buffer,pos);
+        this.Type = 5;
+
+        this.unknownVector = Instruments.ReadV3(buffer, pos);
         pos += 16;
         byte[] JoinName = new byte[32];
         System.Array.Copy(buffer, pos, JoinName, 0, 32);
@@ -39,7 +41,7 @@ public class Block05 : BlockType, IBlocktype, IDisableable
         buf = Instruments.Vector3ToBytes(transform.position);
         buf.CopyTo(buffer, 0);
         buf = new byte[32];
-        if(string.IsNullOrEmpty(nameToJoin))
+        if (string.IsNullOrEmpty(nameToJoin))
         {
             nameToJoin = "";
         }

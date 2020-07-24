@@ -1,11 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
-class Block30 : IBlocktype
+class Block30 : BlockType,IBlocktype
 {
     UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
     Light point;
-    public B3DScript script;
     LoadTrigger go;
     public byte[] GetBytes()
     {

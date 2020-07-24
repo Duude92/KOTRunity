@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq; //see OnDrawGizmos()
 class Block09 : BlockType, IBlocktype
 {
     UnityEngine.GameObject _thisObject;
@@ -7,16 +8,13 @@ class Block09 : BlockType, IBlocktype
 
     [SerializeField] private Vector3 Direction;
     [SerializeField] private float Distance;
-    public B3DScript script;
-
-
-    public Vector4 position;
     void Awake()
     {
     }
     void OnDrawGizmos()
     {
-        if (UnityEditor.Selection.activeGameObject == gameObject)
+
+        if (UnityEditor.Selection.gameObjects.Contains(gameObject))
         {
 
             Gizmos.color = Color.red;
@@ -28,7 +26,7 @@ class Block09 : BlockType, IBlocktype
     public byte[] GetBytes()
     {
         System.Collections.Generic.List<byte> buffer = new System.Collections.Generic.List<byte>();
-        buffer.AddRange(Instruments.Vector4ToBytes(position));
+        buffer.AddRange(Instruments.Vector4ToBytes(this.unknownVector));
 
         buffer.AddRange(Instruments.Vector3ToBytesRevert(Direction));
         buffer.AddRange(System.BitConverter.GetBytes(Distance));
@@ -50,7 +48,7 @@ class Block09 : BlockType, IBlocktype
     public void Read(byte[] buffer, ref int pos)
     {
         this.Type = 9;
-        position = Instruments.ReadV4(buffer, pos);
+        this.unknownVector = Instruments.ReadV4(buffer, pos);
 
         pos += 16;
         Direction = Instruments.ReadV3(buffer, pos);
@@ -59,8 +57,8 @@ class Block09 : BlockType, IBlocktype
         pos += 4;
 
 
-        script.triggerBox.Add(Direction*-Distance);
-        if(false)//(script.triggerBox.Count==4)
+        script.triggerBox.Add(Direction * -Distance);
+        if (false)//(script.triggerBox.Count==4)
         {
             TriggerBox();
         }
@@ -71,18 +69,18 @@ class Block09 : BlockType, IBlocktype
     private void TriggerBox()
     {
         List<Vector3> vertices = new List<Vector3>();
-        foreach(Vector3 vector in script.triggerBox)
+        foreach (Vector3 vector in script.triggerBox)
         {
-            foreach(Vector3 vector1 in script.triggerBox)
+            foreach (Vector3 vector1 in script.triggerBox)
             {
                 //if (vect)
             }
         }
-        
+
     }
     public override void ClosingEvent()
     {
-        script.triggerBox.RemoveAt(script.triggerBox.Count-1);
+        script.triggerBox.RemoveAt(script.triggerBox.Count - 1);
     }
 
 

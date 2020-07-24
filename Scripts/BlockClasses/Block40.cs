@@ -1,9 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
-class Block40 : IBlocktype, IDisableable
+class Block40 : BlockType, IBlocktype, IDisableable
 {
     UnityEngine.GameObject _thisObject;
-    public B3DScript script;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
     GeneratorInvoker GI;
     public Block40()

@@ -1,11 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
-class Block07 : VerticesBlock, IBlocktype
+class Block07 : BlockType, IVerticesBlock, IBlocktype
 {
     UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
 
-    public B3DScript script;
+    private List<Mesh> _mesh = new List<Mesh>();
+    public List<Mesh> mesh { get => _mesh; set => _mesh = value; }
 
     public byte[] GetBytes()
     {

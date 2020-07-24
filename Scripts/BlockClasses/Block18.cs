@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
-class Block18 : IBlocktype, IDisableable
+class Block18 : BlockType, IBlocktype, IDisableable
 {
     UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
-    public B3DScript script;
     InvokeMe me;
     public Block18()
     {

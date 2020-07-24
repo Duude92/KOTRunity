@@ -1,14 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Block08 : MonoBehaviour, IBlocktype
+public class Block08 : BlockType, IBlocktype
 {
     UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
 
-    public B3DScript script;
     public List<Vector3> vertices;
-    public List<Vector2> UV;
+    public List<Vector2> UV = new List<Vector2>();
     public List<string> material = new List<string>();
     public List<string> loops = new List<string>();
     List<int> matNum;
@@ -138,7 +137,7 @@ public class Block08 : MonoBehaviour, IBlocktype
                     //UV.Add(uv);
                     uv_new[num] = uv;
                     pos += 8;
-                    loop += faces_old[faces_old.Count - 1] + ' ' + UV[UV.Count - 1].ToString() + ' ' + System.BitConverter.ToSingle(buffer, pos + 0) + ' ' + System.BitConverter.ToSingle(buffer, pos + 4) + ' ' + System.BitConverter.ToSingle(buffer, pos + 8) + " ";
+                    loop += faces_old[faces_old.Count - 1] + ' ' + uv.ToString() + ' ' + System.BitConverter.ToSingle(buffer, pos + 0) + ' ' + System.BitConverter.ToSingle(buffer, pos + 4) + ' ' + System.BitConverter.ToSingle(buffer, pos + 8) + " ";
                     pos += 12;
 
                 }
@@ -154,11 +153,11 @@ public class Block08 : MonoBehaviour, IBlocktype
                     faces_old.Add(num);
                     pos += 4;
                     Vector2 uv = new Vector2(System.BitConverter.ToSingle(buffer, pos + 0), System.BitConverter.ToSingle(buffer, pos + 4)); //FIXME: УВ для каждой вершины каждого полигона
-                    //UV.Add(uv);
+                    //UV.Add(uv); // FIXME
                     uv_new[num] = uv;
 
                     pos += 8;
-                    loop += faces_old[faces_old.Count - 1] + ' ' + UV[UV.Count - 1].ToString() + " ";
+                    loop += faces_old[faces_old.Count - 1] + ' ' + uv.ToString() + " ";
 
                 }
             }
@@ -290,7 +289,7 @@ public class Block08 : MonoBehaviour, IBlocktype
 
         BlockType bt1 = tr.GetComponent<BlockType>();
 
-        ((VerticesBlock)bt1.component).mesh.Add(curMesh); //ищет в каждом родительском обьекте компоненту verticesBlock рекурсивно    }
+        ((IVerticesBlock)bt1.component).mesh.Add(curMesh); //ищет в каждом родительском обьекте компоненту verticesBlock рекурсивно    }
 
     }
 }

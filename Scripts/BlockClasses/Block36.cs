@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
-public class Block36 : VerticesBlock, IBlocktype
+public class Block36 : BlockType, IVerticesBlock, IBlocktype
 {
-    public B3DScript script;
     GameObject _thisObject;
     public GameObject thisObject { get => _thisObject; set => _thisObject = value; }
-
+    private List<Mesh> _mesh = new List<Mesh>();
+    public List<Mesh> mesh { get => _mesh; set => _mesh = value; }
     public byte[] GetBytes()
     {
         List<byte> buffer = new List<byte>();

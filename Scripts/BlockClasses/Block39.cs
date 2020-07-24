@@ -1,29 +1,24 @@
 using UnityEngine;
 using System.Collections.Generic;
-class Block14 : BlockType, IBlocktype
+class Block39 : BlockType, IBlocktype
 {
     UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
-    BlockSwitcher switcher;
-    SphereCollider sc;
+    GeneratorInvoker GI;
+
     public byte[] GetBytes()
     {
-        List<byte> buffer = new List<byte>();
-        buffer.AddRange(Instruments.Vector3ToBytes(new Vector3()));
-        buffer.AddRange(new byte[4]);
-
-        buffer.AddRange(new byte[28]);
-
-
-        return buffer.ToArray();
+        throw new System.NotImplementedException();
     }
 
     public void Read(byte[] buffer, ref int pos)
     {
+
         pos += 16;
         pos += 16;
         pos += 4;
-
-        pos += 8;
+        pos += 4;
     }
+
+
 }

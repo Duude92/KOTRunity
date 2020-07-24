@@ -4,7 +4,6 @@ class Block28 : BlockType, IBlocktype
 {
     UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
-    [HideInInspector] public B3DScript script;
     [SerializeField] int loopCount;
     [SerializeField] int j_null;
     [SerializeField] int materialNum;
@@ -183,7 +182,7 @@ class Block28 : BlockType, IBlocktype
         Transform tr = script.GetParentVertices(transform);
         BlockType bt1 = tr.GetComponent<BlockType>();
 
-        ((VerticesBlock)bt1.component).mesh.Add(me); //ищет в каждом родительском обьекте компоненту verticesBlock рекурсивно    }
+        ((IVerticesBlock)bt1.component).mesh.Add(me); //ищет в каждом родительском обьекте компоненту verticesBlock рекурсивно    }
 
     }
 }
