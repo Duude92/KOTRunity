@@ -94,6 +94,10 @@ class Block40 : BlockType, IBlocktype, IDisableable
         {
             iName = "People";
         }
+                else if (Generator == "$$DynamicGlow")
+        {
+            iName = "Glow";
+        }
 
     }
     void OnDrawGizmos()
