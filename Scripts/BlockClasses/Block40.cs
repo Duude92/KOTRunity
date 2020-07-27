@@ -5,6 +5,7 @@ class Block40 : BlockType, IBlocktype, IDisableable
     UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
     GeneratorInvoker GI;
+    private string iName = "Plus";
     public Block40()
     {
         GameManager.RegisterDisableale(this);
@@ -80,8 +81,26 @@ class Block40 : BlockType, IBlocktype, IDisableable
         GI.Type = gType;
         GI.hernja = xz;
         GI.Params = Params;
-    }
 
+        if (Generator == "$$TreeGenerator1")
+        {
+            iName = "Tree";
+        }
+        else if (Generator == "$$GeneratorOfTerrain")
+        {
+            iName = "Terrain";
+        }
+        else if (Generator == "$$People")
+        {
+            iName = "People";
+        }
+
+    }
+    void OnDrawGizmos()
+    {
+
+        Gizmos.DrawIcon(transform.position + Vector3.up * 2, iName, true);
+    }
     public void Disable()
     {
         GI.Destroy();
