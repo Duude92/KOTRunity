@@ -81,6 +81,10 @@ class Block28 : BlockType, IBlocktype
 
     public void Read(byte[] buffer, ref int pos)
     {
+        Transform tr = script.GetParentVertices(transform);
+        IVerticesBlock bt1 = tr.GetComponent<BlockType>() as IVerticesBlock;
+
+
         this.Type = 28;
 
         byte[] buff = new byte[4];
@@ -90,17 +94,16 @@ class Block28 : BlockType, IBlocktype
 
         Mesh me = new Mesh();
         me.Clear();
-        me.vertices = script.vertices.ToArray();
+        me.vertices = bt1.vertices.ToArray();
         me.triangles = faces.ToArray();
         uvs.Add(new Vector2(0, 0));
         uvs.Add(new Vector2(1, 0));
         uvs.Add(new Vector2(0, 1));
         uvs.Add(new Vector2(1, 1));
         me.uv = uvs.ToArray();
-        if (script.normals.Count > 0)
-        {
-            me.normals = script.normals.ToArray();
-        }
+
+        me.normals = bt1.normals.ToArray();
+
         me.RecalculateBounds();
         int tex = 0;
 
@@ -179,10 +182,6 @@ class Block28 : BlockType, IBlocktype
 
         gameObject.AddComponent<MeshFilter>().mesh = me;
         gameObject.GetComponent<MeshRenderer>().material = script.gameObject.GetComponent<Materials>().maths[script.TexInts[tex]];
-        Transform tr = script.GetParentVertices(transform);
-        BlockType bt1 = tr.GetComponent<BlockType>();
-
-        ((IVerticesBlock)bt1).mesh.Add(me); //ищет в каждом родительском обьекте компоненту verticesBlock рекурсивно    }
 
     }
 }

@@ -41,8 +41,8 @@ public class Block08 : BlockType, IBlocktype
             {
                 for (int j = 0; j < vCount; j++)
                 {
-                    face.AddRange(System.BitConverter.GetBytes(faces[vCount-1-j]));//TODO: Похоже что везде нужно vCount-1-j, но не факт
-                    face.AddRange(Instruments.Vector2ToBytes(mesh.uv[faces[vCount-1-j]]));
+                    face.AddRange(System.BitConverter.GetBytes(faces[vCount - 1 - j]));//TODO: Похоже что везде нужно vCount-1-j, но не факт
+                    face.AddRange(Instruments.Vector2ToBytes(mesh.uv[faces[vCount - 1 - j]]));
                     face.AddRange(new byte[12]);
                 }
             }
@@ -50,8 +50,8 @@ public class Block08 : BlockType, IBlocktype
             {
                 for (int j = 0; j < vCount; j++)
                 {
-                    face.AddRange(System.BitConverter.GetBytes(faces[vCount-1-j]));
-                    face.AddRange(Instruments.Vector2ToBytes(mesh.uv[faces[vCount-1-j]]));
+                    face.AddRange(System.BitConverter.GetBytes(faces[vCount - 1 - j]));
+                    face.AddRange(Instruments.Vector2ToBytes(mesh.uv[faces[vCount - 1 - j]]));
                 }
             }
             else if ((formats[i] == 176) || (formats[i] == 48) || (formats[i] == 179) || (formats[i] == 51))
@@ -75,7 +75,7 @@ public class Block08 : BlockType, IBlocktype
                 //format = 68;
                 for (int j = 0; j < vCount; j++)
                 {
-                    face.AddRange(System.BitConverter.GetBytes(faces[vCount-1-j]));
+                    face.AddRange(System.BitConverter.GetBytes(faces[vCount - 1 - j]));
                 }
             }
             buffer.AddRange(face);
@@ -87,6 +87,9 @@ public class Block08 : BlockType, IBlocktype
 
     public void Read(byte[] buffer, ref int pos)
     {
+        Transform tr = script.GetParentVertices(transform);
+
+        IVerticesBlock bt1 = tr.GetComponent<BlockType>() as IVerticesBlock;
         //UV = new List<Vector2>();
         pos += 16;
         int polygons = System.BitConverter.ToInt32(buffer, pos);
@@ -103,9 +106,9 @@ public class Block08 : BlockType, IBlocktype
 
         gameObject.AddComponent<MeshFilter>();
         gameObject.AddComponent<MeshRenderer>();
-        Vector2[] uv_new = new Vector2[script.vertices.Count];
+        Vector2[] uv_new = new Vector2[bt1.vertices.Count];
         List<int> faces = new List<int>();
-        curMesh.vertices = script.vertices.ToArray();
+        curMesh.vertices = bt1.vertices.ToArray();
 
 
         for (int i = 0; i < polygons; i++)
@@ -261,35 +264,21 @@ public class Block08 : BlockType, IBlocktype
 
 
 
-        curMesh.uv = script.UV.ToArray();//uv_new;
+        curMesh.uv = bt1.uv.ToArray();//uv_new;
 
         //bt.MatNum = b3dObject.TexInts[matNum[matNum.Count - 1]];
         gameObject.GetComponent<Renderer>().materials = mats.ToArray();
-        if (script.normals.Count > 0)
+
+        curMesh.normals = bt1.normals.ToArray();
+        try
         {
-            curMesh.normals = script.normals.ToArray();
+            curMesh.uv2 = bt1.uv1.ToArray();
         }
-
-
-        if (script.UV1Users > 0)
-        {
-            curMesh.uv2 = script.UV1.ToArray();
-            script.UV1Users--;
-            if (script.UV1Users == 0)
-            {
-                script.UV1 = new List<Vector2>();
-            }
-        }
-
-
+        catch { }
         curMesh.RecalculateBounds();
         gameObject.GetComponent<MeshFilter>().mesh = curMesh;
 
-        Transform tr = script.GetParentVertices(transform);
 
-        BlockType bt1 = tr.GetComponent<BlockType>();
-
-        ((IVerticesBlock)bt1).mesh.Add(curMesh); //ищет в каждом родительском обьекте компоненту verticesBlock рекурсивно    }
 
     }
 }

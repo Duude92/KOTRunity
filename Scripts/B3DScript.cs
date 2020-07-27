@@ -16,13 +16,6 @@ public class B3DScript : MonoBehaviour
     public List<GameObject> LoadTriggers = new List<GameObject>();
     public FileInfo file;
     public bool ready = false;
-
-    public List<Vector3> vertices = new List<Vector3>();
-    public List<Vector2> UV = new List<Vector2>();
-    public List<Vector2> UV1 = new List<Vector2>();
-    public int UV1Users = 0; //Необходимо для счета кол-ва юзеров ув1
-    public List<Vector3> normals = new List<Vector3>();
-
     public void Disable()
     {
         int childCount = transform.childCount;
@@ -91,9 +84,7 @@ public class B3DScript : MonoBehaviour
                 GameObject lastGameObject = null;
                 GameObject newObject = null;
                 GameObject rootObj = gameObject;
-                vertices = new List<Vector3>();
-                UV = new List<Vector2>();
-                normals = new List<Vector3>();
+
                 for (; ; )
                 {
                     lvl++;
@@ -518,7 +509,7 @@ public class B3DScript : MonoBehaviour
                             //     break;
                             // }
                         }
-                        
+
                         if (curLodObj != null)
                         {
                             if (curLodObj != newObject)
@@ -576,15 +567,13 @@ public class B3DScript : MonoBehaviour
     }
     public Transform GetParentVertices(Transform gameObject)
     {
-        try
-        {
-            List<Mesh> mesh = ((IVerticesBlock)gameObject.parent.GetComponent<BlockType>()).mesh;
+
+        IVerticesBlock ivb = gameObject.parent.GetComponent<BlockType>() as IVerticesBlock;
+        if (ivb != null)
             return gameObject.parent;
-        }
-        catch
-        {
+        else
             return GetParentVertices(gameObject.parent);
-        }
+
     }
     public void ClearB3D()
     {

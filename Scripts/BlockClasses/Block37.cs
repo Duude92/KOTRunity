@@ -4,8 +4,17 @@ public class Block37 : BlockType, IVerticesBlock, IBlocktype
 {
     GameObject _thisObject;
     public GameObject thisObject { get => _thisObject; set => _thisObject = value; }
-    private List<Mesh> _mesh = new List<Mesh>();
-    public List<Mesh> mesh { get => _mesh; set => _mesh = value; }
+    //-------- IVertices
+    private List<Vector3> _vertices = new List<Vector3>();
+    public List<Vector3> vertices { get => _vertices; set => _vertices = value; }
+    private List<Vector2> _uv = new List<Vector2>();
+    public List<Vector2> uv { get => _uv; set => _uv = value; }
+    private List<Vector3> _normals = new List<Vector3>();
+    public List<Vector3> normals { get => _normals; set => _normals = value; }
+    private List<Vector2> _uv2 = new List<Vector2>();
+    public List<Vector2> uv1 { get => _uv2; set => _uv2 = value; }
+
+    //-------- 
 
     public string collisionName;
     [SerializeField] private int i_null;
@@ -25,7 +34,7 @@ public class Block37 : BlockType, IVerticesBlock, IBlocktype
         System.Text.Encoding.ASCII.GetBytes(collisionName).CopyTo(colName, 0);
         buffer.AddRange(colName);
         int i_null = 0;
-        if (mesh.Count == 0)
+        if (false)//(mesh.Count == 0)
         {
             Debug.Log("This object have vertices block, but does not have faces", thisObject);
 
@@ -39,11 +48,11 @@ public class Block37 : BlockType, IVerticesBlock, IBlocktype
         {
             i_null = 514;
         }
-        else if (mesh[0].vertices.Length > mesh[0].normals.Length)
+        else if (vertices.Count > normals.Count)
         {
             i_null = 3;
         }
-        else if (mesh[0].uv2.Length > 0)
+        else if (uv1.Count > 0)
         {
             i_null = 258;
         }
@@ -52,72 +61,71 @@ public class Block37 : BlockType, IVerticesBlock, IBlocktype
             i_null = 2;
         }
         buffer.AddRange(System.BitConverter.GetBytes(i_null)); //Some value i_null
-        int vCount = mesh[0].vertices.Length;
+        int vCount = vertices.Count;
         buffer.AddRange(System.BitConverter.GetBytes(vCount)); //Some value j_null
-        var _mesh = mesh[0];
         if (i_null == 2) //vertex + uv + normal
         {
-            for (int i = 0; i < _mesh.vertexCount; i++)
+            for (int i = 0; i < vCount; i++)
             {
 
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].x));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].z));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].y));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.uv[i].x));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.uv[i].y));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.normals[i].x));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.normals[i].z));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.normals[i].y));
+                buffer.AddRange(System.BitConverter.GetBytes(vertices[i].x));
+                buffer.AddRange(System.BitConverter.GetBytes(vertices[i].z));
+                buffer.AddRange(System.BitConverter.GetBytes(vertices[i].y));
+                buffer.AddRange(System.BitConverter.GetBytes(uv[i].x));
+                buffer.AddRange(System.BitConverter.GetBytes(uv[i].y));
+                buffer.AddRange(System.BitConverter.GetBytes(normals[i].x));
+                buffer.AddRange(System.BitConverter.GetBytes(normals[i].z));
+                buffer.AddRange(System.BitConverter.GetBytes(normals[i].y));
             }
         }
         else if (i_null == 258)
         {
-            for (int i = 0; i < _mesh.vertexCount; i++)
+            for (int i = 0; i < vCount; i++)
             {
 
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].x));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].z));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].y));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.uv[i].x));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.uv[i].y));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.uv2[i].x));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.uv2[i].y));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.normals[i].x));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.normals[i].z));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.normals[i].y));
+                buffer.AddRange(System.BitConverter.GetBytes(vertices[i].x));
+                buffer.AddRange(System.BitConverter.GetBytes(vertices[i].z));
+                buffer.AddRange(System.BitConverter.GetBytes(vertices[i].y));
+                buffer.AddRange(System.BitConverter.GetBytes(uv[i].x));
+                buffer.AddRange(System.BitConverter.GetBytes(uv[i].y));
+                buffer.AddRange(System.BitConverter.GetBytes(uv1[i].x));
+                buffer.AddRange(System.BitConverter.GetBytes(uv1[i].y));
+                buffer.AddRange(System.BitConverter.GetBytes(normals[i].x));
+                buffer.AddRange(System.BitConverter.GetBytes(normals[i].z));
+                buffer.AddRange(System.BitConverter.GetBytes(normals[i].y));
             }
 
         }
         else if (i_null == 514)
         {
-            for (int i = 0; i < _mesh.vertexCount; i++)
+            for (int i = 0; i < vCount; i++)
             {
 
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].x));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].z));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].y));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.uv[i].x));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.uv[i].y));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.uv2[i].x));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.uv2[i].y));
+                buffer.AddRange(System.BitConverter.GetBytes(vertices[i].x));
+                buffer.AddRange(System.BitConverter.GetBytes(vertices[i].z));
+                buffer.AddRange(System.BitConverter.GetBytes(vertices[i].y));
+                buffer.AddRange(System.BitConverter.GetBytes(uv[i].x));
+                buffer.AddRange(System.BitConverter.GetBytes(uv[i].y));
+                buffer.AddRange(System.BitConverter.GetBytes(uv1[i].x));
+                buffer.AddRange(System.BitConverter.GetBytes(uv1[i].y));
                 buffer.AddRange(System.BitConverter.GetBytes(0f));
                 buffer.AddRange(System.BitConverter.GetBytes(0f));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.normals[i].x));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.normals[i].z));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.normals[i].y));
+                buffer.AddRange(System.BitConverter.GetBytes(normals[i].x));
+                buffer.AddRange(System.BitConverter.GetBytes(normals[i].z));
+                buffer.AddRange(System.BitConverter.GetBytes(normals[i].y));
             }
 
         }
         else if (i_null == 3) //NO normals
         {
-            for (int i = 0; i < _mesh.vertexCount; i++)
+            for (int i = 0; i < vCount; i++)
             {
 
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].x));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].z));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.vertices[i].y));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.uv[i].x));
-                buffer.AddRange(System.BitConverter.GetBytes(_mesh.uv[i].y));
+                buffer.AddRange(System.BitConverter.GetBytes(vertices[i].x));
+                buffer.AddRange(System.BitConverter.GetBytes(vertices[i].z));
+                buffer.AddRange(System.BitConverter.GetBytes(vertices[i].y));
+                buffer.AddRange(System.BitConverter.GetBytes(uv[i].x));
+                buffer.AddRange(System.BitConverter.GetBytes(uv[i].y));
                 buffer.AddRange(System.BitConverter.GetBytes(1f)); //TODO: Unknown data
             }
 
@@ -143,11 +151,6 @@ public class Block37 : BlockType, IVerticesBlock, IBlocktype
         System.Array.Copy(buffer, pos, buff, 0, 4);
         pos += 4;
         j_null = System.BitConverter.ToInt32(buff, 0);
-        script.vertices = new List<Vector3>();
-        script.UV = new List<Vector2>();
-        script.UV1 = new List<Vector2>();
-        script.normals = new List<Vector3>();
-        //script.vertices = new List<Vector3>[j_null];
         if (i_null == 0)
         {
             ;
@@ -162,9 +165,9 @@ public class Block37 : BlockType, IVerticesBlock, IBlocktype
                 var vertex = Instruments.ReadV3(newBuff, 0);
                 var normal = Instruments.ReadV3(newBuff, 20);
 
-                script.vertices.Add(vertex);
-                script.UV.Add(Instruments.ReadV2(newBuff, 12));
-                script.normals.Add(normal);
+                vertices.Add(vertex);
+                uv.Add(Instruments.ReadV2(newBuff, 12));
+                normals.Add(normal);
                 //pos+=32; 
             }
         }
@@ -176,11 +179,11 @@ public class Block37 : BlockType, IVerticesBlock, IBlocktype
                 //
                 System.Array.Copy(buffer, pos, newBuff, 0, 24);
                 pos += 24;
-                script.vertices.Add(Instruments.ReadV3(newBuff, 0));
-                script.UV.Add(Instruments.ReadV2(newBuff, 12));
+                vertices.Add(Instruments.ReadV3(newBuff, 0));
+                uv.Add(Instruments.ReadV2(newBuff, 12));
                 //
             }
-            script.normals = new List<Vector3>();
+            normals = new List<Vector3>();
 
         }
         else if (i_null == 514)
@@ -195,11 +198,11 @@ public class Block37 : BlockType, IVerticesBlock, IBlocktype
                 var vertex = Instruments.ReadV3(newBuff, 0);
                 var normal = Instruments.ReadV3(newBuff, 34);
 
-                script.vertices.Add(vertex);
-                script.UV.Add(Instruments.ReadV2(newBuff, 12));
-                script.UV1.Add(Instruments.ReadV2(newBuff, 20));
+                vertices.Add(vertex);
+                uv.Add(Instruments.ReadV2(newBuff, 12));
+                uv1.Add(Instruments.ReadV2(newBuff, 20));
 
-                script.normals.Add(normal);
+                normals.Add(normal);
                 //
             }
         }
@@ -213,15 +216,14 @@ public class Block37 : BlockType, IVerticesBlock, IBlocktype
                 pos += 40;
                 var vertex = Instruments.ReadV3(newBuff, 0);
                 var normal = Instruments.ReadV3(newBuff, 28); //TODO: структура 258: вершина (3ф), ув(2ф), ув2(2ф), нормаль(3ф)
-                script.vertices.Add(vertex);
-                script.UV.Add(Instruments.ReadV2(newBuff, 12));
-                script.UV1.Add(Instruments.ReadV2(newBuff, 20));
-                script.normals.Add(normal);
+                vertices.Add(vertex);
+                uv.Add(Instruments.ReadV2(newBuff, 12));
+                uv1.Add(Instruments.ReadV2(newBuff, 20));
+                normals.Add(normal);
                 //
             }
         }
-        int childCount = System.BitConverter.ToInt32(buffer, pos);
-        script.UV1Users = childCount;
+        //int childCount = System.BitConverter.ToInt32(buffer, pos);
         pos += 4;
 
 

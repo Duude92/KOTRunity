@@ -245,7 +245,11 @@ class KOTRManager : EditorWindow
             bt.Type = 37;
             bt = new Block37();
             ((IBlocktype)bt).thisObject = b37;
-            ((IVerticesBlock)bt).mesh.Add(meshFilter.sharedMesh);
+            IVerticesBlock ivb = (IVerticesBlock)bt;
+            ivb.vertices.AddRange( meshFilter.sharedMesh.vertices);
+            ivb.normals.AddRange( meshFilter.sharedMesh.normals);
+            ivb.uv.AddRange( meshFilter.sharedMesh.uv);
+            ivb.uv1.AddRange( meshFilter.sharedMesh.uv2);
 
             transform.parent = b37.transform;
             bt = transform.gameObject.AddComponent<BlockType>();
