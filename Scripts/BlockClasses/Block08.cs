@@ -144,6 +144,10 @@ public class Block08 : BlockType, IBlocktype
                     pos += 12;
 
                 }
+                if(j_null == 4)
+                mt = MeshTopology.Quads;
+                else
+                mt = MeshTopology.Triangles;
             }
             else if ((format == 3) || (format == 2) || (format == 131))
             {
@@ -188,11 +192,12 @@ public class Block08 : BlockType, IBlocktype
             }
             else if (((format == 144) || (format == 129)))
             {
+                List<int> ax = new List<int>();
                 for (int j = 0; j < j_null; j++)
                 {
-                    faces_old.Add(System.BitConverter.ToInt32(buffer, pos));
+                    ax.Add(System.BitConverter.ToInt32(buffer, pos));
                     pos += 4;
-                    loop += faces_old[faces_old.Count - 1] + " ";
+                    loop += ax[ax.Count - 1] + " ";
                 }
                 faces = new List<int>();
                 if (false)
@@ -201,26 +206,29 @@ public class Block08 : BlockType, IBlocktype
                         facesOfFaces.Add(new List<int> { faces_old[j * 4 + 2], faces_old[j * 4 + 3], faces_old[j * 4 + 1], faces_old[j * 4 + 0] });
                     }
                 if (true)
-                    for (int k = 0; k < faces_old.Count - 2; k++)
+                {
+                    for (int k = 0; k < ax.Count - 2; k++)
                     {
 
 
                         if (k % 2 == 0)
                         {
-                            faces.Add(faces_old[k + 0]);
-                            faces.Add(faces_old[k + 2]);
-                            faces.Add(faces_old[k + 1]);
+                            faces.Add(ax[k + 0]);
+                            faces.Add(ax[k + 2]);
+                            faces.Add(ax[k + 1]);
 
                         }
                         else
                         {
-                            faces.Add(faces_old[k + 1]);
-                            faces.Add(faces_old[k + 2]);
-                            faces.Add(faces_old[k + 0]);
+                            faces.Add(ax[k + 1]);
+                            faces.Add(ax[k + 2]);
+                            faces.Add(ax[k + 0]);
                         }
                     }
-                faces.Reverse();
-                faces_old = faces;
+                    faces.Reverse();
+                    faces_old.AddRange(faces);
+
+                }
                 mt = MeshTopology.Triangles;
 
             }
@@ -249,7 +257,16 @@ public class Block08 : BlockType, IBlocktype
             }
             else
             {
-                curMesh.SetIndices(faces_old.ToArray(), mt, i, true);
+                try
+                {
+                    curMesh.SetIndices(faces_old.ToArray(), mt, i, true);
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError(e);
+                    Debug.Log(faces_old.Count + " vertices in face", gameObject);
+
+                }
 
             }
             //faces.Reverse();
