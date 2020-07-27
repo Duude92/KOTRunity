@@ -9,7 +9,8 @@ public class Block35 : BlockType, IBlocktype
     public int matNum = 0;
     public int i_null;
     public List<int> format = new List<int>();
-    public List<Vector2> UV = new List<Vector2>();
+    List<int> faces = new List<int>();
+
     public byte[] GetBytes()
     {
         mesh = gameObject.GetComponent<MeshFilter>().sharedMesh;
@@ -110,6 +111,13 @@ public class Block35 : BlockType, IBlocktype
         IVerticesBlock bt1 = tr.GetComponent<BlockType>() as IVerticesBlock;
 
 
+        List<Vector3> newVector = new List<Vector3>();
+        newVector.AddRange(bt1.vertices);
+        List<Vector3> newNormals = new List<Vector3>();
+        newNormals.AddRange(bt1.normals);
+        List<int> newFaces = new List<int>();
+        List<Vector2> nextUvs = new List<Vector2>();
+        nextUvs.AddRange(bt1.uv);
 
         byte[] buff = new byte[4];
         pos += 16;
@@ -123,11 +131,9 @@ public class Block35 : BlockType, IBlocktype
         pos += 4;
         j_null = System.BitConverter.ToInt32(buff, 0);
         //
-        List<int> faces = new List<int>();
         //List<int> matNum = new List<int>();
         Mesh curMesh = new Mesh();
         curMesh.Clear();
-
         if (i_null < 3)
         {
             //faces = new int[j_null*3];
@@ -139,11 +145,25 @@ public class Block35 : BlockType, IBlocktype
                 if (format[format.Count - 1] == 50)
                 {
                     byte[] newBuff = new byte[88];
-                    //
+                    // FORMAT: format(i),1f,32767,matNum,fCount,face0,uv,f1,f2,unkn_int?,fCount,face0,uv,f1,f2,unkn_int?,fCount,face0,uv,f1,f2,unkn_int?,
                     System.Array.Copy(buffer, pos, newBuff, 0, 88);
                     pos += 88;
                     face = new int[3] { System.BitConverter.ToInt32(newBuff, 16), System.BitConverter.ToInt32(newBuff, 64), System.BitConverter.ToInt32(newBuff, 40) };
-                    Vector2 uv = Instruments.ReadV2(newBuff, 32);
+                    nextUvs.Add(Instruments.ReadV2(newBuff, 20));
+                    nextUvs.Add(Instruments.ReadV2(newBuff, 68));
+                    nextUvs.Add(Instruments.ReadV2(newBuff, 44));
+
+                    newVector.Add(newVector[face[0]]);
+                    newVector.Add(newVector[face[1]]);
+                    newVector.Add(newVector[face[2]]);
+                    if (bt1.normals.Count > 0)
+                    {
+                        newNormals.Add(newNormals[face[0]]);
+                        newNormals.Add(newNormals[face[1]]);
+                        newNormals.Add(newNormals[face[2]]);
+                    }
+                    face = new int[0];
+                    newFaces.AddRange(new int[]{newVector.Count-3,newVector.Count-2,newVector.Count-1});
                 }
                 else if (format[format.Count - 1] == 49)
                 {
@@ -194,13 +214,27 @@ public class Block35 : BlockType, IBlocktype
         gameObject.GetComponent<MeshRenderer>().material = script.GetComponent<Materials>().maths[script.TexInts[matNum]];// resOb.GetComponent<Materials>().maths[TexInts[matNum]];
 
 
-        curMesh.vertices = bt1.vertices.ToArray();
-        curMesh.triangles = faces.ToArray();
-        curMesh.uv = bt1.uv.ToArray();
 
+        {
+            List<int> nextFaces = new List<int>();
+            nextFaces.AddRange(faces);
+            nextFaces.AddRange(newFaces);
+            if (newFaces.Count > 0)
+            {
+                int i = 0;
+            }
+            curMesh.vertices = newVector.ToArray();
+            curMesh.triangles = nextFaces.ToArray();
+            curMesh.uv = nextUvs.ToArray();
+            curMesh.normals = bt1.normals.ToArray();
+        }
 
-        curMesh.normals = bt1.normals.ToArray();
-
+        // {
+        //         curMesh.vertices = bt1.vertices.ToArray();
+        //         curMesh.triangles = faces.ToArray();
+        //         curMesh.uv = bt1.uv.ToArray();
+        //         curMesh.normals = bt1.normals.ToArray();
+        // }
         try
         {
             curMesh.uv2 = bt1.uv1.ToArray();

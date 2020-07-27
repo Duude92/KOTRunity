@@ -104,13 +104,13 @@ class KOTRManager : EditorWindow
         submesh = EditorGUILayout.IntField("Get Submesh:", submesh);
         if (target)
         {
-            Block08 block = target.GetComponent<Block08>();
+            MeshFilter block = target.GetComponent<MeshFilter>();
             if (block)
             {
 
                 if (GUILayout.Button("GetSubmesh"))
                 {
-                    Mesh me = target.GetComponent<MeshFilter>().sharedMesh;
+                    Mesh me = block.sharedMesh;
                     Mesh newMesh = new Mesh();
                     newMesh.vertices = me.vertices;
                     if (submesh >= me.subMeshCount)
@@ -126,6 +126,13 @@ class KOTRManager : EditorWindow
                     newObject.transform.position = target.transform.position + Vector3.up;
                     newObject.transform.parent = target.transform.parent;
 
+                }
+                if (GUILayout.Button("Recalculate Normals"))
+                {
+                    Mesh me = block.sharedMesh;
+                    me.RecalculateNormals();
+                    me.RecalculateTangents();
+                    
                 }
 
             }
@@ -183,40 +190,40 @@ class KOTRManager : EditorWindow
     }
     void TransformRecursively(Transform target)
     {
-			var meshFilter = target.GetComponent<MeshFilter>();
-			if (meshFilter != null)
-			{
-				Debug.Log("MeshApplyTransform:: Baking mesh for object (" + target.name + ").");
-				var originalMeshName = meshFilter.sharedMesh.name;
+        var meshFilter = target.GetComponent<MeshFilter>();
+        if (meshFilter != null)
+        {
+            Debug.Log("MeshApplyTransform:: Baking mesh for object (" + target.name + ").");
+            var originalMeshName = meshFilter.sharedMesh.name;
 
-				var newMesh = 
-        Gigableh.MeshApplyTransform.ApplyTransform(
-					target,
-					Instantiate(meshFilter.sharedMesh),
-					true, true, true);
+            var newMesh =
+    Gigableh.MeshApplyTransform.ApplyTransform(
+                target,
+                Instantiate(meshFilter.sharedMesh),
+                true, true, true);
 
-				Undo.RegisterCompleteObjectUndo(target, "Apply Transform");
+            Undo.RegisterCompleteObjectUndo(target, "Apply Transform");
 
-				meshFilter.sharedMesh = newMesh;
+            meshFilter.sharedMesh = newMesh;
 
-				if (!AssetDatabase.IsValidFolder("Assets/Baked Meshes"))
-					AssetDatabase.CreateFolder("Assets", "Baked Meshes");
+            if (!AssetDatabase.IsValidFolder("Assets/Baked Meshes"))
+                AssetDatabase.CreateFolder("Assets", "Baked Meshes");
 
-				var prefabPath = "";
-				if (originalMeshName.StartsWith("BakedMesh"))
-				{
-					Debug.Log("MeshApplyTransform:: Replacing existing baked mesh (" + originalMeshName + ").");
-					prefabPath = "Assets/Baked Meshes/" + originalMeshName + ".asset";
-				}
-				else
-				{
-					prefabPath = string.Format("Assets/Baked Meshes/BakedMesh_{0}_{1}_{2}.asset",
-						target.name, originalMeshName, (int)Mathf.Abs(newMesh.GetHashCode()));
-				}
-				
-				AssetDatabase.CreateAsset(newMesh, prefabPath);
-				AssetDatabase.SaveAssets();
-			}
+            var prefabPath = "";
+            if (originalMeshName.StartsWith("BakedMesh"))
+            {
+                Debug.Log("MeshApplyTransform:: Replacing existing baked mesh (" + originalMeshName + ").");
+                prefabPath = "Assets/Baked Meshes/" + originalMeshName + ".asset";
+            }
+            else
+            {
+                prefabPath = string.Format("Assets/Baked Meshes/BakedMesh_{0}_{1}_{2}.asset",
+                    target.name, originalMeshName, (int)Mathf.Abs(newMesh.GetHashCode()));
+            }
+
+            AssetDatabase.CreateAsset(newMesh, prefabPath);
+            AssetDatabase.SaveAssets();
+        }
     }
     void ImportRecursively(Transform transform)
     {
@@ -246,10 +253,10 @@ class KOTRManager : EditorWindow
             bt = new Block37();
             ((IBlocktype)bt).thisObject = b37;
             IVerticesBlock ivb = (IVerticesBlock)bt;
-            ivb.vertices.AddRange( meshFilter.sharedMesh.vertices);
-            ivb.normals.AddRange( meshFilter.sharedMesh.normals);
-            ivb.uv.AddRange( meshFilter.sharedMesh.uv);
-            ivb.uv1.AddRange( meshFilter.sharedMesh.uv2);
+            ivb.vertices.AddRange(meshFilter.sharedMesh.vertices);
+            ivb.normals.AddRange(meshFilter.sharedMesh.normals);
+            ivb.uv.AddRange(meshFilter.sharedMesh.uv);
+            ivb.uv1.AddRange(meshFilter.sharedMesh.uv2);
 
             transform.parent = b37.transform;
             bt = transform.gameObject.AddComponent<BlockType>();
