@@ -7,12 +7,12 @@ public class Block08 : BlockType, IBlocktype
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
 
     public List<Vector3> vertices;
-    public List<Vector2> UV = new List<Vector2>();
     public List<string> material = new List<string>();
     public List<string> loops = new List<string>();
     List<int> matNum;
     int format;
     List<int> formats = new List<int>();
+    List<List<int>> facesData1 = new List<List<int>>();
 
 
     public byte[] GetBytes()
@@ -24,6 +24,7 @@ public class Block08 : BlockType, IBlocktype
 
         int subMeshCount = mesh.subMeshCount;
         buffer.AddRange(System.BitConverter.GetBytes(subMeshCount)); //Some value i_null
+        int fcount = 0;
         for (int i = 0; i < subMeshCount; i++)
         {
             buffer.AddRange(System.BitConverter.GetBytes(formats[i]));
@@ -34,15 +35,16 @@ public class Block08 : BlockType, IBlocktype
             face.AddRange(System.BitConverter.GetBytes(matNum[i])); //TODO: MATNUM
             int vCount = mesh.GetIndices(i).Length;
 
+
             face.AddRange(System.BitConverter.GetBytes(vCount)); //count vertices in face???
 
-            int[] faces = mesh.GetIndices(i);
+            int[] faces = facesData1[i].ToArray();//mesh.GetIndices(i);
             if ((formats[i] == 178) || (formats[i] == 50))
             {
                 for (int j = 0; j < vCount; j++)
                 {
-                    face.AddRange(System.BitConverter.GetBytes(faces[vCount - 1 - j]));//TODO: Похоже что везде нужно vCount-1-j, но не факт
-                    face.AddRange(Instruments.Vector2ToBytes(mesh.uv[faces[vCount - 1 - j]]));
+                    face.AddRange(System.BitConverter.GetBytes(faces[vCount]));//TODO: Похоже что везде нужно vCount-1-j, но не факт
+                    face.AddRange(Instruments.Vector2ToBytes(mesh.uv[faces[vCount]]));
                     face.AddRange(new byte[12]);
                 }
             }
@@ -58,7 +60,7 @@ public class Block08 : BlockType, IBlocktype
             {
                 for (int j = 0; j < vCount; j++)
                 {
-                    face.AddRange(System.BitConverter.GetBytes(faces[j]));
+                    face.AddRange(System.BitConverter.GetBytes(faces[vCount - 1 - j]));
                     face.AddRange(new byte[12]);
                 }
             }
@@ -66,18 +68,49 @@ public class Block08 : BlockType, IBlocktype
             {
                 for (int j = 0; j < vCount; j++)
                 {
-                    face.AddRange(System.BitConverter.GetBytes(faces[j]));
+                    face.AddRange(System.BitConverter.GetBytes(faces[vCount - 1 - j]));
                     face.AddRange(new byte[4]);
                 }
             }
-            else
+            else if ((formats[i] == 16) || (formats[i] == 1) || (formats[i] == 0))
             {
-                //format = 68;
                 for (int j = 0; j < vCount; j++)
                 {
                     face.AddRange(System.BitConverter.GetBytes(faces[vCount - 1 - j]));
                 }
             }
+            else if (((formats[i] == 144) || (formats[i] == 129)) || true)
+            {
+                face.RemoveRange(face.Count - 4, 4);
+                // int[] indices = mesh.GetIndices(i);
+                // System.Array.Reverse(indices);
+                // List<int> face_old = new List<int>();
+                // foreach (int ind in indices)
+                // {
+                //     if (!face_old.Contains(ind))
+                //     {
+                //         face_old.Add(ind);
+                //         //face.AddRange(System.BitConverter.GetBytes(ind));
+                //     }
+                // }
+                vCount = faces.Length;
+                face.AddRange(System.BitConverter.GetBytes(vCount));
+                for (int j = 0; j < vCount; j++)
+                {
+                    face.AddRange(System.BitConverter.GetBytes(faces[vCount - 1 - j]));
+                }
+
+                // foreach (var ind in face_old)
+                // {
+                //     face.AddRange(System.BitConverter.GetBytes(facesData[fcount + j]));
+                //     j++;
+                // }
+
+
+            }
+            fcount += vCount - 1;
+
+
             buffer.AddRange(face);
 
         }
@@ -110,9 +143,10 @@ public class Block08 : BlockType, IBlocktype
         List<int> faces = new List<int>();
         curMesh.vertices = bt1.vertices.ToArray();
 
-
         for (int i = 0; i < polygons; i++)
         {
+            List<int> facesData = new List<int>();
+
             //normals = null;
             List<int> faces_old = new List<int>();
             List<List<int>> facesOfFaces = new List<List<int>>();
@@ -135,6 +169,7 @@ public class Block08 : BlockType, IBlocktype
                 {
                     int num = System.BitConverter.ToInt32(buffer, pos);
                     faces_old.Add(num);
+                    facesData.Add(num);
                     pos += 4;
                     Vector2 uv = new Vector2(System.BitConverter.ToSingle(buffer, pos + 0), System.BitConverter.ToSingle(buffer, pos + 4));
                     //UV.Add(uv);
@@ -144,10 +179,10 @@ public class Block08 : BlockType, IBlocktype
                     pos += 12;
 
                 }
-                if(j_null == 4)
-                mt = MeshTopology.Quads;
+                if (j_null == 4)
+                    mt = MeshTopology.Quads;
                 else
-                mt = MeshTopology.Triangles;
+                    mt = MeshTopology.Triangles;
             }
             else if ((format == 3) || (format == 2) || (format == 131))
             {
@@ -158,9 +193,11 @@ public class Block08 : BlockType, IBlocktype
                     // vertices.Add(vertices[num]); //Это правильно, но УВ для каждой вершины каждого полигона
                     // faces_old.Add(vertices.Count - 1);
                     faces_old.Add(num);
+                    facesData.Add(num);
+
                     pos += 4;
                     Vector2 uv = new Vector2(System.BitConverter.ToSingle(buffer, pos + 0), System.BitConverter.ToSingle(buffer, pos + 4)); //FIXME: УВ для каждой вершины каждого полигона
-                    //UV.Add(uv); // FIXME
+                                                                                                                                            //UV.Add(uv); // FIXME
                     uv_new[num] = uv;
 
                     pos += 8;
@@ -172,7 +209,10 @@ public class Block08 : BlockType, IBlocktype
             {
                 for (int j = 0; j < j_null; j++)
                 {
-                    faces_old.Add(System.BitConverter.ToInt32(buffer, pos));
+                    int num = System.BitConverter.ToInt32(buffer, pos);
+                    faces_old.Add(num);
+                    facesData.Add(num);
+
                     pos += 4;
                     loop += faces_old[faces_old.Count - 1] + ' ' + System.BitConverter.ToSingle(buffer, pos + 0) + ' ' + System.BitConverter.ToSingle(buffer, pos + 4) + ' ' + System.BitConverter.ToSingle(buffer, pos + 8) + " ";
 
@@ -183,7 +223,10 @@ public class Block08 : BlockType, IBlocktype
             {
                 for (int j = 0; j < j_null; j++)
                 {
-                    faces_old.Add(System.BitConverter.ToInt32(buffer, pos));
+                    int num = System.BitConverter.ToInt32(buffer, pos);
+                    faces_old.Add(num);
+                    facesData.Add(num);
+
                     pos += 4;
                     loop += faces_old[faces_old.Count - 1] + ' ' + System.BitConverter.ToSingle(buffer, pos + 0) + " ";
                     pos += 4;
@@ -195,7 +238,9 @@ public class Block08 : BlockType, IBlocktype
                 List<int> ax = new List<int>();
                 for (int j = 0; j < j_null; j++)
                 {
-                    ax.Add(System.BitConverter.ToInt32(buffer, pos));
+                    int num = System.BitConverter.ToInt32(buffer, pos);
+                    ax.Add(num);
+                    facesData.Add(num);
                     pos += 4;
                     loop += ax[ax.Count - 1] + " ";
                 }
@@ -236,7 +281,10 @@ public class Block08 : BlockType, IBlocktype
             {
                 for (int j = 0; j < j_null; j++)
                 {
-                    faces_old.Add(System.BitConverter.ToInt32(buffer, pos));
+                    int num = System.BitConverter.ToInt32(buffer, pos);
+                    faces_old.Add(num);
+                    facesData.Add(num);
+
                     pos += 4;
                     loop += faces_old[faces_old.Count - 1] + " ";
                 }
@@ -257,27 +305,16 @@ public class Block08 : BlockType, IBlocktype
             }
             else
             {
-                try
-                {
-                    curMesh.SetIndices(faces_old.ToArray(), mt, i, true);
-                }
-                catch (System.Exception e)
-                {
-                    Debug.LogError(e);
-                    Debug.Log(faces_old.Count + " vertices in face", gameObject);
 
-                }
+                curMesh.SetIndices(faces_old.ToArray(), mt, i, true);
+
+
+
+                mats.Add(script.GetComponent<Materials>().maths[script.TexInts[matNum[i]]]);
+                material.Add(script.GetComponent<Materials>().material[script.TexInts[matNum[i]]]);
 
             }
-            //faces.Reverse();
-
-
-
-            mats.Add(script.GetComponent<Materials>().maths[script.TexInts[matNum[i]]]);
-            material.Add(script.GetComponent<Materials>().material[script.TexInts[matNum[i]]]);
-
-
-
+            facesData1.Add(facesData);
         }
 
 

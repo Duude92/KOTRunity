@@ -8,6 +8,7 @@ public class Block35 : BlockType, IBlocktype
     public GameObject thisObject { get => _thisObject; set => _thisObject = value; }
     public int matNum = 0;
     public int i_null;
+    private int j_null;
     public List<int> format = new List<int>();
     List<int> faces = new List<int>();
 
@@ -20,7 +21,7 @@ public class Block35 : BlockType, IBlocktype
         buffer.AddRange(System.BitConverter.GetBytes(i_null)); //Some value i_null
         buffer.AddRange(System.BitConverter.GetBytes(matNum)); //Some value MatNum
         int loopCount = mesh.triangles.Length / 3;
-        buffer.AddRange(System.BitConverter.GetBytes(loopCount)); //Some value j_null
+        buffer.AddRange(System.BitConverter.GetBytes(j_null)); //Some value j_null
         if (i_null == 3)
         {
             for (int i = 0; i < loopCount; i++)
@@ -126,7 +127,6 @@ public class Block35 : BlockType, IBlocktype
         i_null = System.BitConverter.ToInt32(buff, 0);
         matNum = System.BitConverter.ToInt32(buffer, pos);
         pos += 4;//textureNum?
-        int j_null;
         System.Array.Copy(buffer, pos, buff, 0, 4);
         pos += 4;
         j_null = System.BitConverter.ToInt32(buff, 0);
@@ -162,7 +162,7 @@ public class Block35 : BlockType, IBlocktype
                         newNormals.Add(newNormals[face[1]]);
                         newNormals.Add(newNormals[face[2]]);
                     }
-                    face = new int[0];
+                    //face = new int[0];
                     newFaces.AddRange(new int[]{newVector.Count-3,newVector.Count-2,newVector.Count-1});
                 }
                 else if (format[format.Count - 1] == 49)

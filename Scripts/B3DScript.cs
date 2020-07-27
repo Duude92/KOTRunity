@@ -575,6 +575,7 @@ public class B3DScript : MonoBehaviour
             return GetParentVertices(gameObject.parent);
 
     }
+    
     public void ClearB3D()
     {
         Debug.Log(this, gameObject);

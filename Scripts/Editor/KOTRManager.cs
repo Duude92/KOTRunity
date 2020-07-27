@@ -184,46 +184,8 @@ class KOTRManager : EditorWindow
     {
         Gigableh.MeshApplyTransform.ApplyTransformRecursive(target.transform, true, true, true);
 
-        //TransformRecursively(target.transform);
         ImportRecursively(target.transform);
 
-    }
-    void TransformRecursively(Transform target)
-    {
-        var meshFilter = target.GetComponent<MeshFilter>();
-        if (meshFilter != null)
-        {
-            Debug.Log("MeshApplyTransform:: Baking mesh for object (" + target.name + ").");
-            var originalMeshName = meshFilter.sharedMesh.name;
-
-            var newMesh =
-    Gigableh.MeshApplyTransform.ApplyTransform(
-                target,
-                Instantiate(meshFilter.sharedMesh),
-                true, true, true);
-
-            Undo.RegisterCompleteObjectUndo(target, "Apply Transform");
-
-            meshFilter.sharedMesh = newMesh;
-
-            if (!AssetDatabase.IsValidFolder("Assets/Baked Meshes"))
-                AssetDatabase.CreateFolder("Assets", "Baked Meshes");
-
-            var prefabPath = "";
-            if (originalMeshName.StartsWith("BakedMesh"))
-            {
-                Debug.Log("MeshApplyTransform:: Replacing existing baked mesh (" + originalMeshName + ").");
-                prefabPath = "Assets/Baked Meshes/" + originalMeshName + ".asset";
-            }
-            else
-            {
-                prefabPath = string.Format("Assets/Baked Meshes/BakedMesh_{0}_{1}_{2}.asset",
-                    target.name, originalMeshName, (int)Mathf.Abs(newMesh.GetHashCode()));
-            }
-
-            AssetDatabase.CreateAsset(newMesh, prefabPath);
-            AssetDatabase.SaveAssets();
-        }
     }
     void ImportRecursively(Transform transform)
     {

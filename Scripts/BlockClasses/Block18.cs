@@ -5,6 +5,7 @@ class Block18 : BlockType, IBlocktype, IDisableable
     UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
     InvokeMe me;
+    private Vector3 gizmoPosition;
     public Block18()
     {
         GameManager.RegisterDisableale(this);
@@ -30,7 +31,7 @@ class Block18 : BlockType, IBlocktype, IDisableable
         byte[] tempPosB = new byte[16];
         System.Array.Copy(buffer, pos, tempPosB, 0, 16);
         pos += 16;
-        Vector3 tempPos = new Vector3(System.BitConverter.ToSingle(tempPosB, 0), System.BitConverter.ToSingle(tempPosB, 8), System.BitConverter.ToSingle(tempPosB, 4));
+        this.unknownVector = new Vector3(System.BitConverter.ToSingle(tempPosB, 0), System.BitConverter.ToSingle(tempPosB, 8), System.BitConverter.ToSingle(tempPosB, 4));
         float scale = System.BitConverter.ToSingle(tempPosB, 12);
         byte[] newbuff = new byte[32];
         System.Array.Copy(buffer, pos, newbuff, 0, 32);
@@ -46,8 +47,27 @@ class Block18 : BlockType, IBlocktype, IDisableable
         me.blocks = block;
         me.GO = script.transform;
         script.InvokeBlocks.Add(thisObject);
+        if(!string.IsNullOrEmpty(space))
+        {
+            Transform tr = GameManager.currentObject.transform.Find(space);
+            if (!tr)
+            {
+                tr = GameManager.common.transform.Find(space);
+            }
+            if(tr)
+            {
+                gizmoPosition = tr.GetComponent<Block24>().position+Vector3.up*2;
+            }
+            else
+            {
+                Debug.Log("No "+space+" position for",gameObject);
+            }
+        }
     }
-
+    void OnDrawGizmos()
+    {
+        Gizmos.DrawIcon(gizmoPosition,"Copy18",true);
+    }
     public void Disable()
     {
         me.Destroy();
