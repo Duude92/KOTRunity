@@ -200,7 +200,7 @@ public class Block08 : BlockType, IBlocktype
                     {
                         facesOfFaces.Add(new List<int> { faces_old[j * 4 + 2], faces_old[j * 4 + 3], faces_old[j * 4 + 1], faces_old[j * 4 + 0] });
                     }
-                if (false)
+                if (true)
                     for (int k = 0; k < faces_old.Count - 2; k++)
                     {
 
@@ -219,8 +219,9 @@ public class Block08 : BlockType, IBlocktype
                             faces.Add(faces_old[k + 0]);
                         }
                     }
-                //faces_old = faces;
-                mt = MeshTopology.LineStrip;
+                faces.Reverse();
+                faces_old = faces;
+                mt = MeshTopology.Triangles;
 
             }
             else
