@@ -8,17 +8,18 @@ public class Block04 : BlockType, IBlocktype, IDisableable
     UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
 
-    public string nameToJoin;
+    public string spaceName;
     public GameObject obj;
     bool rendered = false;
 
     public void Read(byte[] buffer, ref int pos)
     {
+        unknownVector = Instruments.ReadV4(buffer,pos);
         pos += 16;
         byte[] JoinName = new byte[32];
         System.Array.Copy(buffer, pos, JoinName, 0, 32);
         pos += 32;
-        nameToJoin = System.Text.Encoding.UTF8.GetString(JoinName).Trim(new char[] { '\0' });
+        spaceName = System.Text.Encoding.UTF8.GetString(JoinName).Trim(new char[] { '\0' });
         pos += 32;
 
         pos += 4;
@@ -37,11 +38,10 @@ public class Block04 : BlockType, IBlocktype, IDisableable
     byte[] IBlocktype.GetBytes()
     {
         List<byte> buffer = new List<byte>();
-        buffer.AddRange(Instruments.Vector3ToBytes(transform.position));
-        buffer.AddRange(new byte[4]);
+        buffer.AddRange(Instruments.Vector4ToBytes(unknownVector));
 
         byte[] bf = new byte[32];
-        System.Text.Encoding.UTF8.GetBytes(nameToJoin).CopyTo(bf, 0);
+        System.Text.Encoding.UTF8.GetBytes(spaceName).CopyTo(bf, 0);
 
         buffer.AddRange(bf);
         buffer.AddRange(new byte[32]);
@@ -82,14 +82,14 @@ public class Block04 : BlockType, IBlocktype, IDisableable
     }
     public void Enable()
     {
-        if (nameToJoin == "hitAnmObj0241")
+        if (spaceName == "hitAnmObj0241")
         {
             Debug.Log("hitAnmObj0241");
         }
-        if (!string.IsNullOrEmpty(nameToJoin))
+        if (!string.IsNullOrEmpty(spaceName))
         {
             Debug.Log("", gameObject);
-            StartCoroutine(Enable(nameToJoin));
+            StartCoroutine(Enable(spaceName));
         }
     }
     IEnumerator Enable(string Name, bool common = false)
@@ -111,7 +111,7 @@ public class Block04 : BlockType, IBlocktype, IDisableable
             }
             if (!common && !transform)
             {
-                yield return StartCoroutine(Enable(nameToJoin, true));
+                yield return StartCoroutine(Enable(spaceName, true));
 
             }
             else

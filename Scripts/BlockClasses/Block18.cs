@@ -6,6 +6,7 @@ class Block18 : BlockType, IBlocktype, IDisableable
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
     InvokeMe me;
     private Vector3 gizmoPosition;
+    [SerializeField] private float scale;
     public Block18()
     {
         GameManager.RegisterDisableale(this);
@@ -15,8 +16,7 @@ class Block18 : BlockType, IBlocktype, IDisableable
     public byte[] GetBytes()
     {
         List<byte> buffer = new List<byte>();
-        buffer.AddRange(Instruments.Vector3ToBytes(new Vector3()));
-        buffer.AddRange(new byte[4]);
+        buffer.AddRange(Instruments.Vector4ToBytes(this.unknownVector));
         byte[] textBuffer = new byte[32];
         System.Text.Encoding.ASCII.GetBytes(me.space).CopyTo(textBuffer, 0);
         buffer.AddRange(textBuffer);
@@ -28,11 +28,10 @@ class Block18 : BlockType, IBlocktype, IDisableable
 
     public void Read(byte[] buffer, ref int pos)
     {
-        byte[] tempPosB = new byte[16];
-        System.Array.Copy(buffer, pos, tempPosB, 0, 16);
-        pos += 16;
-        this.unknownVector = new Vector3(System.BitConverter.ToSingle(tempPosB, 0), System.BitConverter.ToSingle(tempPosB, 8), System.BitConverter.ToSingle(tempPosB, 4));
-        float scale = System.BitConverter.ToSingle(tempPosB, 12);
+        this.unknownVector = Instruments.ReadV4(buffer,pos);
+        pos+=12;
+        scale = unknownVector.w;
+        pos+=4;
         byte[] newbuff = new byte[32];
         System.Array.Copy(buffer, pos, newbuff, 0, 32);
         pos += 32;
@@ -42,8 +41,6 @@ class Block18 : BlockType, IBlocktype, IDisableable
         string block = System.Text.Encoding.UTF8.GetString(newbuff).Replace("\x0", string.Empty);
         me = thisObject.AddComponent<InvokeMe>();
         me.space = space;
-        //me.tempSpace = tempPos;
-        //me.tempScale = scale;
         me.blocks = block;
         me.GO = script.transform;
         script.InvokeBlocks.Add(thisObject);

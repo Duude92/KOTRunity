@@ -7,9 +7,10 @@ class Block20 : BlockType, IBlocktype
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
     MeshCollider col;
     List<Vector3> vertices = new List<Vector3>();
-    int a = 0, b = 0, c = 0;
-    float d = 0;
+    [SerializeField] int a = 0, b = 0, c = 0;
     [SerializeField] private char[] keyName = new char[12];
+    [SerializeField] private float height;
+    [SerializeField] private List<int> parameters = new List<int>();
     public byte[] GetBytes()
     {
         List<byte> buffer = new List<byte>();
@@ -21,16 +22,26 @@ class Block20 : BlockType, IBlocktype
         buffer.AddRange(System.BitConverter.GetBytes(a));//TODO: vCount?
         buffer.AddRange(System.BitConverter.GetBytes(b));//TODO: vCount?
         buffer.AddRange(System.BitConverter.GetBytes(c));//TODO: vCount?
-        for (int i = 0; i < c; i++)
+        if (c != 4)
         {
-            if (i == 0)
+            for (int i = 0; i < c; i++)
             {
-                buffer.AddRange(System.BitConverter.GetBytes(d));
+                if (i == 0)
+                {
+                    buffer.AddRange(System.BitConverter.GetBytes(height));
+                }
+                else
+                {
+                    buffer.AddRange(System.BitConverter.GetBytes(parameters[i - 1]));
+                }
             }
-            else
-            {
-                buffer.AddRange(System.BitConverter.GetBytes(0));
-            }
+        }
+        else
+        {
+            buffer.AddRange(System.BitConverter.GetBytes(height));
+            byte[] buff = new byte[12];
+            System.Text.Encoding.ASCII.GetBytes(keyName).CopyTo(buff, 0);
+            buffer.AddRange(buff);
         }
         // if (c == 4)
         // {
@@ -56,7 +67,7 @@ class Block20 : BlockType, IBlocktype
     public void Read(byte[] buffer, ref int pos)
     {
         this.Type = 20;
-        this.unknownVector = Instruments.ReadV3(buffer,pos);
+        this.unknownVector = Instruments.ReadV4(buffer, pos);
         pos += 16;
         int vertNum = System.BitConverter.ToInt32(buffer, pos);
         pos += 4;
@@ -76,24 +87,11 @@ class Block20 : BlockType, IBlocktype
 
         if (c == 4)
         {
-            d = System.BitConverter.ToSingle(buffer, pos);
+            height = System.BitConverter.ToSingle(buffer, pos);
             pos += 4;
             System.Array.Copy(buffer, pos, keyName, 0, 12);
             pos += 12;
 
-        }
-        else if (c == 0)
-        {
-            for (int i = 0; i < newParam; i++)
-            {
-                if (i == 0)
-                {
-                    height = System.BitConverter.ToSingle(buffer, pos);
-                    pos += 4;
-                }
-                else
-                    pos += 4;
-            }
         }
         else
         {
@@ -102,10 +100,14 @@ class Block20 : BlockType, IBlocktype
                 if (i == 0)
                 {
                     height = System.BitConverter.ToSingle(buffer, pos);
-                    pos += 4;
                 }
                 else
-                    pos += 4;
+                {
+                    parameters.Add(System.BitConverter.ToInt32(buffer, pos));
+                }
+                pos += 4;
+
+
             }
         }
 

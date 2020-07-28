@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
-class Block40 : BlockType, IBlocktype, IDisableable
+
+public class Block40 : BlockType, IBlocktype, IDisableable
 {
     UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
@@ -8,6 +9,21 @@ class Block40 : BlockType, IBlocktype, IDisableable
     private string iName = "Plus";
     private AGenerator generator;
     private Vector3 gPosition;
+    public static Dictionary<string, System.Type> generators = new Dictionary<string, System.Type>();
+    //private string KeyByValue;
+    private string KeyByValue(Dictionary<string, System.Type> dict, System.Type val)
+    {
+        string key = default;
+        foreach (KeyValuePair<string, System.Type> pair in dict)
+        {
+            if (EqualityComparer<System.Type>.Default.Equals(pair.Value, val))
+            {
+                key = pair.Key;
+                break;
+            }
+        }
+        return key;
+    }
     public Block40()
     {
         GameManager.RegisterDisableale(this);
@@ -17,28 +33,33 @@ class Block40 : BlockType, IBlocktype, IDisableable
     {
         List<byte> buffer = new List<byte>();
         buffer.AddRange(Instruments.Vector3ToBytesRevert(thisObject.transform.position));
-        buffer.AddRange(System.BitConverter.GetBytes(GI.Scale));
+        buffer.AddRange(System.BitConverter.GetBytes(generator.scale));
 
         buffer.AddRange(new byte[32]);
         byte[] genName = new byte[32];
-        System.Text.Encoding.ASCII.GetBytes(GI.invokeName).CopyTo(genName, 0);
+        System.Text.Encoding.ASCII.GetBytes(KeyByValue(generators, generator.GetType())).CopyTo(genName, 0);
         buffer.AddRange(genName);
-        buffer.AddRange(System.BitConverter.GetBytes(GI.Type));
-        buffer.AddRange(System.BitConverter.GetBytes(GI.hernja));
-        int pCount = GI.Params.Count;
+        buffer.AddRange(generator.GetBytes());
+
+        /*
+        buffer.AddRange(System.BitConverter.GetBytes(generator.Type));
+        buffer.AddRange(System.BitConverter.GetBytes(generator.hernja));
+        int pCount = generator.Params.Count;
         buffer.AddRange(System.BitConverter.GetBytes(pCount));
         byte[] newBuff = new byte[pCount * 4];
         for (int i = 0; i < pCount; i++)
         {
             System.BitConverter.GetBytes(GI.Params[i]).CopyTo(newBuff, i * 4);
         }
-        buffer.AddRange(newBuff);
+        buffer.AddRange(newBuff);*/
 
         return buffer.ToArray();
     }
 
     public void Read(byte[] buffer, ref int pos)
     {
+
+
 
         List<float> Params = new List<float>();
         byte[] newBuff = new byte[16];
@@ -59,38 +80,17 @@ class Block40 : BlockType, IBlocktype, IDisableable
         pos += 32;
 
         string Generator = System.Text.Encoding.UTF8.GetString(GenBytes).Trim(new char[] { '\0' });
-        switch (Generator)
+        System.Type type;
+        if (!generators.TryGetValue(Generator, out type))
         {
-            case "$$WeldingSparkles":
-                {
-                    generator = gameObject.AddComponent<WeldingSparkles>();
-
-                    break;
-                }
-            case "$$TreeGenerator1":
-                {
-                    generator = gameObject.AddComponent<TreeGenerator1>();
-                    break;
-                }
-            case "$$People":
-                {
-                    generator = gameObject.AddComponent<People>();
-                    break;
-                }
-            case "$$DynamicGlow":
-                {
-                    generator = gameObject.AddComponent<Glow>();
-                    break;
-                }
-            default:
-                {
-                    generator = gameObject.AddComponent<GDefault>();
-                    Debug.Log("Not found generator for: " + Generator, gameObject);
-                    break;
-                }
+            type = typeof(GDefault);
+            Debug.Log("Not found generator for: " + Generator + ". Scene couldnt be exported.", gameObject);
         }
+
+        generator = (AGenerator)gameObject.AddComponent(type);
         generator.InitRead(buffer, ref pos);
         generator.ReadParameters(buffer, ref pos);
+        generator.scale = scale;
         iName = generator.Name;
         gPosition = generator.position;
 
@@ -115,20 +115,16 @@ class Block40 : BlockType, IBlocktype, IDisableable
             GI.Params = Params;
         }
 
-        if (Generator == "$$GeneratorOfTerrain")
-        {
-            iName = "Terrain";
-        }
-
-        else
-        {
-        }
-
     }
-    void OnDrawGizmos()
-    {
 
-        //Gizmos.DrawIcon(gPosition + Vector3.up * 2, iName, true);
+    public static void Register()
+    {
+        generators.Add("$$WeldingSparkles", typeof(WeldingSparkles));
+        generators.Add("$$TreeGenerator1", typeof(TreeGenerator1));
+        generators.Add("$$People", typeof(People));
+        generators.Add("$$DynamicGlow", typeof(Glow));
+        generators.Add("$$GeneratorOfTerrain", typeof(Terrain));
+
     }
     public void Disable()
     {
@@ -139,14 +135,30 @@ class Block40 : BlockType, IBlocktype, IDisableable
     {
         GI.Generate();
     }
+    public override void ClosingEvent()
+    {
+        base.ClosingEvent();
+    }
+
+
+
+
+
+
+
 }
-abstract class AGenerator : MonoBehaviour
+
+
+
+
+abstract class AGenerator : MonoBehaviour, IDisableable
 {
     [SerializeField] private List<float> Params = new List<float>();
     public abstract Vector3 position { get; set; }
     public abstract string Name { get; set; }
     protected int paramCount;
-    [SerializeField] private int gType, xz;
+    [SerializeField] protected int gType, xz;
+    public float scale;
     public virtual void InitRead(byte[] buffer, ref int pos)
     {
         gType = System.BitConverter.ToInt32(buffer, pos);
@@ -165,10 +177,34 @@ abstract class AGenerator : MonoBehaviour
         }
     }
     public abstract void Generate();
+    public virtual byte[] GetBytes()
+    {
+        List<byte> buffer = new List<byte>();
+        buffer.AddRange(System.BitConverter.GetBytes(gType));
+        buffer.AddRange(System.BitConverter.GetBytes(xz));
+        buffer.AddRange(System.BitConverter.GetBytes(Params.Count));
+        for (int i = 0; i < paramCount; i++)
+        {
+            buffer.AddRange(System.BitConverter.GetBytes(Params[i]));
+        }
+
+
+        return buffer.ToArray();
+    }
     public virtual void OnDrawGizmos()
     {
         Gizmos.DrawIcon(position + Vector3.up * 2, Name, true);
 
+    }
+
+    public void Disable()
+    {
+
+    }
+
+    public void Enable()
+    {
+        //TODO: генерировать всю чепуху в гизмо
     }
 }
 class Terrain : AGenerator
@@ -235,6 +271,18 @@ class WeldingSparkles : AGenerator
     public override void Generate()
     {
         throw new System.NotImplementedException();
+    }
+    public override byte[] GetBytes()
+    {
+        List<byte> buffer = new List<byte>();
+        buffer.AddRange(System.BitConverter.GetBytes(gType));
+        buffer.AddRange(System.BitConverter.GetBytes(xz));
+        buffer.AddRange(Instruments.Vector3ToBytesRevert(position));
+        buffer.AddRange(Instruments.Vector2ToBytes(someVector));
+        buffer.AddRange(System.BitConverter.GetBytes(someVar));
+
+
+        return buffer.ToArray();
     }
 
     public override void ReadParameters(byte[] buffer, ref int pos)

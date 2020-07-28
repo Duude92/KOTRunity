@@ -51,6 +51,8 @@ class KOTRManager : EditorWindow
         GameManager.TC = tc;
         GameManager.TCu = tc;
 
+        Block40.Register();
+
     }
     void OnGUI()
     {

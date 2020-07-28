@@ -6,6 +6,11 @@ class Block14 : BlockType, IBlocktype
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
     BlockSwitcher switcher;
     SphereCollider sc;
+    [SerializeField] Vector4 newVector;
+    [SerializeField] Vector2 doubleVector;
+    [SerializeField] float someFloat;
+
+
     public byte[] GetBytes()
     {
         List<byte> buffer = new List<byte>();
@@ -20,10 +25,15 @@ class Block14 : BlockType, IBlocktype
 
     public void Read(byte[] buffer, ref int pos)
     {
+        unknownVector = Instruments.ReadV4(buffer, pos);
         pos += 16;
+        newVector = Instruments.ReadV4(buffer, pos);
+
         pos += 16;
+        doubleVector = Instruments.ReadV2(buffer, pos);
+        pos += 8;
+        someFloat = System.BitConverter.ToInt32(buffer, pos);
         pos += 4;
 
-        pos += 8;
     }
 }
