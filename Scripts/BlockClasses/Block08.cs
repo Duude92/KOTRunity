@@ -33,18 +33,20 @@ public class Block08 : BlockType, IBlocktype
             //buffer.AddRange(new byte[8]); //1f, 32767
             List<byte> face = new List<byte>();
             face.AddRange(System.BitConverter.GetBytes(matNum[i])); //TODO: MATNUM
-            int vCount = mesh.GetIndices(i).Length;
+            int[] faces = facesData1[i].ToArray();//mesh.GetIndices(i);
+
+            int vCount = faces.Length;//mesh.GetIndices(i).Length;
 
 
             face.AddRange(System.BitConverter.GetBytes(vCount)); //count vertices in face???
 
-            int[] faces = facesData1[i].ToArray();//mesh.GetIndices(i);
             if ((formats[i] == 178) || (formats[i] == 50))
             {
+                //vCount = faces.Length;
                 for (int j = 0; j < vCount; j++)
                 {
-                    face.AddRange(System.BitConverter.GetBytes(faces[vCount]));//TODO: Похоже что везде нужно vCount-1-j, но не факт
-                    face.AddRange(Instruments.Vector2ToBytes(mesh.uv[faces[vCount]]));
+                    face.AddRange(System.BitConverter.GetBytes(faces[j]));//TODO: Похоже что везде нужно vCount-1-j, но не факт
+                    face.AddRange(Instruments.Vector2ToBytes(mesh.uv[faces[j]]));
                     face.AddRange(new byte[12]);
                 }
             }
@@ -52,15 +54,15 @@ public class Block08 : BlockType, IBlocktype
             {
                 for (int j = 0; j < vCount; j++)
                 {
-                    face.AddRange(System.BitConverter.GetBytes(faces[vCount - 1 - j]));
-                    face.AddRange(Instruments.Vector2ToBytes(mesh.uv[faces[vCount - 1 - j]]));
+                    face.AddRange(System.BitConverter.GetBytes(faces[j]));
+                    face.AddRange(Instruments.Vector2ToBytes(mesh.uv[faces[ j]]));
                 }
             }
             else if ((formats[i] == 176) || (formats[i] == 48) || (formats[i] == 179) || (formats[i] == 51))
             {
                 for (int j = 0; j < vCount; j++)
                 {
-                    face.AddRange(System.BitConverter.GetBytes(faces[vCount - 1 - j]));
+                    face.AddRange(System.BitConverter.GetBytes(faces[j]));
                     face.AddRange(new byte[12]);
                 }
             }
@@ -68,7 +70,7 @@ public class Block08 : BlockType, IBlocktype
             {
                 for (int j = 0; j < vCount; j++)
                 {
-                    face.AddRange(System.BitConverter.GetBytes(faces[vCount - 1 - j]));
+                    face.AddRange(System.BitConverter.GetBytes(faces[j]));
                     face.AddRange(new byte[4]);
                 }
             }
@@ -76,7 +78,7 @@ public class Block08 : BlockType, IBlocktype
             {
                 for (int j = 0; j < vCount; j++)
                 {
-                    face.AddRange(System.BitConverter.GetBytes(faces[vCount - 1 - j]));
+                    face.AddRange(System.BitConverter.GetBytes(faces[j]));
                 }
             }
             else if (((formats[i] == 144) || (formats[i] == 129)) || true)
@@ -97,7 +99,7 @@ public class Block08 : BlockType, IBlocktype
                 face.AddRange(System.BitConverter.GetBytes(vCount));
                 for (int j = 0; j < vCount; j++)
                 {
-                    face.AddRange(System.BitConverter.GetBytes(faces[vCount - 1 - j]));
+                    face.AddRange(System.BitConverter.GetBytes(faces[j]));
                 }
 
                 // foreach (var ind in face_old)
