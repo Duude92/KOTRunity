@@ -1,16 +1,57 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEditor;
+
+public enum EGenerator
+{
+    WeldingSparkles,
+    TreeGenerator1,
+    People,
+    DynamicGlow,
+    GeneratorOfTerrain,
+}
+[CustomEditor(typeof(Block40))]
+public class Block40Editor : Editor
+{
+    EGenerator generator;
+    Block40 targ;
+    public override void OnInspectorGUI()
+    {
+        targ = (Block40)target;
+        ((BlockType)target).Type = UnityEditor.EditorGUILayout.IntField("Unknown vector", ((BlockType)target).Type);
+
+        ((BlockType)target).unknownVector = UnityEditor.EditorGUILayout.Vector4Field("Unknown vector", ((BlockType)target).unknownVector);
+
+        generator = (EGenerator)UnityEditor.EditorGUILayout.EnumPopup("Generator type", targ.generatorType);
+        if (generator != targ.generatorType)
+        {
+            targ.generatorType = generator;
+
+            targ.NewGenerator();
+
+        }
+    }
+}
 
 public class Block40 : BlockType, IBlocktype, IDisableable
 {
     UnityEngine.GameObject _thisObject;
-    public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
+    public UnityEngine.GameObject thisObject { get { if (_thisObject) return _thisObject; else return _thisObject; } set => _thisObject = value; }
     GeneratorInvoker GI;
     private string iName = "Plus";
     private AGenerator generator;
     private Vector3 gPosition;
     public static Dictionary<string, System.Type> generators = new Dictionary<string, System.Type>();
-    //private string KeyByValue;
+    public EGenerator generatorType;
+
+    public void NewGenerator()
+    {
+        DestroyImmediate(generator);
+        System.Type type;
+        generators.TryGetValue("$$" + generatorType.ToString(), out type);
+        generator = (AGenerator)gameObject.AddComponent(type);
+    }
+
     private string KeyByValue(Dictionary<string, System.Type> dict, System.Type val)
     {
         string key = default;
@@ -31,8 +72,17 @@ public class Block40 : BlockType, IBlocktype, IDisableable
     }
     public byte[] GetBytes()
     {
+        if (!generator)
+        {
+            generator = GetComponent<AGenerator>();
+        }
+        if (!generator)
+        {
+
+            throw new System.Exception("Generator not found");
+        }
         List<byte> buffer = new List<byte>();
-        buffer.AddRange(Instruments.Vector3ToBytesRevert(thisObject.transform.position));
+        buffer.AddRange(Instruments.Vector3ToBytesRevert(gameObject.transform.position));
         buffer.AddRange(System.BitConverter.GetBytes(generator.scale));
 
         buffer.AddRange(new byte[32]);
@@ -41,35 +91,19 @@ public class Block40 : BlockType, IBlocktype, IDisableable
         buffer.AddRange(genName);
         buffer.AddRange(generator.GetBytes());
 
-        /*
-        buffer.AddRange(System.BitConverter.GetBytes(generator.Type));
-        buffer.AddRange(System.BitConverter.GetBytes(generator.hernja));
-        int pCount = generator.Params.Count;
-        buffer.AddRange(System.BitConverter.GetBytes(pCount));
-        byte[] newBuff = new byte[pCount * 4];
-        for (int i = 0; i < pCount; i++)
-        {
-            System.BitConverter.GetBytes(GI.Params[i]).CopyTo(newBuff, i * 4);
-        }
-        buffer.AddRange(newBuff);*/
-
         return buffer.ToArray();
     }
 
     public void Read(byte[] buffer, ref int pos)
     {
-
-
-
         List<float> Params = new List<float>();
         byte[] newBuff = new byte[16];
-        //
         System.Array.Copy(buffer, pos, newBuff, 0, 16);
         pos += 16;
 
 
         Vector3 position = new Vector3(System.BitConverter.ToSingle(newBuff, 0), System.BitConverter.ToSingle(newBuff, 8), System.BitConverter.ToSingle(newBuff, 4));
-        thisObject.transform.position = position;
+        gameObject.transform.position = position;
         float scale = System.BitConverter.ToSingle(newBuff, 12);
 
         pos += 32;  //null
@@ -80,6 +114,9 @@ public class Block40 : BlockType, IBlocktype, IDisableable
         pos += 32;
 
         string Generator = System.Text.Encoding.UTF8.GetString(GenBytes).Trim(new char[] { '\0' });
+        generatorType = (EGenerator)System.Enum.Parse(typeof(EGenerator), Generator.Substring(2));
+
+
         System.Type type;
         if (!generators.TryGetValue(Generator, out type))
         {
@@ -105,7 +142,7 @@ public class Block40 : BlockType, IBlocktype, IDisableable
             {
                 Params.Add(System.BitConverter.ToSingle(buffer, pos)); pos += 4;
             }
-            GI = thisObject.AddComponent<GeneratorInvoker>();
+            GI = gameObject.AddComponent<GeneratorInvoker>();
             GI.resOb = script.gameObject;
 
             GI.Scale = scale;
@@ -140,16 +177,7 @@ public class Block40 : BlockType, IBlocktype, IDisableable
         base.ClosingEvent();
     }
 
-
-
-
-
-
-
 }
-
-
-
 
 abstract class AGenerator : MonoBehaviour, IDisableable
 {
@@ -157,7 +185,9 @@ abstract class AGenerator : MonoBehaviour, IDisableable
     public abstract Vector3 position { get; set; }
     public abstract string Name { get; set; }
     protected int paramCount;
-    [SerializeField] protected int gType, xz;
+    [Tooltip("gType for TreeGenerator1 is for tree type:\n19 is for blue spruce\n3 is for green spruce")]
+    [SerializeField] protected int gType;
+    [SerializeField] protected int xz;
     public float scale;
     public virtual void InitRead(byte[] buffer, ref int pos)
     {
@@ -183,13 +213,28 @@ abstract class AGenerator : MonoBehaviour, IDisableable
         buffer.AddRange(System.BitConverter.GetBytes(gType));
         buffer.AddRange(System.BitConverter.GetBytes(xz));
         buffer.AddRange(System.BitConverter.GetBytes(Params.Count));
-        for (int i = 0; i < paramCount; i++)
+        for (int i = 0; i < Params.Count; i++)
         {
             buffer.AddRange(System.BitConverter.GetBytes(Params[i]));
         }
 
 
         return buffer.ToArray();
+    }
+    [UnityEditor.MenuItem("KOTR Editor/New Generator")]
+    public static void New()
+    {
+        RaycastHit raycastHit;
+        if (Physics.Raycast(UnityEditor.SceneView.lastActiveSceneView.camera.transform.position, UnityEditor.SceneView.lastActiveSceneView.camera.transform.forward, out raycastHit))
+        {
+            GameObject gameObject = new GameObject();
+            gameObject.transform.position = raycastHit.point;
+            //gameObject.transform.parent = raycastHit.transform.parent;
+            Block40 blk = gameObject.AddComponent<Block40>();
+            blk.Type = 40;
+            blk.NewGenerator();
+            UnityEditor.Selection.activeGameObject = gameObject;
+        }
     }
     public virtual void OnDrawGizmos()
     {
@@ -252,7 +297,6 @@ class TreeGenerator1 : AGenerator
 {
     public override string Name { get => "Tree"; set => throw new System.NotImplementedException(); }
     public override Vector3 position { get => transform.position; set { } }
-
     public override void Generate()
     {
         throw new System.NotImplementedException();
@@ -262,23 +306,33 @@ class TreeGenerator1 : AGenerator
 }
 class WeldingSparkles : AGenerator
 {
-    private Vector3 _position;
-    [SerializeField] private Vector2 someVector;
+    //[SerializeField] private Vector3 _position;
+    [SerializeField] private Vector2 radiusRightLeft;
     [SerializeField] private int someVar;
     public override string Name { get => "Sparkles"; set { } }
-    public override Vector3 position { get => _position; set => _position = value; }
-    [SerializeField] private List<float> Params = new List<float>();
+    public override Vector3 position { get => transform.position; set { transform.position = value; } }
     public override void Generate()
     {
         throw new System.NotImplementedException();
     }
+    public override void OnDrawGizmos()
+    {
+        Gizmos.DrawIcon(position + Vector3.up * 2, Name, true);
+        if (UnityEditor.Selection.activeGameObject == gameObject)
+            Gizmos.DrawWireSphere(position + Vector3.up * 2, radiusRightLeft.x);
+    }
+    // public override void New()
+    // {
+    //     //UnityEditor.SceneView.lastActiveSceneView.camera.ScreenPointToRay()
+    // }
     public override byte[] GetBytes()
     {
         List<byte> buffer = new List<byte>();
         buffer.AddRange(System.BitConverter.GetBytes(gType));
         buffer.AddRange(System.BitConverter.GetBytes(xz));
+        buffer.AddRange(System.BitConverter.GetBytes(6));
         buffer.AddRange(Instruments.Vector3ToBytesRevert(position));
-        buffer.AddRange(Instruments.Vector2ToBytes(someVector));
+        buffer.AddRange(Instruments.Vector2ToBytes(radiusRightLeft));
         buffer.AddRange(System.BitConverter.GetBytes(someVar));
 
 
@@ -291,7 +345,7 @@ class WeldingSparkles : AGenerator
         position = Instruments.ReadV3(buffer, pos);
         pos += 12;
         paramCount -= 3;
-        someVector = Instruments.ReadV2(buffer, pos);
+        radiusRightLeft = Instruments.ReadV2(buffer, pos);
         pos += 8;
         paramCount -= 2;
         someVar = System.BitConverter.ToInt32(buffer, pos);

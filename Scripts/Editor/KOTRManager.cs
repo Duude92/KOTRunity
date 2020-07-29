@@ -37,7 +37,7 @@ class KOTRManager : EditorWindow
         SceneView.duringSceneGui -= OnSceneGUI;
     }
 
-    [MenuItem("Window/KOTR Loader")]
+    [MenuItem("KOTR Editor/KOTR Loader")]
     static void Init()
     {
         string shdr = PlayerPrefs.GetString("shader", "");
