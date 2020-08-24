@@ -79,8 +79,9 @@ class Block28 : BlockType, IBlocktype
         return buffer.ToArray();
     }
 
-    public void Read(byte[] buffer, ref int pos)
+    public void Read(byte[] buffer, ref int pos) //FIXME: Не определился как его генерировать, работает не правильно
     {
+        Debug.Log(this,gameObject);
         Transform tr = script.GetParentVertices(transform);
         IVerticesBlock bt1 = tr.GetComponent<BlockType>() as IVerticesBlock;
 
@@ -100,6 +101,11 @@ class Block28 : BlockType, IBlocktype
         uvs.Add(new Vector2(1, 0));
         uvs.Add(new Vector2(0, 1));
         uvs.Add(new Vector2(1, 1));
+        for (int i = 4; i<bt1.vertices.Count;i++)
+        {
+            uvs.Add(new Vector2(0,0));
+        }
+        Debug.LogWarning(bt1.vertices.Count + " " + uvs.Count);
         me.uv = uvs.ToArray();
 
         me.normals = bt1.normals.ToArray();
