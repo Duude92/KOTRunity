@@ -235,7 +235,7 @@ public class Block08 : BlockType, IBlocktype
 
                 }
             }
-            else if (((format == 144) || (format == 129)))
+            else if (((format == 144) || (format == 129))|| (format == 128))
             {
                 List<int> ax = new List<int>();
                 for (int j = 0; j < j_null; j++)
