@@ -54,7 +54,7 @@ LightmapSettings:
     m_EnableBakedLightmaps: 1
     m_EnableRealtimeLightmaps: 0
   m_LightmapEditorSettings:
-    serializedVersion: 10
+    serializedVersion: 12
     m_Resolution: 2
     m_BakeResolution: 40
     m_AtlasSize: 1024
@@ -62,6 +62,7 @@ LightmapSettings:
     m_AOMaxDistance: 1
     m_CompAOExponent: 1
     m_CompAOExponentDirect: 0
+    m_ExtractAmbientOcclusion: 0
     m_Padding: 2
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
@@ -76,10 +77,16 @@ LightmapSettings:
     m_PVRDirectSampleCount: 32
     m_PVRSampleCount: 500
     m_PVRBounces: 2
+    m_PVREnvironmentSampleCount: 500
+    m_PVREnvironmentReferencePointCount: 2048
+    m_PVRFilteringMode: 2
+    m_PVRDenoiserTypeDirect: 0
+    m_PVRDenoiserTypeIndirect: 0
+    m_PVRDenoiserTypeAO: 0
     m_PVRFilterTypeDirect: 0
     m_PVRFilterTypeIndirect: 0
     m_PVRFilterTypeAO: 0
-    m_PVRFilteringMode: 2
+    m_PVREnvironmentMIS: 0
     m_PVRCulling: 1
     m_PVRFilteringGaussRadiusDirect: 1
     m_PVRFilteringGaussRadiusIndirect: 5
@@ -88,6 +95,7 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaIndirect: 2
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ShowResolutionOverlay: 1
+    m_ExportTrainingData: 0
   m_LightingDataAsset: {fileID: 0}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -112,73 +120,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &134625570
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 134625572}
-  - component: {fileID: 134625571}
-  m_Layer: 0
-  m_Name: Root
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &134625571
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 134625570}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8755ee8bf1faf1b458fa9673e021b481, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TC2: {fileID: 0}
-  TCu2: {fileID: 0}
-  MainRooms: []
-  Rooms: []
-  LoaT: []
-  currentCamera: {fileID: 0}
-  CarNode: {fileID: 0}
---- !u!4 &134625572
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 134625570}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 1956053932}
-  - {fileID: 1763926715}
-  - {fileID: 1386613091}
-  m_Father: {fileID: 0}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!115 &564268439
-MonoScript:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  serializedVersion: 5
-  m_Script: 
-  m_DefaultReferences: {}
-  m_Icon: {fileID: 0}
-  m_ExecutionOrder: 0
-  m_ClassName: Soundfiles
-  m_Namespace: 
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -204,12 +145,13 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705507993}
   m_Enabled: 1
-  serializedVersion: 8
+  serializedVersion: 9
   m_Type: 1
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
+  m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
     m_Type: 2
@@ -219,6 +161,24 @@ Light:
     m_Bias: 0.05
     m_NormalBias: 0.4
     m_NearPlane: 0.2
+    m_CullingMatrixOverride:
+      e00: 1
+      e01: 0
+      e02: 0
+      e03: 0
+      e10: 0
+      e11: 1
+      e12: 0
+      e13: 0
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+    m_UseCullingMatrixOverride: 0
   m_Cookie: {fileID: 0}
   m_DrawHalo: 0
   m_Flare: {fileID: 0}
@@ -226,12 +186,15 @@ Light:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+  m_RenderingLayerMask: 1
   m_Lightmapping: 1
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
 --- !u!4 &705507995
@@ -277,13 +240,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8755ee8bf1faf1b458fa9673e021b481, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TC2: {fileID: 4800000, guid: 1800c63b4f4533449981437378b85b13, type: 3}
-  TCu2: {fileID: 4800000, guid: 1800c63b4f4533449981437378b85b13, type: 3}
   MainRooms: []
   Rooms: []
-  LoaT: []
-  currentCamera: {fileID: 0}
-  CarNode: {fileID: 0}
 --- !u!4 &922373425
 Transform:
   m_ObjectHideFlags: 0
@@ -336,9 +294,10 @@ Camera:
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
-  m_GateFitMode: 2
   m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
@@ -380,758 +339,3 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1386613090
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1386613091}
-  - component: {fileID: 1386613095}
-  - component: {fileID: 1386613094}
-  - component: {fileID: 1386613093}
-  - component: {fileID: 1386613092}
-  m_Layer: 0
-  m_Name: COMMON
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1386613091
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1386613090}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 134625572}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1386613092
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1386613090}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 564268439}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  wavs:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
---- !u!114 &1386613093
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1386613090}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1735607971}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  colors:
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4282335039
-  - serializedVersion: 2
-    rgba: 4286545791
-  - serializedVersion: 2
-    rgba: 4290756543
-  - serializedVersion: 2
-    rgba: 4294967295
-  - serializedVersion: 2
-    rgba: 4278190335
-  - serializedVersion: 2
-    rgba: 4278255615
-  - serializedVersion: 2
-    rgba: 4294902015
-  - serializedVersion: 2
-    rgba: 4278913803
-  - serializedVersion: 2
-    rgba: 4278453252
-  - serializedVersion: 2
-    rgba: 4293316045
-  - serializedVersion: 2
-    rgba: 4281545523
-  - serializedVersion: 2
-    rgba: 4280819220
-  - serializedVersion: 2
-    rgba: 4278979596
-  - serializedVersion: 2
-    rgba: 4281019179
-  - serializedVersion: 2
-    rgba: 4280268543
-  - serializedVersion: 2
-    rgba: 4294964468
-  - serializedVersion: 2
-    rgba: 4290228913
-  - serializedVersion: 2
-    rgba: 4285558896
-  - serializedVersion: 2
-    rgba: 4280163870
-  - serializedVersion: 2
-    rgba: 4279841576
-  - serializedVersion: 2
-    rgba: 4290228913
-  - serializedVersion: 2
-    rgba: 4294967295
-  - serializedVersion: 2
-    rgba: 4294967295
-  - serializedVersion: 2
-    rgba: 4279703307
-  - serializedVersion: 2
-    rgba: 4283585106
-  - serializedVersion: 2
-    rgba: 4284440415
-  - serializedVersion: 2
-    rgba: 4285295724
-  - serializedVersion: 2
-    rgba: 4286151033
-  - serializedVersion: 2
-    rgba: 4286940549
-  - serializedVersion: 2
-    rgba: 4287795858
-  - serializedVersion: 2
-    rgba: 4288651167
-  - serializedVersion: 2
-    rgba: 4289506476
-  - serializedVersion: 2
-    rgba: 4292006610
-  - serializedVersion: 2
-    rgba: 4294506744
-  - serializedVersion: 2
-    rgba: 4282334003
-  - serializedVersion: 2
-    rgba: 4289300588
-  - serializedVersion: 2
-    rgba: 4279779123
-  - serializedVersion: 2
-    rgba: 4278190309
-  - serializedVersion: 2
-    rgba: 4278203391
-  - serializedVersion: 2
-    rgba: 4293316045
-  - serializedVersion: 2
-    rgba: 4293316045
-  - serializedVersion: 2
-    rgba: 4278203391
-  - serializedVersion: 2
-    rgba: 4279909160
-  - serializedVersion: 2
-    rgba: 4278190257
-  - serializedVersion: 2
-    rgba: 4278969572
-  - serializedVersion: 2
-    rgba: 4280163870
-  - serializedVersion: 2
-    rgba: 4279841576
-  - serializedVersion: 2
-    rgba: 4294960870
-  - serializedVersion: 2
-    rgba: 4278255873
-  - serializedVersion: 2
-    rgba: 4290228913
-  - serializedVersion: 2
-    rgba: 4285558896
-  - serializedVersion: 2
-    rgba: 4280268543
-  - serializedVersion: 2
-    rgba: 4294964468
-  - serializedVersion: 2
-    rgba: 4279703307
-  - serializedVersion: 2
-    rgba: 4283585106
-  - serializedVersion: 2
-    rgba: 4284440415
-  - serializedVersion: 2
-    rgba: 4285295724
-  - serializedVersion: 2
-    rgba: 4286151033
-  - serializedVersion: 2
-    rgba: 4286940549
-  - serializedVersion: 2
-    rgba: 4287795858
-  - serializedVersion: 2
-    rgba: 4288651167
-  - serializedVersion: 2
-    rgba: 4289506476
-  - serializedVersion: 2
-    rgba: 4292006610
-  - serializedVersion: 2
-    rgba: 4294506744
-  - serializedVersion: 2
-    rgba: 4282334003
-  - serializedVersion: 2
-    rgba: 4289300588
-  - serializedVersion: 2
-    rgba: 4279779123
-  - serializedVersion: 2
-    rgba: 4278190309
-  - serializedVersion: 2
-    rgba: 4292006610
-  - serializedVersion: 2
-    rgba: 4294506744
-  - serializedVersion: 2
-    rgba: 4282334003
-  - serializedVersion: 2
-    rgba: 4289300588
-  - serializedVersion: 2
-    rgba: 4279779123
-  - serializedVersion: 2
-    rgba: 4278255873
-  - serializedVersion: 2
-    rgba: 4290228913
-  - serializedVersion: 2
-    rgba: 4285558896
-  - serializedVersion: 2
-    rgba: 4280268543
-  - serializedVersion: 2
-    rgba: 4294964468
-  - serializedVersion: 2
-    rgba: 4279703307
-  - serializedVersion: 2
-    rgba: 4283585106
-  - serializedVersion: 2
-    rgba: 4284440415
-  - serializedVersion: 2
-    rgba: 4285295724
-  - serializedVersion: 2
-    rgba: 4286151033
-  - serializedVersion: 2
-    rgba: 4286940549
-  - serializedVersion: 2
-    rgba: 4287795858
-  - serializedVersion: 2
-    rgba: 4288651167
-  - serializedVersion: 2
-    rgba: 4289506476
-  - serializedVersion: 2
-    rgba: 4292006610
-  - serializedVersion: 2
-    rgba: 4294506744
-  - serializedVersion: 2
-    rgba: 4282334003
-  - serializedVersion: 2
-    rgba: 4289300588
-  - serializedVersion: 2
-    rgba: 4279779123
-  - serializedVersion: 2
-    rgba: 4292006610
-  - serializedVersion: 2
-    rgba: 4294506744
-  - serializedVersion: 2
-    rgba: 4282334003
-  - serializedVersion: 2
-    rgba: 4289300588
-  - serializedVersion: 2
-    rgba: 4279779123
-  - serializedVersion: 2
-    rgba: 4294960870
-  - serializedVersion: 2
-    rgba: 4278255873
-  - serializedVersion: 2
-    rgba: 4286611584
-  - serializedVersion: 2
-    rgba: 4290822336
-  - serializedVersion: 2
-    rgba: 4278255873
-  - serializedVersion: 2
-    rgba: 4294044639
-  - serializedVersion: 2
-    rgba: 4294967295
-  - serializedVersion: 2
-    rgba: 4290863971
-  - serializedVersion: 2
-    rgba: 4281232757
-  - serializedVersion: 2
-    rgba: 4290948249
-  - serializedVersion: 2
-    rgba: 4290102994
-  - serializedVersion: 2
-    rgba: 4283930064
-  - serializedVersion: 2
-    rgba: 4289309148
-  - serializedVersion: 2
-    rgba: 4279440147
-  - serializedVersion: 2
-    rgba: 4283058762
-  - serializedVersion: 2
-    rgba: 4283058762
-  - serializedVersion: 2
-    rgba: 4279440147
-  - serializedVersion: 2
-    rgba: 4279440147
-  - serializedVersion: 2
-    rgba: 4279440147
-  - serializedVersion: 2
-    rgba: 4279440147
-  - serializedVersion: 2
-    rgba: 4279440147
-  - serializedVersion: 2
-    rgba: 4279440147
-  - serializedVersion: 2
-    rgba: 4280641085
-  - serializedVersion: 2
-    rgba: 4280641085
-  - serializedVersion: 2
-    rgba: 4286735970
-  - serializedVersion: 2
-    rgba: 4286735970
-  - serializedVersion: 2
-    rgba: 4291019704
-  - serializedVersion: 2
-    rgba: 4291019704
-  - serializedVersion: 2
-    rgba: 4286086525
-  - serializedVersion: 2
-    rgba: 4281545523
-  - serializedVersion: 2
-    rgba: 4279909160
-  - serializedVersion: 2
-    rgba: 4278190257
-  - serializedVersion: 2
-    rgba: 4278969572
-  - serializedVersion: 2
-    rgba: 4279841576
-  - serializedVersion: 2
-    rgba: 4280163870
-  - serializedVersion: 2
-    rgba: 4279841576
-  - serializedVersion: 2
-    rgba: 4280163870
-  - serializedVersion: 2
-    rgba: 4294960870
-  - serializedVersion: 2
-    rgba: 4278255873
-  - serializedVersion: 2
-    rgba: 4290228913
-  - serializedVersion: 2
-    rgba: 4285558896
-  - serializedVersion: 2
-    rgba: 4280268543
-  - serializedVersion: 2
-    rgba: 4294964468
-  - serializedVersion: 2
-    rgba: 4292006610
-  - serializedVersion: 2
-    rgba: 4279703307
-  - serializedVersion: 2
-    rgba: 4283585106
-  - serializedVersion: 2
-    rgba: 4284440415
-  - serializedVersion: 2
-    rgba: 4285295724
-  - serializedVersion: 2
-    rgba: 4286151033
-  - serializedVersion: 2
-    rgba: 4286940549
-  - serializedVersion: 2
-    rgba: 4287795858
-  - serializedVersion: 2
-    rgba: 4288651167
-  - serializedVersion: 2
-    rgba: 4289506476
-  - serializedVersion: 2
-    rgba: 4294506744
-  - serializedVersion: 2
-    rgba: 4282334003
-  - serializedVersion: 2
-    rgba: 4289300588
-  - serializedVersion: 2
-    rgba: 4279779123
-  - serializedVersion: 2
-    rgba: 4294960870
-  - serializedVersion: 2
-    rgba: 4278255873
-  - serializedVersion: 2
-    rgba: 4292006610
-  - serializedVersion: 2
-    rgba: 4283585106
-  - serializedVersion: 2
-    rgba: 4284440415
-  - serializedVersion: 2
-    rgba: 4285295724
-  - serializedVersion: 2
-    rgba: 4286151033
-  - serializedVersion: 2
-    rgba: 4286940549
-  - serializedVersion: 2
-    rgba: 4287795858
-  - serializedVersion: 2
-    rgba: 4288651167
-  - serializedVersion: 2
-    rgba: 4289506476
-  - serializedVersion: 2
-    rgba: 4294506744
-  - serializedVersion: 2
-    rgba: 4282202163
-  - serializedVersion: 2
-    rgba: 4294044639
-  - serializedVersion: 2
-    rgba: 4294967295
-  - serializedVersion: 2
-    rgba: 4290863971
-  - serializedVersion: 2
-    rgba: 4281232757
-  - serializedVersion: 2
-    rgba: 4290863971
-  - serializedVersion: 2
-    rgba: 4294967295
-  - serializedVersion: 2
-    rgba: 4294967295
-  - serializedVersion: 2
-    rgba: 4290948249
-  - serializedVersion: 2
-    rgba: 4289309148
-  - serializedVersion: 2
-    rgba: 4283930064
-  - serializedVersion: 2
-    rgba: 4290102994
-  - serializedVersion: 2
-    rgba: 4290228913
-  - serializedVersion: 2
-    rgba: 4285558896
-  - serializedVersion: 2
-    rgba: 4280268543
-  - serializedVersion: 2
-    rgba: 4294964468
-  - serializedVersion: 2
-    rgba: 4294967295
-  - serializedVersion: 2
-    rgba: 4283058762
-  - serializedVersion: 2
-    rgba: 4283058762
-  - serializedVersion: 2
-    rgba: 4280641085
-  - serializedVersion: 2
-    rgba: 4280641085
-  - serializedVersion: 2
-    rgba: 4286735970
-  - serializedVersion: 2
-    rgba: 4286735970
-  - serializedVersion: 2
-    rgba: 4291019704
-  - serializedVersion: 2
-    rgba: 4291019704
-  - serializedVersion: 2
-    rgba: 4279909160
-  - serializedVersion: 2
-    rgba: 4278190257
-  - serializedVersion: 2
-    rgba: 4278969572
-  - serializedVersion: 2
-    rgba: 4286086525
-  - serializedVersion: 2
-    rgba: 4286086525
-  - serializedVersion: 2
-    rgba: 4279909160
-  - serializedVersion: 2
-    rgba: 4278190257
-  - serializedVersion: 2
-    rgba: 4278969572
-  - serializedVersion: 2
-    rgba: 4279440147
-  - serializedVersion: 2
-    rgba: 4279440147
-  - serializedVersion: 2
-    rgba: 4279440147
-  - serializedVersion: 2
-    rgba: 4279440147
-  - serializedVersion: 2
-    rgba: 4279440147
-  - serializedVersion: 2
-    rgba: 4279440147
-  - serializedVersion: 2
-    rgba: 4279440147
-  - serializedVersion: 2
-    rgba: 4294954137
-  - serializedVersion: 2
-    rgba: 4294954137
-  - serializedVersion: 2
-    rgba: 4289300588
-  - serializedVersion: 2
-    rgba: 4279779123
-  - serializedVersion: 2
-    rgba: 4292006610
-  - serializedVersion: 2
-    rgba: 4283585106
-  - serializedVersion: 2
-    rgba: 4284440415
-  - serializedVersion: 2
-    rgba: 4285295724
-  - serializedVersion: 2
-    rgba: 4286151033
-  - serializedVersion: 2
-    rgba: 4286940549
-  - serializedVersion: 2
-    rgba: 4287795858
-  - serializedVersion: 2
-    rgba: 4288651167
-  - serializedVersion: 2
-    rgba: 4289506476
-  - serializedVersion: 2
-    rgba: 4294506744
-  - serializedVersion: 2
-    rgba: 4282202163
-  - serializedVersion: 2
-    rgba: 4294960870
-  - serializedVersion: 2
-    rgba: 4278255873
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4291819519
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4278190080
-  - serializedVersion: 2
-    rgba: 4279384882
---- !u!114 &1386613094
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1386613090}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60c30b0084925784092f36c031b6e705, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TexInts: 
-  SwitchBlocks: []
-  InvokeBlocks: []
-  Blocks05: []
-  Rooms: []
-  LoadTriggers: []
-  ready: 0
---- !u!114 &1386613095
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1386613090}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58b745e0cc38d194d92a02b1875186de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!115 &1735607971
-MonoScript:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  serializedVersion: 5
-  m_Script: 
-  m_DefaultReferences: {}
-  m_Icon: {fileID: 0}
-  m_ExecutionOrder: 0
-  m_ClassName: Palettefiles
-  m_Namespace: 
---- !u!1 &1763926714
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1763926715}
-  - component: {fileID: 1763926717}
-  - component: {fileID: 1763926716}
-  m_Layer: 0
-  m_Name: COMMON
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1763926715
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1763926714}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 134625572}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1763926716
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1763926714}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60c30b0084925784092f36c031b6e705, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TexInts: 
-  SwitchBlocks: []
-  InvokeBlocks: []
-  Blocks05: []
-  Rooms: []
-  LoadTriggers: []
-  ready: 0
---- !u!114 &1763926717
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1763926714}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58b745e0cc38d194d92a02b1875186de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!1 &1956053931
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1956053932}
-  - component: {fileID: 1956053934}
-  - component: {fileID: 1956053933}
-  m_Layer: 0
-  m_Name: COMMON
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1956053932
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1956053931}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 134625572}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1956053933
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1956053931}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60c30b0084925784092f36c031b6e705, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TexInts: 
-  SwitchBlocks: []
-  InvokeBlocks: []
-  Blocks05: []
-  Rooms: []
-  LoadTriggers: []
-  ready: 0
---- !u!114 &1956053934
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1956053931}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58b745e0cc38d194d92a02b1875186de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

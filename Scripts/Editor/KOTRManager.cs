@@ -98,10 +98,16 @@ class KOTRManager : EditorWindow
             GameObject.DestroyImmediate(_root);
             ClearConsole();
         }
+        GUILayout.BeginHorizontal();
         if (GUILayout.Button("Import Mesh to Scene"))
         {
             ImportObject();
         }
+        if (GUILayout.Button("Export to OBJ"))
+        {
+            ExportObject();
+        }
+        GUILayout.EndHorizontal();
         target = (GameObject)EditorGUILayout.ObjectField("Target object:", (GameObject)target, typeof(GameObject), true);
         submesh = EditorGUILayout.IntField("Get Submesh:", submesh);
         if (target)
@@ -134,7 +140,7 @@ class KOTRManager : EditorWindow
                     Mesh me = block.sharedMesh;
                     me.RecalculateNormals();
                     me.RecalculateTangents();
-                    
+
                 }
 
             }
@@ -181,6 +187,58 @@ class KOTRManager : EditorWindow
                 }
             }
         }
+    }
+    void ExportObject()
+    {
+        if (target == null)
+        {
+            Debug.LogError("Выберите target в KotrManager");
+            return;
+        }
+        string path = EditorUtility.SaveFilePanel("Выберите куда сохранить", _lastPath, "", "obj");
+        if (string.IsNullOrEmpty(path))
+        {
+            return;
+        }
+        System.IO.TextWriter textWriter = System.IO.File.CreateText(path);
+        MeshFilter[] meshFilters = target.GetComponentsInChildren<MeshFilter>(true);
+        foreach (var mf in meshFilters)
+        {
+            var name = mf.transform.parent.name;
+            textWriter.WriteLine("o " + name);
+            Mesh mesh = mf.sharedMesh;
+            Vector3[] vertices = mesh.vertices;
+            int[] faces = mesh.triangles;
+            Vector3[] normals = mesh.normals;
+            Vector2[] UVs = mesh.uv;
+            foreach (var vertex in vertices)
+            {
+                textWriter.WriteLine(string.Format("v {0} {1} {2}", vertex.x, vertex.y, vertex.z));
+            }
+            if (UVs.Length > 0)
+            {
+                foreach (var uv in UVs)
+                {
+                    textWriter.WriteLine(string.Format("vt {0} {1}", uv.x, uv.y));
+                }
+            }
+            foreach (var normal in normals)
+            {
+                textWriter.WriteLine(string.Format("vn {0} {1} {2}", normal.x, normal.y, normal.z));
+            }
+            textWriter.WriteLine("usemtl None");
+            textWriter.WriteLine("s off");
+            if (faces.Length % 3 == 0)
+            {
+                for (int i = 0; i < faces.Length / 3; i++)
+                {
+                    textWriter.WriteLine(string.Format("f {0}/{0}/{0} {1}/{1}/{1} {2}/{2}/{2}", faces[i * 3 + 0] + 1, faces[i * 3 + 1] + 1, faces[i * 3 + 2] + 1));
+                }
+            }
+
+
+        }
+        textWriter.Close();
     }
     void ImportObject()
     {
