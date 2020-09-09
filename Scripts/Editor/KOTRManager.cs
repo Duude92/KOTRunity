@@ -213,18 +213,19 @@ class KOTRManager : EditorWindow
             Vector2[] UVs = mesh.uv;
             foreach (var vertex in vertices)
             {
-                textWriter.WriteLine(string.Format("v {0} {1} {2}", vertex.x, vertex.y, vertex.z));
+                textWriter.WriteLine(string.Format("v {0:F6} {1:F6} {2:F6}", vertex.x, vertex.y, vertex.z));
             }
             if (UVs.Length > 0)
             {
                 foreach (var uv in UVs)
                 {
-                    textWriter.WriteLine(string.Format("vt {0} {1}", uv.x, uv.y));
+                    textWriter.WriteLine(string.Format("vt {0:F6} {1:F6}", uv.x, uv.y));
                 }
             }
             foreach (var normal in normals)
             {
-                textWriter.WriteLine(string.Format("vn {0} {1} {2}", normal.x, normal.y, normal.z));
+                textWriter.WriteLine(string.Format("vn {0:F6} {1:F6} {2:F6}", normal.x, normal.y, normal.z));
+
             }
             textWriter.WriteLine("usemtl None");
             textWriter.WriteLine("s off");
