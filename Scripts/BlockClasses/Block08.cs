@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Block08 : BlockType, IBlocktype
+public class Block08 : BlockType, IBlocktype, IMeshInfo
 {
     UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
+    public List<int> Materials { get => matNum; set => matNum = value; }
 
     public List<Vector3> vertices;
     public List<string> material = new List<string>();
@@ -55,7 +56,7 @@ public class Block08 : BlockType, IBlocktype
                 for (int j = 0; j < vCount; j++)
                 {
                     face.AddRange(System.BitConverter.GetBytes(faces[j]));
-                    face.AddRange(Instruments.Vector2ToBytes(mesh.uv[faces[ j]]));
+                    face.AddRange(Instruments.Vector2ToBytes(mesh.uv[faces[j]]));
                 }
             }
             else if ((formats[i] == 176) || (formats[i] == 48) || (formats[i] == 179) || (formats[i] == 51))
@@ -235,7 +236,7 @@ public class Block08 : BlockType, IBlocktype
 
                 }
             }
-            else if (((format == 144) || (format == 129))|| (format == 128))
+            else if (((format == 144) || (format == 129)) || (format == 128))
             {
                 List<int> ax = new List<int>();
                 for (int j = 0; j < j_null; j++)

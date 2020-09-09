@@ -227,7 +227,20 @@ class KOTRManager : EditorWindow
                 textWriter.WriteLine(string.Format("vn {0:F6} {1:F6} {2:F6}", normal.x, normal.y, normal.z));
 
             }
-            textWriter.WriteLine("usemtl None");
+            string lastMat = "None";
+            IMeshInfo mr = mf.GetComponent<IMeshInfo>();
+            Materials mts = mf.GetComponentInParent<Materials>();
+            foreach (int mt in mr.Materials)
+            {
+                string matName = mts.material[mt].Split(' ')[0];
+                if (lastMat != matName)
+                {
+                    lastMat = matName;
+                }
+
+            }
+            
+            textWriter.WriteLine("usemtl " + lastMat); //TODO: разные материалы к группам вершин
             textWriter.WriteLine("s off");
             if (faces.Length % 3 == 0)
             {

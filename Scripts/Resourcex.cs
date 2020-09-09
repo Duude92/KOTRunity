@@ -440,7 +440,7 @@ public class Colors : MonoBehaviour
     }
 }
 
-class Materials : MonoBehaviour
+public class Materials : MonoBehaviour
 {
     public List<string> material = new List<string>();
     public List<Material> maths = new List<Material>();

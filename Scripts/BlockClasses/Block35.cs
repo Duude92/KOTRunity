@@ -1,11 +1,14 @@
 using UnityEngine;
 using System.Collections.Generic;
-public class Block35 : BlockType, IBlocktype
+public class Block35 : BlockType, IBlocktype, IMeshInfo
 {
     private Mesh mesh;
 
     GameObject _thisObject;
     public GameObject thisObject { get => _thisObject; set => _thisObject = value; }
+    private List<int> _materials = new List<int>();
+    public List<int> Materials { get => _materials; set => _materials = value; }
+
     public int matNum = 0;
     public int i_null;
     private int j_null;
@@ -126,6 +129,7 @@ public class Block35 : BlockType, IBlocktype
         pos += 4;
         i_null = System.BitConverter.ToInt32(buff, 0);
         matNum = System.BitConverter.ToInt32(buffer, pos);
+        _materials.Add(matNum);
         pos += 4;//textureNum?
         System.Array.Copy(buffer, pos, buff, 0, 4);
         pos += 4;
@@ -211,7 +215,7 @@ public class Block35 : BlockType, IBlocktype
         }
 
         gameObject.AddComponent<MeshRenderer>();
-        gameObject.GetComponent<MeshRenderer>().material = script.GetComponent<Materials>().maths[script.TexInts[matNum]];// resOb.GetComponent<Materials>().maths[TexInts[matNum]];
+        gameObject.GetComponent<MeshRenderer>().sharedMaterial = script.GetComponent<Materials>().maths[script.TexInts[matNum]];// resOb.GetComponent<Materials>().maths[TexInts[matNum]];
 
 
 
