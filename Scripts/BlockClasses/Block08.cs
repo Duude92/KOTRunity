@@ -208,6 +208,7 @@ public class Block08 : BlockType, IBlocktype, IMeshInfo
 
                 }
             }
+
             else if ((format == 176) || (format == 48) || (format == 179) || (format == 51))
             {
                 for (int j = 0; j < j_null; j++)
@@ -279,6 +280,28 @@ public class Block08 : BlockType, IBlocktype, IMeshInfo
                 }
                 mt = MeshTopology.Triangles;
 
+            }
+            else if (format == 0)
+            {
+                faces = new List<int>();
+                List<int> ax = new List<int>();
+
+                for (int j = 0; j < j_null; j++)
+                {
+                    int num = System.BitConverter.ToInt32(buffer, pos);
+                    ax.Add(num);
+                    facesData.Add(num);
+                    //Debug.Log(bt1.vertices[num],this);
+                    pos += 4;
+                    loop += ax[ax.Count - 1] + " ";
+                }
+
+                faces.Add(ax[0]);
+                faces.Add(ax[2]);
+                faces.Add(ax[1]);
+
+                faces.Reverse();
+                faces_old.AddRange(faces);
             }
             else
             {
