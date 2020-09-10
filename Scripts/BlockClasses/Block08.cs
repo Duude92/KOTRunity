@@ -281,28 +281,6 @@ public class Block08 : BlockType, IBlocktype, IMeshInfo
                 mt = MeshTopology.Triangles;
 
             }
-            else if (format == 0)
-            {
-                faces = new List<int>();
-                List<int> ax = new List<int>();
-
-                for (int j = 0; j < j_null; j++)
-                {
-                    int num = System.BitConverter.ToInt32(buffer, pos);
-                    ax.Add(num);
-                    facesData.Add(num);
-                    //Debug.Log(bt1.vertices[num],this);
-                    pos += 4;
-                    loop += ax[ax.Count - 1] + " ";
-                }
-
-                faces.Add(ax[0]);
-                faces.Add(ax[2]);
-                faces.Add(ax[1]);
-
-                faces.Reverse();
-                faces_old.AddRange(faces);
-            }
             else
             {
                 for (int j = 0; j < j_null; j++)
@@ -314,6 +292,7 @@ public class Block08 : BlockType, IBlocktype, IMeshInfo
                     pos += 4;
                     loop += faces_old[faces_old.Count - 1] + " ";
                 }
+
             }
             loops.Add(loop);
 
@@ -331,6 +310,10 @@ public class Block08 : BlockType, IBlocktype, IMeshInfo
             }
             else
             {
+                if (faces_old.Count == 3)
+                {
+                    mt = MeshTopology.Triangles;
+                }
 
                 curMesh.SetIndices(faces_old.ToArray(), mt, i, true);
 
