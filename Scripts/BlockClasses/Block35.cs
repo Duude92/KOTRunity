@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEditor;
 public class Block35 : BlockType, IBlocktype, IMeshInfo
 {
     private Mesh mesh;
@@ -167,7 +168,7 @@ public class Block35 : BlockType, IBlocktype, IMeshInfo
                         newNormals.Add(newNormals[face[2]]);
                     }
                     //face = new int[0];
-                    newFaces.AddRange(new int[]{newVector.Count-3,newVector.Count-2,newVector.Count-1});
+                    newFaces.AddRange(new int[] { newVector.Count - 3, newVector.Count - 2, newVector.Count - 1 });
                 }
                 else if (format[format.Count - 1] == 49)
                 {
@@ -258,5 +259,27 @@ public class Block35 : BlockType, IBlocktype, IMeshInfo
 
 
 
+    }
+}
+
+[CustomEditor(typeof(Block35))]
+public class Block35Editor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        base.OnInspectorGUI();
+        if (GUILayout.Button("Save Mesh"))
+        {
+            Mesh mesh = (target as Block35).GetComponent<MeshFilter>().sharedMesh;
+            string objectName = target.name;
+            if (string.IsNullOrEmpty(objectName))
+            {
+                objectName = "Object" + target.GetInstanceID();
+            }
+            AssetDatabase.CreateAsset(mesh, $"Assets/Meshes/{objectName}.asset");
+            GameObject gob = (target as Block35).gameObject;
+
+            PrefabUtility.SaveAsPrefabAsset(gob, $"Assets/Prefabs/{objectName}.prefab");
+        }
     }
 }

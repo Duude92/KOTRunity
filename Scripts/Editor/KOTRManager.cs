@@ -108,6 +108,30 @@ class KOTRManager : EditorWindow
             ExportObject();
         }
         GUILayout.EndHorizontal();
+
+        if (GUILayout.Button("Save as prefab"))
+        {
+            string objectName = target.name;
+            if (string.IsNullOrEmpty(objectName))
+            {
+                objectName = "Object" + target.GetInstanceID();
+            }
+            MeshFilter[] meshes = target.GetComponentsInChildren<MeshFilter>();
+            foreach (var mf in meshes)
+            {
+                if (mf.sharedMesh)
+                {
+                    string MeshName = mf.name;
+                    if (string.IsNullOrEmpty(MeshName))
+                    {
+                        MeshName = "Mesh" + mf.GetInstanceID();
+                    }
+                    AssetDatabase.CreateAsset(mf.sharedMesh, $"Assets/Meshes/{MeshName}.asset");
+                }
+            }
+            PrefabUtility.SaveAsPrefabAsset(target, $"Assets/Prefabs/{objectName}.prefab");
+        }
+
         target = (GameObject)EditorGUILayout.ObjectField("Target object:", (GameObject)target, typeof(GameObject), true);
         submesh = EditorGUILayout.IntField("Get Submesh:", submesh);
         if (target)
@@ -239,7 +263,7 @@ class KOTRManager : EditorWindow
                 }
 
             }
-            
+
             textWriter.WriteLine("usemtl " + lastMat); //TODO: разные материалы к группам вершин
             textWriter.WriteLine("s off");
             if (faces.Length % 3 == 0)

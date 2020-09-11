@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEditor;
 public class Block08 : BlockType, IBlocktype, IMeshInfo
 {
     UnityEngine.GameObject _thisObject;
@@ -356,5 +356,30 @@ public class Block08 : BlockType, IBlocktype, IMeshInfo
 
         curMesh.RecalculateBounds();
         gameObject.GetComponent<MeshFilter>().mesh = curMesh;
+    }
+}
+
+
+[CustomEditor(typeof(Block08))]
+public class Block08Editor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        base.OnInspectorGUI();
+        if (GUILayout.Button("Save Mesh"))
+        {
+
+            Mesh mesh = (target as Block08).GetComponent<MeshFilter>().sharedMesh;
+            string objectName = target.name;
+            if (string.IsNullOrEmpty(objectName))
+            {
+                objectName = "Object" + target.GetInstanceID();
+            }
+            AssetDatabase.CreateAsset(mesh, $"Assets/Meshes/{objectName}.asset");
+
+            GameObject gob = (target as Block08).gameObject;
+
+            PrefabUtility.SaveAsPrefabAsset(gob, $"Assets/Prefabs/{objectName}.prefab");
+        }
     }
 }
