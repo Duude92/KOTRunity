@@ -190,6 +190,21 @@ public class Block35 : BlockType, IBlocktype, IMeshInfo
                     System.Array.Copy(buffer, pos, newBuff, 0, 52);
                     pos += 52;
                     face = new int[3] { System.BitConverter.ToInt32(newBuff, 16), System.BitConverter.ToInt32(newBuff, 40), System.BitConverter.ToInt32(newBuff, 28) };
+                    nextUvs.Add(Instruments.ReadV2(newBuff, 20));
+                    nextUvs.Add(Instruments.ReadV2(newBuff, 44));
+                    nextUvs.Add(Instruments.ReadV2(newBuff, 32));
+
+                    newVector.Add(newVector[face[0]]);
+                    newVector.Add(newVector[face[1]]);
+                    newVector.Add(newVector[face[2]]);
+                    if (bt1.normals.Count > 0)
+                    {
+                        newNormals.Add(newNormals[face[0]]);
+                        newNormals.Add(newNormals[face[1]]);
+                        newNormals.Add(newNormals[face[2]]);
+                    }
+                    //face = new int[0];
+                    newFaces.AddRange(new int[] { newVector.Count - 3, newVector.Count - 2, newVector.Count - 1 });
                 }
                 else
                 {
