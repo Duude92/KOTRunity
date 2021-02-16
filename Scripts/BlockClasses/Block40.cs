@@ -165,12 +165,12 @@ public class Block40 : BlockType, IBlocktype, IDisableable
     }
     public void Disable()
     {
-        GI.Destroy();
+        GI?.Destroy();
     }
 
     public void Enable()
     {
-        GI.Generate();
+        GI?.Generate();
     }
     public override void ClosingEvent()
     {

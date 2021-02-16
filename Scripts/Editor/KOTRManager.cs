@@ -308,9 +308,9 @@ class KOTRManager : EditorWindow
 
 
 
-            BlockType bt = b37.AddComponent<BlockType>();
+            BlockType bt = b37.AddComponent<Block37>();
             bt.Type = 37;
-            bt = new Block37();
+            //bt = new Block37();
             ((IBlocktype)bt).thisObject = b37;
             IVerticesBlock ivb = (IVerticesBlock)bt;
             ivb.vertices.AddRange(meshFilter.sharedMesh.vertices);
@@ -319,9 +319,9 @@ class KOTRManager : EditorWindow
             ivb.uv1.AddRange(meshFilter.sharedMesh.uv2);
 
             transform.parent = b37.transform;
-            bt = transform.gameObject.AddComponent<BlockType>();
-            bt.Type = 35;
             bt = transform.gameObject.AddComponent<Block35>();
+            bt.Type = 35;
+            //bt = transform.gameObject.AddComponent<Block35>();
             ((Block35)bt).i_null = 3;
             transform.name = ""; // Просто придержимся традиции софтклаба - не оставлять имена 35 блока
 

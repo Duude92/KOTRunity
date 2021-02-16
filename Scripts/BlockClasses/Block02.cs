@@ -1,6 +1,7 @@
-
-class Block02 : IBlocktype
-{        UnityEngine.GameObject _thisObject;
+using UnityEngine;
+class Block02 : BlockType, IBlocktype
+{
+    UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
 
     public byte[] GetBytes()
@@ -11,6 +12,7 @@ class Block02 : IBlocktype
 
     public void Read(byte[] buffer, ref int pos)
     {
-        throw new System.NotImplementedException();
+        pos += 36;
+        Debug.LogWarning("Read is not implemented", gameObject);
     }
 }

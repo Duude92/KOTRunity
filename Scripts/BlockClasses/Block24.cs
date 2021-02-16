@@ -1,6 +1,6 @@
 using UnityEngine;
 
-class Block24 : BlockType, IBlocktype
+public class Block24 : BlockType, IBlocktype
 {
 
     UnityEngine.GameObject _thisObject;

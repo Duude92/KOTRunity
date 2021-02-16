@@ -9,7 +9,7 @@ class Block28 : BlockType, IBlocktype
     [SerializeField] int materialNum;
     [SerializeField] int type2;
     [SerializeField] int vertexCount;
-    [SerializeField] List<Vector4> vectors28 = new List<Vector4>();
+    [SerializeField] List<Vector2> vectors28 = new List<Vector2>();
 
 
     public byte[] GetBytes()
@@ -100,9 +100,9 @@ class Block28 : BlockType, IBlocktype
         uvs.Add(new Vector2(1, 0));
         uvs.Add(new Vector2(0, 1));
         uvs.Add(new Vector2(1, 1));
-        for (int i = 4; i<bt1.vertices.Count;i++)
+        for (int i = 4; i < bt1.vertices.Count; i++)
         {
-            uvs.Add(new Vector2(0,0));
+            uvs.Add(new Vector2(0, 0));
         }
         me.uv = uvs.ToArray();
 
@@ -118,21 +118,35 @@ class Block28 : BlockType, IBlocktype
         System.Array.Copy(buffer, pos, buff, 0, 4);
         pos += 4;
         loopCount = System.BitConverter.ToInt32(buff, 0);
+        //Debug.Log(loopCount);
         for (int i = 0; i < loopCount; i++)
         {
             System.Array.Copy(buffer, pos, buff, 0, 4);
             pos += 4;
             j_null = System.BitConverter.ToInt32(buff, 0);
-            pos += 8;
+            pos += 4;
             materialNum = System.BitConverter.ToInt32(buffer, pos);
+            pos += 4;
+            int format = System.BitConverter.ToInt32(buffer, pos);
             pos += 4;
             System.Array.Copy(buffer, pos, buff, 0, 4);
             pos += 4;
             vertexCount = System.BitConverter.ToInt32(buff, 0);
             for (int j = 0; j < vertexCount; j++)
             {
-                vectors28.Add(Instruments.ReadV4(buffer, pos));
-                pos += 16;
+                if (format < 24)
+                {
+                    vectors28.Add(Instruments.ReadV2(buffer, pos));
+                    pos += 8;
+                }
+                else if (format >= 24)
+                {
+                    pos += 16;
+                }
+                else
+                {
+                    Debug.LogError($"No specified format {format}",gameObject);
+                }
             }
         }
 

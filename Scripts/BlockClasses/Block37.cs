@@ -131,7 +131,7 @@ public class Block37 : BlockType, IVerticesBlock, IBlocktype
 
         }
 
-        buffer.AddRange(System.BitConverter.GetBytes(thisObject.transform.childCount));
+        buffer.AddRange(System.BitConverter.GetBytes(transform.childCount));
         return buffer.ToArray();
     }
 

@@ -46,9 +46,9 @@ class InvokeMe : MonoBehaviour
         }
         else
         {
-            meT = GO.Find(blocks);
+            meT = GO?.Find(blocks);
             if (meT)
-                me = meT.gameObject;
+                me = meT?.gameObject;
             else
             {
                 Debug.LogError(blocks + " NOT FOUND");
@@ -67,7 +67,8 @@ class InvokeMe : MonoBehaviour
 
         if (space != "$$world")
         {
-            SpcOb = GO.Find(space).gameObject;
+            Transform tr = GO?.Find(space);
+            SpcOb = tr?.gameObject;
         }
         else
         {
