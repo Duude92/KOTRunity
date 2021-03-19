@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
-class Block18 : BlockType, IBlocktype, IDisableable
+public class Block18 : BlockType, IBlocktype, IDisableable
 {
     UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
-    InvokeMe me;
+    private InvokeMe me;
     private Vector3 gizmoPosition;
+    public Block24 gizmosTransform;
     [SerializeField] private float scale;
     public Block18()
     {
@@ -28,10 +29,10 @@ class Block18 : BlockType, IBlocktype, IDisableable
 
     public void Read(byte[] buffer, ref int pos)
     {
-        this.unknownVector = Instruments.ReadV4(buffer,pos);
-        pos+=12;
+        this.unknownVector = Instruments.ReadV4(buffer, pos);
+        pos += 12;
         scale = unknownVector.w;
-        pos+=4;
+        pos += 4;
         byte[] newbuff = new byte[32];
         System.Array.Copy(buffer, pos, newbuff, 0, 32);
         pos += 32;
@@ -44,26 +45,32 @@ class Block18 : BlockType, IBlocktype, IDisableable
         me.blocks = block;
         me.GO = script.transform;
         script.InvokeBlocks.Add(thisObject);
-        if(!string.IsNullOrEmpty(space))
+        if (!string.IsNullOrEmpty(space))
         {
             Transform tr = GameManager.currentObject.transform.Find(space);
             if (!tr)
             {
                 tr = GameManager.common.transform.Find(space);
             }
-            if(tr)
+            if (tr)
             {
-                gizmoPosition = tr.GetComponent<Block24>().position+Vector3.up*2;
+                gizmosTransform = tr.GetComponent<Block24>();
+                transform.position = gizmosTransform.position;
             }
             else
             {
-                Debug.Log("No "+space+" position for",gameObject);
+                Debug.Log("No " + space + " position for", gameObject);
             }
         }
     }
     void OnDrawGizmos()
     {
-        Gizmos.DrawIcon(gizmoPosition,"Copy18",true);
+        if (gizmosTransform)
+        {
+            Gizmos.DrawIcon(gizmosTransform.position + Vector3.up * 2, "Copy18", true);
+            //gizmosTransform.position = transform.position;
+            transform.position = gizmosTransform.position;
+        }
     }
     public void Disable()
     {
