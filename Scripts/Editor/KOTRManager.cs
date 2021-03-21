@@ -45,6 +45,8 @@ class KOTRManager : EditorWindow
     private bool _isDisabled = false;
     private GameObject target;
     private int submesh;
+    private GameObject common, trucks, cabines;
+    private List<GameObject> env = new List<GameObject>();
     private bool isDisabled
     {
         get { return _isDisabled; }
@@ -60,6 +62,7 @@ class KOTRManager : EditorWindow
     void OnEnable()
     {
         SceneView.duringSceneGui += OnSceneGUI;
+
     }
 
     void OnDisable()
@@ -109,30 +112,86 @@ class KOTRManager : EditorWindow
             GameManager gm = _root.AddComponent<GameManager>();
             GameManager.instance = gm;
         }
-
-        if (GUILayout.Button("Open COMMON"))
+        GUILayout.Label("----TRUCKS----");
+        GUILayout.Label("Under construction");
+        GUILayout.Label("----CABINES----");
+        GUILayout.Label("Under Construction");
+        GUILayout.Label("----COMMON----");
+        if (!common)
         {
-            OpenB3D(true);
+            GUI.backgroundColor = Color.green;
+
+            if (GUILayout.Button("Open COMMON"))
+            {
+                common = OpenB3D(true);
+            }
         }
+        else
+        {
+            GUILayout.BeginHorizontal();
+            common = (GameObject)EditorGUILayout.ObjectField(common, typeof(GameObject), true);
+            GUI.backgroundColor = Color.green;
+
+            if (GUILayout.Button("Save"))
+            {
+
+            }
+            GUI.backgroundColor = Color.red;
+            if (GUILayout.Button("Close"))
+            {
+                DestroyImmediate(common);
+            }
+            GUILayout.EndHorizontal();
+
+        }
+        GUI.backgroundColor = Color.white;
+
+        GUILayout.Label("----ENV----");
+        foreach (var item in env)
+        {
+            GUILayout.BeginHorizontal();
+            EditorGUILayout.ObjectField(item, typeof(GameObject), true);
+            GUI.backgroundColor = Color.green;
+
+            if (GUILayout.Button("Save"))
+            {
+                string path = EditorUtility.SaveFilePanel("Выберите B3D сцену", _lastPath, item.name, "b3d");
+                if (!string.IsNullOrEmpty(path))
+                {
+                    SceneSaver.SaveScene(item, path);
+                }
+            }
+            GUI.backgroundColor = Color.red;
+            if (GUILayout.Button("Close"))
+            {
+                GameObject tempObject = item;
+                env.Remove(item);
+                DestroyImmediate(tempObject);
+            }
+            GUILayout.EndHorizontal();
+            GUI.backgroundColor = Color.white;
+        }
+        GUI.backgroundColor = Color.green;
 
         if (GUILayout.Button("Open B3D"))
         {
-            if (!_currentScene)
-                OpenB3D();
+            env.Add(OpenB3D());
 
         }
+        GUI.backgroundColor = Color.white;
 
-        if (GUILayout.Button("Save Scene"))
-        {
-            string path = EditorUtility.SaveFilePanel("Выберите B3D сцену", _lastPath, _lastPath, "b3d");
-            if (!string.IsNullOrEmpty(path))
-            {
-                SceneSaver.SaveScene(_currentScene, path);
-            }
-        }
+        // if (GUILayout.Button("Save Scene"))
+        // {
+        //     string path = EditorUtility.SaveFilePanel("Выберите B3D сцену", _lastPath, _lastPath, "b3d");
+        //     if (!string.IsNullOrEmpty(path))
+        //     {
+        //         SceneSaver.SaveScene(_currentScene, path);
+        //     }
+        // }
         isDisabled = EditorGUILayout.Toggle("Включить инстанциируемые блоки", isDisabled);
         if (GUILayout.Button("Close B3D"))
         {
+            env = new List<GameObject>();
             GameObject.DestroyImmediate(_root);
             ClearConsole();
         }
@@ -386,8 +445,9 @@ class KOTRManager : EditorWindow
         target = Selection.activeGameObject;
         Repaint();
     }
-    void OpenB3D(bool isCommon = false)
+    GameObject OpenB3D(bool isCommon = false)
     {
+        GameObject tempObj = null;
         string path = EditorUtility.OpenFilePanel("Выберите B3D сцену", _lastPath, "b3d");
         if (isCommon || !isCommon && GameManager.common)
             if (!string.IsNullOrEmpty(path))
@@ -396,6 +456,7 @@ class KOTRManager : EditorWindow
                 string sceneName = splitted[splitted.Length - 1];
                 sceneName = sceneName.Substring(0, sceneName.Length - 4);
                 _currentScene = new GameObject(sceneName);
+                tempObj = _currentScene;
                 _currentScene.transform.SetParent(_root.transform);
                 string resPath = path.Substring(0, path.Length - 3);
                 resPath = resPath + "res";
@@ -418,6 +479,7 @@ class KOTRManager : EditorWindow
                 b3d.StartB3D();
 
             }
+        return tempObj;
     }
     System.Collections.IEnumerator ClearConsole()
     {
