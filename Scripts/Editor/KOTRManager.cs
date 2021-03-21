@@ -5,8 +5,38 @@ using System.Collections.Generic;
 [ExecuteInEditMode]
 class KOTRManager : EditorWindow
 {
-    public static Shader tc;
+    private static Shader _shader;
+    private static Shader DefaultShader
+    {
+        get => _shader; set
+        {
+            if (value != _shader)
+            {
+                _shader = value;
+                DataBase.defaultShader = _shader;
+                EditorUtility.SetDirty(DataBase);
+            }
+        }
+    }
     private Shader oldShader;
+    private static SettingManager _dbase;
+    private static SettingManager DataBase
+    {
+        get
+        {
+            if (!_dbase)
+            {
+                _dbase = Resources.Load<SettingManager>("SettingManager");
+                if (!_dbase)
+                {
+                    _dbase = ScriptableObject.CreateInstance<SettingManager>();
+                    AssetDatabase.CreateAsset(_dbase, "Assets/Resources/SettingManager.asset");
+                    AssetDatabase.SaveAssets();
+                }
+            }
+            return _dbase;
+        }
+    }
 
 
     private string _lastPath = "";
@@ -40,16 +70,24 @@ class KOTRManager : EditorWindow
     [MenuItem("KOTR Editor/KOTR Loader")]
     static void Init()
     {
-        string shdr = PlayerPrefs.GetString("shader", "");
-        tc = Shader.Find(shdr);
+
+
+        // string shdr = PlayerPrefs.GetString("shader", "");
+        // shader = Shader.Find(shdr);
+
+
+        DefaultShader = DataBase.defaultShader;
+
+
+
         KOTRManager km = (KOTRManager)EditorWindow.GetWindow(typeof(KOTRManager));
         km.Show();
-        if (tc == null)
-        {
-            tc = Shader.Find("Standard");
-        }
-        GameManager.TC = tc;
-        GameManager.TCu = tc;
+        // if (shader == null)
+        // {
+        //     shader = Shader.Find("Standard");
+        // }
+        GameManager.TC = DefaultShader;
+        GameManager.TCu = DefaultShader;
 
         Block40.Register();
 
@@ -57,14 +95,14 @@ class KOTRManager : EditorWindow
     void OnGUI()
     {
 
-        if (tc != oldShader && tc != null)
+        if (DefaultShader != oldShader && DefaultShader != null)
         {
-            oldShader = tc;
-            PlayerPrefs.SetString("shader", tc.name);
+            oldShader = DefaultShader;
+            PlayerPrefs.SetString("shader", DefaultShader.name);
         }
-        tc = (Shader)EditorGUILayout.ObjectField(tc, typeof(Shader), false);
-        GameManager.TC = tc;
-        GameManager.TCu = tc;
+        DefaultShader = (Shader)EditorGUILayout.ObjectField(DefaultShader, typeof(Shader), false);
+        GameManager.TC = DefaultShader;
+        GameManager.TCu = DefaultShader;
         if (!_root)
         {
             _root = new GameObject("Root");
