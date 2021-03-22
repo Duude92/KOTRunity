@@ -199,7 +199,7 @@ class Block28 : BlockType, IBlocktype
         // }
 
         gameObject.AddComponent<MeshFilter>().mesh = me;
-        gameObject.GetComponent<MeshRenderer>().material = script.gameObject.GetComponent<Materials>().maths[script.TexInts[tex]];
+        gameObject.GetComponent<MeshRenderer>().material = script.gameObject.GetComponent<Materials>().maths[script.Materials[tex]];
 
     }
 }

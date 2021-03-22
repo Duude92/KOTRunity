@@ -8,7 +8,7 @@ public class B3DScript : MonoBehaviour
 {
     public List<Vector3> triggerBox = new List<Vector3>();
     BinaryReader br;
-    public List<int> TexInts = new List<int>();
+    public List<int> Materials = new List<int>();
     public List<GameObject> SwitchBlocks = new List<GameObject>();
     public List<GameObject> InvokeBlocks = new List<GameObject>();
     public List<GameObject> Blocks05 = new List<GameObject>();
@@ -70,7 +70,7 @@ public class B3DScript : MonoBehaviour
                 string matName = System.Text.Encoding.UTF8.GetString(texName);
                 int a = mat.FindIndexByString(matName);//.Trim(new char[]{'\0'}));
 
-                TexInts.Add(a);
+                Materials.Add(a);
                 texture[i] = new Texture2D(1, 1);
                 texture[i].name = System.Text.Encoding.UTF8.GetString(texName);
 

@@ -231,7 +231,7 @@ public class Block35 : BlockType, IBlocktype, IMeshInfo
         }
 
         gameObject.AddComponent<MeshRenderer>();
-        gameObject.GetComponent<MeshRenderer>().sharedMaterial = script.GetComponent<Materials>().maths[script.TexInts[matNum]];// resOb.GetComponent<Materials>().maths[TexInts[matNum]];
+        gameObject.GetComponent<MeshRenderer>().sharedMaterial = script.GetComponent<Materials>().maths[script.Materials[matNum]];// resOb.GetComponent<Materials>().maths[TexInts[matNum]];
 
 
 

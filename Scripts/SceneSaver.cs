@@ -24,11 +24,11 @@ public class SceneSaver : MonoBehaviour
             binaryWriter.Write(6);
             B3DScript script = root.GetComponent<B3DScript>();
 
-            binaryWriter.Write(script.TexInts.Count * 8 + 1);
-            binaryWriter.Write(script.TexInts.Count * 8 + 7);
+            binaryWriter.Write(script.Materials.Count * 8 + 1);
+            binaryWriter.Write(script.Materials.Count * 8 + 7);
 
             binaryWriter.Write(0);
-            binaryWriter.Write(script.TexInts.Count);
+            binaryWriter.Write(script.Materials.Count);
 
 
             Materials math = root.GetComponent<Materials>();

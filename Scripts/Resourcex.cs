@@ -516,7 +516,7 @@ public class Materials : MonoBehaviour
         return a;
     }
 }
-class Texturefiles : MonoBehaviour
+public class Texturefiles : MonoBehaviour
 {
     public List<string> Texturenames = new List<string>();
     public List<Texture2D> textures = new List<Texture2D>();
@@ -794,35 +794,43 @@ class Sounds : MonoBehaviour
 public class ResoursexEditor : Editor
 {
     Resourcex objTarget;
+    // Materials materials;
+    // Texturefiles texturefiles;
     public override void OnInspectorGUI()
     {
         if (GUILayout.Button("Export texture Assets"))
         {
-            objTarget = target as Resourcex;
             Texturefiles tf = objTarget.GetComponent<Texturefiles>();
-            for(int i = 0; i<tf.textures.Count; i++)
+            for (int i = 0; i < tf.textures.Count; i++)
             {
                 var texture = tf.textures[i];
                 texture.name = tf.Texturenames[i];
                 string[] splits = texture.name.Split('\\'); //Уберем txr директорию
-                splits = splits[splits.Length-1].Split(' '); // Уберем лишние пробелы после .txr
+                splits = splits[splits.Length - 1].Split(' '); // Уберем лишние пробелы после .txr
                 splits = splits[0].Split('.');//Убираем расширение txr или msk
-                texture.name = splits[0]+".asset"; //
-                AssetDatabase.CreateAsset(texture,$"Assets/Textures/{texture.name}");
+                texture.name = splits[0] + ".asset"; //
+                AssetDatabase.CreateAsset(texture, $"Assets/Textures/{texture.name}");
             }
         }
         if (GUILayout.Button("Export materials"))
         {
             objTarget = target as Resourcex;
             Materials tf = objTarget.GetComponent<Materials>();
-            for(int i = 0; i<tf.material.Count; i++)
+            for (int i = 0; i < tf.material.Count; i++)
             {
                 var material = tf.maths[i];
                 material.name = tf.material[i];
                 string[] splits = material.name.Split(' '); // Оставляем только имя материала
-                material.name = splits[0]+".mat"; //
-                AssetDatabase.CreateAsset(material,$"Assets/Materials/{material.name}");
+                material.name = splits[0] + ".mat"; //
+                AssetDatabase.CreateAsset(material, $"Assets/Materials/{material.name}");
             }
         }
+    }
+    void OnEnable()
+    {
+        objTarget = target as Resourcex;
+
+        // materials = objTarget.GetComponent<Materials>();
+        // texturefiles = objTarget.GetComponent<Texturefiles>();
     }
 }

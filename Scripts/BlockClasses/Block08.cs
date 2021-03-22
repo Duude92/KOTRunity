@@ -338,8 +338,8 @@ public class Block08 : BlockType, IBlocktype, IMeshInfo
 
             curMesh.SetIndices(faces_old.ToArray(), mt, i, true);
 
-            mats.Add(script.GetComponent<Materials>().maths[script.TexInts[matNum[i]]]);
-            material.Add(script.GetComponent<Materials>().material[script.TexInts[matNum[i]]]);
+            mats.Add(script.GetComponent<Materials>().maths[script.Materials[matNum[i]]]);
+            material.Add(script.GetComponent<Materials>().material[script.Materials[matNum[i]]]);
 
             facesData1.Add(facesData);
         }

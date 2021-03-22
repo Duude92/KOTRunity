@@ -8,7 +8,15 @@ class KOTRManager : EditorWindow
     private static Shader _shader;
     private static Shader DefaultShader
     {
-        get => _shader; set
+        get
+        {
+            if (!_shader)
+            {
+                _shader = DataBase.defaultShader;
+            }
+            return _shader;
+        }
+        set
         {
             if (value != _shader)
             {
@@ -18,7 +26,6 @@ class KOTRManager : EditorWindow
             }
         }
     }
-    private Shader oldShader;
     private static SettingManager _dbase;
     private static SettingManager DataBase
     {
@@ -97,12 +104,10 @@ class KOTRManager : EditorWindow
     }
     void OnGUI()
     {
-
-        if (DefaultShader != oldShader && DefaultShader != null)
-        {
-            oldShader = DefaultShader;
-            PlayerPrefs.SetString("shader", DefaultShader.name);
-        }
+        // if (!DefaultShader)
+        // {
+        //     DefaultShader = DataBase.defaultShader;
+        // }
         DefaultShader = (Shader)EditorGUILayout.ObjectField(DefaultShader, typeof(Shader), false);
         GameManager.TC = DefaultShader;
         GameManager.TCu = DefaultShader;
@@ -112,6 +117,7 @@ class KOTRManager : EditorWindow
             GameManager gm = _root.AddComponent<GameManager>();
             GameManager.instance = gm;
         }
+
         GUILayout.Label("----TRUCKS----");
         GUILayout.Label("Under construction");
         GUILayout.Label("----CABINES----");
@@ -178,23 +184,24 @@ class KOTRManager : EditorWindow
             env.Add(OpenB3D());
 
         }
-        GUI.backgroundColor = Color.white;
-
-        // if (GUILayout.Button("Save Scene"))
-        // {
-        //     string path = EditorUtility.SaveFilePanel("Выберите B3D сцену", _lastPath, _lastPath, "b3d");
-        //     if (!string.IsNullOrEmpty(path))
-        //     {
-        //         SceneSaver.SaveScene(_currentScene, path);
-        //     }
-        // }
-        isDisabled = EditorGUILayout.Toggle("Включить инстанциируемые блоки", isDisabled);
-        if (GUILayout.Button("Close B3D"))
+        if (GUILayout.Button("New scene B3D"))
         {
-            env = new List<GameObject>();
-            GameObject.DestroyImmediate(_root);
-            ClearConsole();
+            GameObject tempObject = new GameObject();
+            tempObject.transform.parent = _root.transform;
+            tempObject.AddComponent<Resourcex>();
+            tempObject.AddComponent<B3DScript>();
+            tempObject.AddComponent<Materials>();
+            tempObject.AddComponent<Texturefiles>();
+            env.Add(tempObject);
+
         }
+        GUILayout.Label("-----------");
+
+
+
+        GUI.backgroundColor = Color.white;
+        isDisabled = EditorGUILayout.Toggle("Включить инстанциируемые блоки", isDisabled);
+
         GUILayout.BeginHorizontal();
         if (GUILayout.Button("Import Mesh to Scene"))
         {
