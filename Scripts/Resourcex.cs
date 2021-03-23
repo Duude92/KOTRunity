@@ -1,17 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using UnityEngine.UI;
-
-using UnityEditor;
-
+using UnityEditor.Experimental.AssetImporters;
 
 public class Resourcex : MonoBehaviour
 {
-
     public FileInfo file;
-    public void StartRes()
+    public void StartRes(AssetImportContext assetObj = null)
     {
         BinaryReader br = new BinaryReader(File.Open(file.FullName, FileMode.Open));
         byte[] resource = new byte[file.Length];
@@ -200,24 +195,11 @@ public class Resourcex : MonoBehaviour
                             pos += 4;
                             byte[] buff = new byte[18];
                             System.Array.Copy(resource, pos, buff, 0, 18);
-                            /*byte  IDLength = br.ReadByte();
-							byte  ColorMapType = br.ReadByte();
-							byte  ImageType = br.ReadByte();
-							short   FirstIndexEntry = br.ReadInt16();
-							short   ColorMapLength = br.ReadInt16();
-							byte  ColorMapEntrySize = br.ReadByte();
-
-
-
-							short   XOrigin = br.ReadInt16();
-							short   YOrigin = br.ReadInt16();*/
                             pos += 12;
                             short Width = System.BitConverter.ToInt16(resource, pos);// br.ReadInt16();
                             pos += 2;
                             short Height = System.BitConverter.ToInt16(resource, pos);// br.ReadInt16();
                             pos += 2;
-                            /*byte  PixelDepth = br.ReadByte();
-							byte  ImageDescriptor = br.ReadByte();*/
                             pos += 2;
                             int format = 0;
                             if (System.BitConverter.ToInt32(resource, pos) == 1179012940)
@@ -226,25 +208,15 @@ public class Resourcex : MonoBehaviour
                                 //byte[] Loff;
 
                                 pos += 4;
-                                //int LineOffset = br.ReadInt32();  
                                 pos += 4;
                                 int SizeImage = System.BitConverter.ToInt32(resource, pos);//br.ReadInt32();  
                                 pos += 4;
-                                //Debug.Log(SizeImage);
-
-                                // TO TEXTURES CLASS:	Texture2D tex = new Texture2D(Width,Height,TextureFormat.RG16,false);
-
                                 int newsize = pos + 2 * Width * Height;
 
                                 byte[] rawIm = new byte[SizeImage - 30];
 
                                 System.Array.Copy(resource, pos, rawIm, 0, SizeImage - 30);
                                 pos += SizeImage - 30;
-                                /*
-								for (int j = 0; j<SizeImage-30;j++)
-								{
-									rawIm[j] = br.ReadByte();
-								}*/
 
 
 
@@ -252,7 +224,6 @@ public class Resourcex : MonoBehaviour
 
                                 byte[] ident = new byte[4];
                                 System.Array.Copy(resource, pos, ident, 0, 4);
-                                //br.Read(ident,0,4);
 
                                 if (System.Text.Encoding.UTF8.GetString(ident) == "LVMP")
                                 {
@@ -317,9 +288,8 @@ public class Resourcex : MonoBehaviour
                                     pos += x + 6;
 
                                 }
-                                //Debug.LogWarning(pos);
 
-                                texs.addTex(name, Width, Height, rawIm, format);
+                                texs.addTex(name, Width, Height, rawIm, format, assetObj);
                             }
                             else
                             {
@@ -356,7 +326,7 @@ public class Resourcex : MonoBehaviour
 
                         for (int i = 0; i < num; i++)
                         {
-                            mats.addMat(GetLine(resource, ref pos));
+                            mats.addMat(GetLine(resource, ref pos), assetObj);
                         }
                         break;
                     }
@@ -428,17 +398,7 @@ public class Resourcex : MonoBehaviour
 }
 
 
-
-
-
 public struct ColorsRGB
 {
     public byte R, G, B;
 }
-
-
-
-
-
-
-

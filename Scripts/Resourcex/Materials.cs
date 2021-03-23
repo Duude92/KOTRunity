@@ -1,35 +1,30 @@
 using UnityEditor;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor.Experimental.AssetImporters;
+
 public class Materials : MonoBehaviour
 {
     public List<string> material = new List<string>();
     public List<Material> maths = new List<Material>();
 
-    public void addMat(string abs)
+    public void addMat(string abs, AssetImportContext rootObject = null)
     {
         material.Add(abs);
         string[] spl = abs.Split(' ');
-        var ma = new Material(GameManager.TC);
-
-
-        //tex.
-
-
-
+        var ma = new Material(SettingManager.DefaultShader);
 
         switch (spl[1])
         {
             case "col":
                 {
-
                     ma.color = GameManager.common.GetComponent<Palettefiles>().colors[int.Parse(spl[2]) - 1];
                     break;
                 }
             case "tex":
                 {
                     var tex = gameObject.GetComponent<Texturefiles>().textures[int.Parse(spl[2]) - 1];
-                    ma = new Material(GameManager.TCu);
+                    ma = new Material(SettingManager.DefaultShader);
                     ma.mainTexture = gameObject.GetComponent<Texturefiles>().textures[int.Parse(spl[2]) - 1];
                     break;
                 }
@@ -37,7 +32,7 @@ public class Materials : MonoBehaviour
                 {
                     var tex = gameObject.GetComponent<Texturefiles>().textures[int.Parse(spl[2]) - 1];
 
-                    ma = new Material(GameManager.TC);
+                    ma = new Material(SettingManager.DefaultShader);
                     ma.mainTexture = gameObject.GetComponent<Texturefiles>().textures[int.Parse(spl[2]) - 1];
                     //Debug.LogWarning(spl[1]+", "+spl[4]);
                     if (spl.Length > 4)
@@ -56,7 +51,11 @@ public class Materials : MonoBehaviour
                 }
         }
         ma.name = abs;
-        
+        if(rootObject!=null)
+        {
+            rootObject.AddObjectToAsset($"{spl[0]}.mat",ma);
+        }
+
         maths.Add(ma);
 
         //ma.mainTexture = int.Parse(spl[1])

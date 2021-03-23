@@ -2,12 +2,14 @@ using UnityEditor;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEditor.Experimental.AssetImporters;
+
 public class Texturefiles : MonoBehaviour
 {
     public List<string> Texturenames = new List<string>();
     public List<Texture2D> textures = new List<Texture2D>();
     //public Dictionary<string,Texture2D> textures = new Dictionary<string,Texture2D>();
-    public void addTex(string name, short width, short height, byte[] rawIm, int format)
+    public void addTex(string name, short width, short height, byte[] rawIm, int format, AssetImportContext rootObject = null)
     {
         TextureFormat tf;
         bool r8 = false;
@@ -84,7 +86,10 @@ public class Texturefiles : MonoBehaviour
         tex.alphaIsTransparency = true;
 #endif
         tex.Apply();
-
+        if (rootObject != null)
+        {
+            rootObject.AddObjectToAsset(name, tex);
+        }
         Texturenames.Add(name);
         textures.Add(tex);
     }

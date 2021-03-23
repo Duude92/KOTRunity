@@ -11,8 +11,8 @@ public class GameManager : MonoBehaviour, IDisableable
     private static List<IDisableable> disableList = new List<IDisableable>();
 
 	public static GameManager instance;
-    [SerializeField] public static Shader TC;
-    [SerializeField] public static Shader TCu;
+    [SerializeField] public static Shader TC; //TOREMOVE
+    [SerializeField] public static Shader TCu;//TOREMOVE
     public List<GameObject> MainRooms = new List<GameObject>();
     public List<GameObject> Rooms = new List<GameObject>();
     public static GameObject common;

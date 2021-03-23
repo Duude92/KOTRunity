@@ -2,8 +2,7 @@ using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 
-[ExecuteInEditMode]
-class KOTRManager : EditorWindow
+public class KOTRManager : EditorWindow
 {
     private static Shader _shader;
     private static Shader DefaultShader
@@ -12,7 +11,7 @@ class KOTRManager : EditorWindow
         {
             if (!_shader)
             {
-                _shader = DataBase.defaultShader;
+                _shader = SettingManager.DefaultShader;
             }
             return _shader;
         }
@@ -21,29 +20,29 @@ class KOTRManager : EditorWindow
             if (value != _shader)
             {
                 _shader = value;
-                DataBase.defaultShader = _shader;
-                EditorUtility.SetDirty(DataBase);
+                SettingManager.DefaultShader = _shader;
+                EditorUtility.SetDirty(SettingManager.GetInstance());
             }
         }
     }
-    private static SettingManager _dbase;
-    private static SettingManager DataBase
-    {
-        get
-        {
-            if (!_dbase)
-            {
-                _dbase = Resources.Load<SettingManager>("SettingManager");
-                if (!_dbase)
-                {
-                    _dbase = ScriptableObject.CreateInstance<SettingManager>();
-                    AssetDatabase.CreateAsset(_dbase, "Assets/Resources/SettingManager.asset");
-                    AssetDatabase.SaveAssets();
-                }
-            }
-            return _dbase;
-        }
-    }
+    // private static SettingManager _dbase; //TOREMOVE
+    // private static SettingManager DataBase
+    // {
+    //     get
+    //     {
+    //         if (!_dbase)
+    //         {
+    //             _dbase = Resources.Load<SettingManager>("SettingManager");
+    //             if (!_dbase)
+    //             {
+    //                 _dbase = ScriptableObject.CreateInstance<SettingManager>();
+    //                 AssetDatabase.CreateAsset(_dbase, "Assets/Resources/SettingManager.asset");
+    //                 AssetDatabase.SaveAssets();
+    //             }
+    //         }
+    //         return _dbase;
+    //     }
+    // }
 
 
     private string _lastPath = "";
@@ -86,7 +85,7 @@ class KOTRManager : EditorWindow
         // shader = Shader.Find(shdr);
 
 
-        DefaultShader = DataBase.defaultShader;
+        //DefaultShader = DataBase.defaultShader;//TOREMOVE
 
 
 

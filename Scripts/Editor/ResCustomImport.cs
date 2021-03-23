@@ -13,7 +13,7 @@ class ResCustomImport : ScriptedImporter
         GameObject rootObject = new GameObject(rootName);
         Resourcex res = rootObject.AddComponent<Resourcex>();
         res.file = new System.IO.FileInfo(ctx.assetPath);
-        res.StartRes();
+        res.StartRes(ctx);
         ctx.AddObjectToAsset(rootName, rootObject);
         ctx.SetMainObject(rootObject);
     }
