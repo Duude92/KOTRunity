@@ -171,7 +171,7 @@ public class Resourcex : MonoBehaviour
                                 byte[] buffer = new byte[SectionSize];
                                 System.Array.Copy(resource, pos, buffer, 0, SectionSize);
                                 pos += SectionSize;
-                                msk.AddMsk(name, buffer);
+                                msk.AddMsk(name, buffer, assetObj);
                             }
                             else
                             {
@@ -303,7 +303,7 @@ public class Resourcex : MonoBehaviour
 
                                 pos += SectionSize - 18;
 
-                                texs.addTex(name, Width, Height, rawIm, 0);
+                                texs.addTex(name, Width, Height, rawIm, 0, assetObj);
 
                             }
                         }

@@ -2,12 +2,14 @@ using UnityEditor;
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor.Experimental.AssetImporters;
+
 class Maskfiles : MonoBehaviour
 {
     public List<string> masks = new List<string>();
     public List<Texture2D> textures = new List<Texture2D>();
     public List<Material> maths = new List<Material>();
-    public void AddMsk(string name, byte[] rawIm)
+    public void AddMsk(string name, byte[] rawIm, AssetImportContext rootObject = null)
     {
         masks.Add(name);
         int pos = 4;
@@ -81,6 +83,12 @@ class Maskfiles : MonoBehaviour
 
         tex.LoadRawTextureData(raw3);
         tex.Apply();
+
+        if (rootObject != null)
+        {
+            rootObject.AddObjectToAsset(name, tex);
+        }
+
 
         textures.Add(tex);
 
