@@ -88,8 +88,6 @@ class Maskfiles : MonoBehaviour
         {
             rootObject.AddObjectToAsset(name, tex);
         }
-
-
         textures.Add(tex);
 
     }

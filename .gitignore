@@ -5,3 +5,6 @@ Plugins/*
 *.prefab
 BarrierPack/*
 *.RES
+*.pro
+*.txt
+*.b3d

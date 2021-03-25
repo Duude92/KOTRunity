@@ -6,25 +6,26 @@ using UnityEditor.Experimental.AssetImporters;
 public class Materials : MonoBehaviour
 {
     public List<string> material = new List<string>();
-    public List<Material> maths = new List<Material>();
+    public List<KMaterial> maths = new List<KMaterial>();
 
     public void addMat(string abs, AssetImportContext rootObject = null)
     {
         material.Add(abs);
         string[] spl = abs.Split(' ');
-        var ma = new Material(SettingManager.DefaultShader);
+        var ma = new KMaterial(SettingManager.DefaultShader);
+        List<Color32> colors = GameManager.common?.GetComponent<Palettefiles>()?.colors;
 
         switch (spl[1])
         {
             case "col":
                 {
-                    ma.color = GameManager.common.GetComponent<Palettefiles>().colors[int.Parse(spl[2]) - 1];
+                    ma.color = (colors != null) ? colors[int.Parse(spl[2]) - 1] : new Color32();
                     break;
                 }
             case "tex":
                 {
                     var tex = gameObject.GetComponent<Texturefiles>().textures[int.Parse(spl[2]) - 1];
-                    ma = new Material(SettingManager.DefaultShader);
+                    ma = new KMaterial(SettingManager.DefaultShader);
                     ma.mainTexture = gameObject.GetComponent<Texturefiles>().textures[int.Parse(spl[2]) - 1];
                     break;
                 }
@@ -32,15 +33,14 @@ public class Materials : MonoBehaviour
                 {
                     var tex = gameObject.GetComponent<Texturefiles>().textures[int.Parse(spl[2]) - 1];
 
-                    ma = new Material(SettingManager.DefaultShader);
+                    ma = new KMaterial(SettingManager.DefaultShader);
                     ma.mainTexture = gameObject.GetComponent<Texturefiles>().textures[int.Parse(spl[2]) - 1];
                     //Debug.LogWarning(spl[1]+", "+spl[4]);
                     if (spl.Length > 4)
                         if (spl[4] == "col")
                         {
                             //Debug.LogWarning(spl[5]);
-                            var colors = GameManager.common.GetComponent<Palettefiles>().colors;
-                            ma.SetColor("_TransparentColor", colors[int.Parse(spl[5]) - 1]);
+                            ma.SetColor("_TransparentColor", (colors != null) ? colors[int.Parse(spl[2]) - 1] : new Color32());
                             //ma.SetColor("_TransparentColor",new Color32(255,255,255,255));
                         }
                     break;
@@ -51,9 +51,9 @@ public class Materials : MonoBehaviour
                 }
         }
         ma.name = abs;
-        if(rootObject!=null)
+        if (rootObject != null)
         {
-            rootObject.AddObjectToAsset($"{spl[0]}.mat",ma);
+            rootObject.AddObjectToAsset($"{spl[0]}.mat", ma);
         }
 
         maths.Add(ma);
@@ -76,5 +76,21 @@ public class Materials : MonoBehaviour
             i++;
         }
         return a;
+    }
+    public class KMaterial : Material
+    {
+        public bool isRes = true;
+        public KMaterial(Shader shader) : base(shader)
+        {
+
+        }
+
+        public KMaterial(Material source) : base(source)
+        {
+        }
+
+        public KMaterial(string contents) : base(contents)
+        {
+        }
     }
 }

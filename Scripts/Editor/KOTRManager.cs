@@ -480,6 +480,9 @@ public class KOTRManager : EditorWindow
                 {
                     GameManager.currentObject = _currentScene;
                 }
+                //GameObject go = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+                //AssetDatabase.ImportAsset(path);
+
                 res.StartRes();
 
                 b3d.StartB3D();

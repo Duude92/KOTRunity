@@ -1,6 +1,7 @@
 using UnityEditor;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 [CustomEditor(typeof(Resourcex))]
 public class ResoursexEditor : Editor
@@ -28,7 +29,7 @@ public class ResoursexEditor : Editor
         if (GUILayout.Button("Export materials"))
         {
             objTarget = target as Resourcex;
-            
+
             Materials tf = objTarget.GetComponent<Materials>();
             for (int i = 0; i < tf.material.Count; i++)
             {
@@ -41,6 +42,8 @@ public class ResoursexEditor : Editor
         }
         if (GUILayout.Button("Prepare materials & textures"))
         {
+            textureNames = new List<string>();
+            matNames = new List<string>();
             PrepareMatNTexNames(textureNames, matNames);
         }
         if (GUILayout.Button("Export res"))
@@ -53,6 +56,7 @@ public class ResoursexEditor : Editor
 
         MeshRenderer[] meshRenderers = ((Resourcex)target).GetComponentsInChildren<MeshRenderer>();
         List<Material> materials = new List<Material>();
+        List<Texture> textures = new List<Texture>();
         foreach (var item in meshRenderers) //чистим список от повторяющихся материалов
         {
             foreach (var mat in item.sharedMaterials)
@@ -70,7 +74,63 @@ public class ResoursexEditor : Editor
         {
             if (!item)
                 continue; //FIXME: заплатка из-за импорта
-            Debug.Log(item.name);
+            int tPos = int.MinValue;
+
+            string mName = item.name;
+            tPos = mName.IndexOf(" tex ");
+
+            if (tPos == -1)
+            {
+                tPos = mName.IndexOf(" ttx ");
+
+                if (tPos == -1)
+                {
+                    tPos = mName.IndexOf(" itx ");
+
+                }
+            }
+
+
+            if (!item.mainTexture)
+            {
+                matNames.Add($"col{i}");
+            }
+            else if (tPos != -1)    //если использован материал из импорченого .res файла
+            {
+                textures.Add(item.mainTexture);
+
+
+                // Debug.LogWarning(3);
+                // Debug.Log(tPos);
+
+                mName = mName.Substring(0, tPos + 4);
+                mName += $" {i} ";
+                // Debug.Log(item.name);
+                // Debug.Log(tPos + 3);
+
+                // Debug.Log(item.name.Length - tPos - 3);
+                // Debug.LogWarning(item.name.Substring(tPos + 3, item.name.Length - tPos - 3));
+                mName += item.name.Substring(tPos + 8, item.name.Length - tPos - 8);
+                matNames.Add(mName);
+
+            }
+            else
+            {
+                textures.Add(item.mainTexture);
+
+                string[] splits = item.mainTexture.name.Split('\\');
+                string texName = splits[splits.Length - 1];
+                texName = texName.Split('.')[0];
+                item.mainTexture.name = $"txr\\{texName}.txr";
+
+
+
+                string matName = splits[splits.Length - 1];
+                matName = matName.Split('.')[0];
+                matNames.Add($"mat_{matName} tex {i}");
+            }
+            i++;
+            continue;
             if (item.mainTexture)
             {
                 if (item.mainTexture.name.Contains("txr\\"))
@@ -91,6 +151,26 @@ public class ResoursexEditor : Editor
                 i++;
             }
         }
+        StreamWriter file = new StreamWriter($"Assets/{target.name}.pro");
+        file.WriteLine($"TEXTUREFILES {textures.Count}");
+        foreach (var item in textures)
+        {
+            file.WriteLine(item.name);
+        }
+        file.WriteLine($"MATERIALS {matNames.Count}");
+        foreach (var item in matNames)
+        {
+            file.WriteLine(item);
+        }
+        file.Close();
+        AssetDatabase.Refresh();
+        return;
+        for (i = 0; i < matNames.Count; i++)
+        {
+            Debug.Log(matNames[i]);
+            Debug.Log(textures[i].name);
+        }
+        return;
         i = 0;
         foreach (var item in textureNames)
         {
