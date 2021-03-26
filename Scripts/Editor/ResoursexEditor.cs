@@ -56,7 +56,16 @@ public class ResoursexEditor : Editor
 
         MeshRenderer[] meshRenderers = ((Resourcex)target).GetComponentsInChildren<MeshRenderer>();
         List<Material> materials = new List<Material>();
-        List<Texture> textures = new List<Texture>();
+        List<Texture2D> textures = new List<Texture2D>();
+
+        var mats = objTarget.GetComponent<Materials>();
+        mats.material = new List<string>();
+        mats.maths = new List<Material>();
+
+        var texts = objTarget.GetComponent<Texturefiles>();
+        texts.textures = new List<Texture2D>();
+        texts.Texturenames = new List<string>();
+
         foreach (var item in meshRenderers) //чистим список от повторяющихся материалов
         {
             foreach (var mat in item.sharedMaterials)
@@ -74,6 +83,10 @@ public class ResoursexEditor : Editor
         {
             if (!item)
                 continue; //FIXME: заплатка из-за импорта
+
+
+
+            mats.maths.Add(item);
             int tPos = int.MinValue;
 
             string mName = item.name;
@@ -90,33 +103,22 @@ public class ResoursexEditor : Editor
                 }
             }
 
-
             if (!item.mainTexture)
             {
                 matNames.Add($"col{i}");
             }
             else if (tPos != -1)    //если использован материал из импорченого .res файла
             {
-                textures.Add(item.mainTexture);
-
-
-                // Debug.LogWarning(3);
-                // Debug.Log(tPos);
-
+                textures.Add((Texture2D)item.mainTexture);
                 mName = mName.Substring(0, tPos + 4);
                 mName += $" {i} ";
-                // Debug.Log(item.name);
-                // Debug.Log(tPos + 3);
-
-                // Debug.Log(item.name.Length - tPos - 3);
-                // Debug.LogWarning(item.name.Substring(tPos + 3, item.name.Length - tPos - 3));
                 mName += item.name.Substring(tPos + 8, item.name.Length - tPos - 8);
                 matNames.Add(mName);
 
             }
             else
             {
-                textures.Add(item.mainTexture);
+                textures.Add((Texture2D)item.mainTexture);
 
                 string[] splits = item.mainTexture.name.Split('\\');
                 string texName = splits[splits.Length - 1];
@@ -130,32 +132,13 @@ public class ResoursexEditor : Editor
                 matNames.Add($"mat_{matName} tex {i}");
             }
             i++;
-            continue;
-            if (item.mainTexture)
-            {
-                if (item.mainTexture.name.Contains("txr\\"))
-                {
-                    textureNames.Add(item.mainTexture.name);
-                }
-                else
-                {
-                    string[] splits = item.mainTexture.name.Split('\\');
-                    string texName = splits[splits.Length - 1];
-                    texName = texName.Split('.')[0];
-                    textureNames.Add($"txr\\{texName}.txr");
-                }
-            }
-            else
-            {
-                textureNames.Add($"col{i}");
-                i++;
-            }
         }
         StreamWriter file = new StreamWriter($"Assets/{target.name}.pro");
         file.WriteLine($"TEXTUREFILES {textures.Count}");
         foreach (var item in textures)
         {
             file.WriteLine(item.name);
+            texts.Texturenames.Add(item.name);
         }
         file.WriteLine($"MATERIALS {matNames.Count}");
         foreach (var item in matNames)
@@ -164,31 +147,10 @@ public class ResoursexEditor : Editor
         }
         file.Close();
         AssetDatabase.Refresh();
-        return;
-        for (i = 0; i < matNames.Count; i++)
-        {
-            Debug.Log(matNames[i]);
-            Debug.Log(textures[i].name);
-        }
-        return;
-        i = 0;
-        foreach (var item in textureNames)
-        {
-            if (item.Contains("col"))
-            {
-                matNames.Add($"mat_{item} col 0");
-            }
-            else
-            {
-                string[] splits = item.Split('\\');
-                string matName = splits[splits.Length - 1];
-                matName = matName.Split('.')[0];
-                matNames.Add($"mat_{matName} tex {i}");
-                i++;
+        mats.material = matNames;
+        texts.textures = textures;
 
-            }
-            Debug.Log(matNames[matNames.Count - 1]);
-        }
+        return;
     }
     void OnEnable()
     {
