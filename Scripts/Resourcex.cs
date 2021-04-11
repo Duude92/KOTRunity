@@ -8,6 +8,11 @@ public class Resourcex : MonoBehaviour
     public FileInfo file;
     public void StartRes(AssetImportContext assetObj = null)
     {
+        if (!File.Exists(file.FullName))
+        {
+            Debug.LogError("RESOURCE FILE NOT FOUND FOR SCENE");
+            return;
+        }
         BinaryReader br = new BinaryReader(File.Open(file.FullName, FileMode.Open));
         byte[] resource = new byte[file.Length];
         br.Read(resource, 0, (int)file.Length);
