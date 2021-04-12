@@ -86,15 +86,11 @@ public class Block05 : BlockType, IBlocktype, IDisableable
     }
     public void Enable()
     {
-        if (nameToJoin == "hitAnmObj0241")
-        {
-            Debug.Log("hitAnmObj0241");
-        }
-        if (!string.IsNullOrEmpty(nameToJoin))
-        {
-            Debug.Log("", gameObject);
-            StartCoroutine(Enable(nameToJoin));
-        }
+        // if (!string.IsNullOrEmpty(nameToJoin)) //FIXME
+        // {
+        //     Debug.Log("", gameObject);
+        //     StartCoroutine(Enable(nameToJoin));
+        // }
     }
     IEnumerator Enable(string Name, bool common = false)
     {

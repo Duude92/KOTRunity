@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour, IDisableable
 {
     private static List<IDisableable> disableList = new List<IDisableable>();
 
-	public static GameManager instance;
+    public static GameManager instance;
     [SerializeField] public static Shader TC; //TOREMOVE
     [SerializeField] public static Shader TCu;//TOREMOVE
     public List<GameObject> MainRooms = new List<GameObject>();
@@ -27,14 +27,14 @@ public class GameManager : MonoBehaviour, IDisableable
     {
         GC.Collect();
     }
-	void Init()
-	{
-		if(instance)
-		{
-			DestroyImmediate(instance.gameObject);
-			instance = this;
-		}
-	}
+    void Init()
+    {
+        if (instance)
+        {
+            DestroyImmediate(instance.gameObject);
+            instance = this;
+        }
+    }
     void Start()
     {
         int childCount = transform.childCount;
@@ -110,27 +110,47 @@ public class GameManager : MonoBehaviour, IDisableable
     // }
 
 
-	public static void SetActiveBlocks(bool enable)
-	{
-		if(enable)
-		instance.Enable();
-		else
-		instance.Disable();
-	}
+    public static void SetActiveBlocks(bool enable)
+    {
+        if (enable)
+            instance.Enable();
+        else
+            instance.Disable();
+    }
+    private void RemoveIDisableNulls()
+    {
+        List<IDisableable> disableables = new List<IDisableable>();
+        foreach (var item in disableList)
+        {
+            if (item != null)
+            {
+                disableables.Add(item);
+            }
+        }
+        disableList = disableables;
+    }
+    private void SetEnableObjects(bool enable)
+    {
+        RemoveIDisableNulls();
+        IDisableable[] disableables = new IDisableable[disableList.Count];
+        disableList.CopyTo(disableables);
+        foreach (var go in disableables)
+        {
+            if (enable)
+                go.Enable();
+            else
+                go.Disable();
+        }
+
+    }
 
     public void Disable()
     {
-        foreach (var go in disableList)
-        {
-            go.Disable();
-        }
+        SetEnableObjects(false);
     }
 
     public void Enable()
     {
-        foreach (var go in disableList)
-        {
-            go.Enable();
-        }
+        SetEnableObjects(true);
     }
 }

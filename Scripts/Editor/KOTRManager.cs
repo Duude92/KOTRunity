@@ -204,16 +204,31 @@ public class KOTRManager : EditorWindow
         GUILayout.BeginHorizontal();
         if (GUILayout.Button("Import Mesh to Scene"))
         {
+            if (!target)
+            {
+                Debug.LogWarning("Необходимо выбрать обьект для сохранения");
+                return;
+            }
             ImportObject();
         }
         if (GUILayout.Button("Export to OBJ"))
         {
+            if (!target)
+            {
+                Debug.LogWarning("Необходимо выбрать обьект для сохранения");
+                return;
+            }
             ExportObject();
         }
         GUILayout.EndHorizontal();
 
         if (GUILayout.Button("Save as prefab"))
         {
+            if (!target)
+            {
+                Debug.LogWarning("Необходимо выбрать обьект для сохранения");
+                return;
+            }
             string objectName = target.name;
             if (string.IsNullOrEmpty(objectName))
             {
@@ -397,9 +412,8 @@ public class KOTRManager : EditorWindow
         MeshFilter meshFilter = transform.GetComponent<MeshFilter>();
         if (meshFilter == null)
         {
-            BlockType bt = transform.gameObject.AddComponent<BlockType>();
+            BlockType bt = transform.gameObject.AddComponent<Block05>();
             bt.Type = 5;
-            bt = transform.gameObject.AddComponent<Block05>();
             ((IBlocktype)bt).thisObject = transform.gameObject;
         }
         else if (transform.GetComponent<MeshRenderer>())

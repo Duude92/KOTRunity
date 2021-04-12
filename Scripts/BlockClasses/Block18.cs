@@ -79,6 +79,13 @@ public class Block18 : BlockType, IBlocktype, IDisableable
 
     public void Enable()
     {
-        me.Invoke();
+        try
+        {
+            me.Invoke();
+        }
+        catch (System.Exception e)
+        {
+            Debug.Log(e, this);
+        }
     }
 }

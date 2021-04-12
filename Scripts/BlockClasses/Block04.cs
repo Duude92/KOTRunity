@@ -82,15 +82,16 @@ public class Block04 : BlockType, IBlocktype, IDisableable
     }
     public void Enable()
     {
-        if (spaceName == "hitAnmObj0241")
+        if(!this)
         {
-            Debug.Log("hitAnmObj0241");
+            DestroyImmediate(this);
+            return;
         }
-        if (!string.IsNullOrEmpty(spaceName))
-        {
-            Debug.Log("", gameObject);
-            StartCoroutine(Enable(spaceName));
-        }
+        // if (!string.IsNullOrEmpty(spaceName))//FIXME
+        // {
+        //     Debug.Log("", gameObject);
+        //     StartCoroutine(Enable(spaceName));
+        // }
     }
     IEnumerator Enable(string Name, bool common = false)
     {

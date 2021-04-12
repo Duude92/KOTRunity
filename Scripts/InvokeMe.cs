@@ -7,7 +7,7 @@ using System;
 
 
 
-class InvokeMe : MonoBehaviour
+public class InvokeMe : MonoBehaviour
 {
     public string space;
     public string blocks;
@@ -34,47 +34,61 @@ class InvokeMe : MonoBehaviour
     }
     public void Invoke()
     {
+        if (this == null)
+        {
+            DestroyImmediate(this);
+            return;
+        }
 
         GameObject me = null;
         Transform meT = null;
+        GameObject SpcOb = null;
 
         meT = GameManager.common.transform.Find(blocks);
+        try
+        {
 
-        if (meT)
-        {
-            me = meT.gameObject;
-        }
-        else
-        {
-            meT = GO?.Find(blocks);
+
             if (meT)
-                me = meT?.gameObject;
+            {
+                me = meT.gameObject;
+            }
             else
             {
-                Debug.LogError(blocks + " NOT FOUND");
-                me = null;
+                meT = GO?.Find(blocks);
+                if (meT)
+                    me = meT?.gameObject;
+                else
+                {
+                    Debug.LogError(blocks + " NOT FOUND");
+                    me = null;
+                }
+
+            }
+
+
+
+
+
+
+
+
+            if ((space != "$$world")||string.IsNullOrEmpty(space)||string.IsNullOrWhiteSpace(space))
+            {
+                Transform tr = GO?.Find(space);
+                SpcOb = tr?.gameObject;
+            }
+            else
+            {
+                notfound = true;
             }
 
         }
-
-
-
-
-        GameObject SpcOb = null;
-
-
-
-
-        if (space != "$$world")
+        catch (System.Exception e)
         {
-            Transform tr = GO?.Find(space);
-            SpcOb = tr?.gameObject;
+            Debug.LogError(e, this);
+            return;
         }
-        else
-        {
-            notfound = true;
-        }
-
 
 
 
@@ -108,7 +122,7 @@ class InvokeMe : MonoBehaviour
                         rotation.y = 0;
                     }
 
-                    ind.transform.localPosition = Spc.position;
+                    ind.transform.position = Spc.position;
                     ind.transform.eulerAngles = rotation;
                     ind.SetActive(true);
 
