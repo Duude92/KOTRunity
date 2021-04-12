@@ -4,6 +4,11 @@ public class Block18 : BlockType, IBlocktype, IDisableable
 {
     UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
+
+    public Transform GetTransform => transform;
+
+    public GameObject GetGameObject => gameObject;
+
     private InvokeMe me;
     private Vector3 gizmoPosition;
     public Block24 gizmosTransform;
@@ -74,6 +79,11 @@ public class Block18 : BlockType, IBlocktype, IDisableable
     }
     public void Disable()
     {
+        if(!me)
+        {
+            Debug.Log(this,this);
+            return;
+        }
         me.Destroy();
     }
 

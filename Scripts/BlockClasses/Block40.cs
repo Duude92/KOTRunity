@@ -35,8 +35,14 @@ public class Block40Editor : Editor
 
 public class Block40 : BlockType, IBlocktype, IDisableable
 {
+    
     UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get { if (_thisObject) return _thisObject; else return _thisObject; } set => _thisObject = value; }
+
+    public Transform GetTransform => transform;
+
+    public GameObject GetGameObject => gameObject;
+
     GeneratorInvoker GI;
     private string iName = "Plus";
     private AGenerator generator;
@@ -184,6 +190,11 @@ abstract class AGenerator : MonoBehaviour, IDisableable
     [SerializeField] private List<float> Params = new List<float>();
     public abstract Vector3 position { get; set; }
     public abstract string Name { get; set; }
+
+    public Transform GetTransform => transform;
+
+    public GameObject GetGameObject => gameObject;
+
     protected int paramCount;
     [Tooltip("gType for TreeGenerator1 is for tree type:\n19 is for blue spruce\n3 is for green spruce")]
     [SerializeField] protected int gType;

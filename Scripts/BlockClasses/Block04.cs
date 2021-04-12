@@ -8,6 +8,10 @@ public class Block04 : BlockType, IBlocktype, IDisableable
     UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
 
+    public Transform GetTransform => transform;
+
+    public GameObject GetGameObject => gameObject;
+
     public string spaceName;
     public GameObject obj;
     bool rendered = false;

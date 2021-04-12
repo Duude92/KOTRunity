@@ -6,10 +6,9 @@ using System.Threading;
 using UnityEngine.EventSystems;
 using System;
 
-public class GameManager : MonoBehaviour, IDisableable
+public class GameManager : MonoBehaviour
 {
     private static List<IDisableable> disableList = new List<IDisableable>();
-
     public static GameManager instance;
     [SerializeField] public static Shader TC; //TOREMOVE
     [SerializeField] public static Shader TCu;//TOREMOVE
@@ -112,10 +111,7 @@ public class GameManager : MonoBehaviour, IDisableable
 
     public static void SetActiveBlocks(bool enable)
     {
-        if (enable)
-            instance.Enable();
-        else
-            instance.Disable();
+        instance.SetEnableObjects(enable);
     }
     private void RemoveIDisableNulls()
     {
@@ -136,21 +132,16 @@ public class GameManager : MonoBehaviour, IDisableable
         disableList.CopyTo(disableables);
         foreach (var go in disableables)
         {
-            if (enable)
-                go.Enable();
-            else
-                go.Disable();
+            if (go != null)
+                if (go.GetGameObject.activeSelf)
+                {
+                    if (enable)
+                        go.Enable();
+                    else
+                        go.Disable();
+                }
         }
 
     }
 
-    public void Disable()
-    {
-        SetEnableObjects(false);
-    }
-
-    public void Enable()
-    {
-        SetEnableObjects(true);
-    }
 }

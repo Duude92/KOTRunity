@@ -55,6 +55,7 @@ public class InvokeMe : MonoBehaviour
             }
             else
             {
+
                 meT = GO?.Find(blocks);
                 if (meT)
                     me = meT?.gameObject;
