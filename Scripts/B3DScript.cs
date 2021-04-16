@@ -6,6 +6,14 @@ using System.IO;
 
 public class B3DScript : MonoBehaviour
 {
+    enum SceneCase
+    {
+        SCENE_BEGIN = 111,
+        SCENE_END = 222,
+        NEW_OBJECT = 333,
+        BLOCK_BREAK = 444,
+        OBJECT_END = 555
+    }
     public List<Vector3> triggerBox = new List<Vector3>();
     BinaryReader br;
     public List<int> Materials = new List<int>();
@@ -76,9 +84,10 @@ public class B3DScript : MonoBehaviour
 
                 sprites[i] = Sprite.Create(texture[i], new Rect(0, 0, 1, 1), new Vector2(0f, 0f), 100);
             }
-            int Ccase = System.BitConverter.ToInt32(resource, pos);
+            //int Ccase = System.BitConverter.ToInt32(resource, pos);
+            SceneCase Ccase = (SceneCase)System.BitConverter.ToInt32(resource, pos);
             pos += 4;
-            if (Ccase == 111)
+            if (Ccase == SceneCase.SCENE_BEGIN)
             {
                 int lvl = 0;
                 GameObject lastGameObject = null;
@@ -88,9 +97,9 @@ public class B3DScript : MonoBehaviour
                 for (; ; )
                 {
                     lvl++;
-                    Ccase = System.BitConverter.ToInt32(resource, pos);
+                    Ccase = (SceneCase)System.BitConverter.ToInt32(resource, pos);
                     pos += 4;
-                    if (Ccase == 222)
+                    if (Ccase == SceneCase.SCENE_END)
                     {
                         foreach (var go in rootObj.GetComponent<B3DScript>().Rooms)
                         {
@@ -102,12 +111,9 @@ public class B3DScript : MonoBehaviour
 
                             go.GetComponent<LoadTrigger>().Init(rootObj);
                         }
-
-
-
                         break;
                     }
-                    else if (Ccase == 444)
+                    else if (Ccase == SceneCase.BLOCK_BREAK)
                     {
                         newObject = new GameObject("444");
                         if (lastGameObject != null)
@@ -149,7 +155,7 @@ public class B3DScript : MonoBehaviour
                             swIt++;
                         }*/
                     }
-                    else if (Ccase == 555)
+                    else if (Ccase == SceneCase.OBJECT_END)
                     {
                         lastGameObject.GetComponent<BlockType>().ClosingEvent();
 
@@ -169,7 +175,7 @@ public class B3DScript : MonoBehaviour
 
                         lastGameObject = lastGameObject.transform.parent.gameObject;
                     }
-                    else if (Ccase == 333)
+                    else if (Ccase == SceneCase.NEW_OBJECT)
                     {
                         byte[] blockName = new byte[32];
                         System.Array.Copy(resource, pos, blockName, 0, 32);
@@ -575,7 +581,7 @@ public class B3DScript : MonoBehaviour
             return GetParentVertices(gameObject.parent);
 
     }
-    
+
     public void ClearB3D()
     {
         Debug.Log(this, gameObject);
