@@ -5,6 +5,6 @@ public abstract class BlockType : MonoBehaviour {
 	//public IBlocktype component;
 	[HideInInspector] public B3DScript script;
 	public virtual void ClosingEvent(){	} //should be abstract?
-	public void ComaEvent(){}
+	public virtual void ComaEvent(){}
 
 }

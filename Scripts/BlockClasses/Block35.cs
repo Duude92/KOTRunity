@@ -25,6 +25,8 @@ public class Block35 : BlockType, IBlocktype, IMeshInfo
         buffer.AddRange(System.BitConverter.GetBytes(i_null)); //Some value i_null
         buffer.AddRange(System.BitConverter.GetBytes(matNum)); //Some value MatNum
         int loopCount = mesh.triangles.Length / 3;
+        if (j_null == 0)
+            j_null = loopCount;
         buffer.AddRange(System.BitConverter.GetBytes(j_null)); //Some value j_null
         if (i_null == 3)
         {

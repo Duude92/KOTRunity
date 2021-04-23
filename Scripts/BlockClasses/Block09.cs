@@ -6,8 +6,8 @@ class Block09 : BlockType, IBlocktype
     UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
 
-    [SerializeField] private Vector3 Direction;
-    [SerializeField] private float Distance;
+    [SerializeField] public Vector3 Direction;
+    [SerializeField] public float Distance;
     void Awake()
     {
     }
@@ -68,20 +68,69 @@ class Block09 : BlockType, IBlocktype
 
     private void TriggerBox()
     {
+        Mesh mesh = new Mesh();
+
         List<Vector3> vertices = new List<Vector3>();
         foreach (Vector3 vector in script.triggerBox)
         {
             foreach (Vector3 vector1 in script.triggerBox)
             {
-                //if (vect)
+
             }
         }
 
     }
     public override void ClosingEvent()
     {
-        script.triggerBox.RemoveAt(script.triggerBox.Count - 1);
+        //script.triggerBox.RemoveAt(script.triggerBox.Count - 1);
+        script.triggerBox.Clear();
     }
 
+    public override void ComaEvent()
+    {
+        return;
+        List<Vector3> rawVertices = new List<Vector3>();
+        BlockType bt = this;
+        while (bt?.Type == 9)
+        {
+            var b9 = (Block09)bt;
+            rawVertices.Add(b9.Direction * -b9.Distance);
+            bt = bt.transform.parent?.GetComponent<BlockType>();
+        }
+
+        Mesh mesh = new Mesh();
+        List<Vector3> vertices = new List<Vector3>();
+        Vector3 topVector = new Vector3(0, 5, 0);
+        foreach (var item in rawVertices)
+        {
+            vertices.Add(item);
+            vertices.Add(item + topVector);
+        }
+        int[] quads = new int[vertices.Count * 2];
+        for (int i = 0; i < vertices.Count - 2; i += 2)
+        {
+            quads[i * 2 + 0] = i + 0;
+            quads[i * 2 + 1] = i + 1;
+            quads[i * 2 + 2] = i + 3;
+            quads[i * 2 + 3] = i + 2;
+        }
+        {
+            int i = vertices.Count - 2;
+            quads[i * 2 + 0] = i + 0;
+            quads[i * 2 + 1] = i + 1;
+            quads[i * 2 + 2] = 0;
+            quads[i * 2 + 3] = 1;
+        }
+
+        mesh.SetVertices(vertices);
+        mesh.SetIndices(quads, MeshTopology.Quads, 0);
+        mesh.RecalculateBounds();
+        var mf = gameObject.AddComponent<MeshFilter>();
+        mf.sharedMesh = mesh;
+        var mc = gameObject.AddComponent<MeshCollider>();
+        mc.sharedMesh = mesh;
+        mc.convex = true;
+
+    }
 
 }

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+[RequireComponent(typeof(BlockSwitcher),typeof(SphereCollider))]
 class Block21 : BlockType, IBlocktype
 {
     UnityEngine.GameObject _thisObject;
@@ -8,6 +9,19 @@ class Block21 : BlockType, IBlocktype
     SphereCollider sc;
     public byte[] GetBytes()
     {
+        if(!thisObject)
+        {
+            thisObject = gameObject;
+        }
+        if(!sc|!switcher)
+        {
+            sc = GetComponent<SphereCollider>();
+            switcher = GetComponent<BlockSwitcher>();
+            if(!sc|!switcher)
+            {
+                throw new System.Exception("SphereCollider or BlockSwitcher not found");
+            }
+        }
         List<byte> buffer = new List<byte>();
         buffer.AddRange(Instruments.Vector3ToBytes(sc.center));
         buffer.AddRange(System.BitConverter.GetBytes(sc.radius));
@@ -19,14 +33,13 @@ class Block21 : BlockType, IBlocktype
 
     public void Read(byte[] buffer, ref int pos)
     {
-        thisObject.AddComponent<MeshRenderer>();//sw -> OnWillRender()
         script.SwitchBlocks.Add(thisObject);
-        sc = thisObject.AddComponent<SphereCollider>();
-        sc.center = new Vector3(System.BitConverter.ToSingle(buffer, pos), System.BitConverter.ToSingle(buffer, pos + 8), System.BitConverter.ToSingle(buffer, pos + 4));
+        sc = thisObject.GetComponent<SphereCollider>();
+        sc.center = Instruments.ReadV3(buffer,pos);
         sc.radius = System.BitConverter.ToSingle(buffer, pos + 12);
         sc.isTrigger = true;
         pos += 16;
-        switcher = thisObject.AddComponent<BlockSwitcher>();
+        switcher = thisObject.GetComponent<BlockSwitcher>();
         switcher.groups = System.BitConverter.ToInt32(buffer, pos);
         //sw.Initialize(System.BitConverter.ToInt32(resource,pos));
         pos += 4;

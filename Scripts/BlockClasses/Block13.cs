@@ -5,25 +5,30 @@ class Block13 : BlockType, IBlocktype
 {
     public enum EventType
     {
-        NoRain = 4,
-        Restart = 11,
+        NoRain = 4,                 //limit09
+        Fon_Main = 6,
+        Restart = 11,               //Restart
         Room,
-        Benzo_event = 14,
-        STOS,
+        Benzo_event = 14,           //limit09
+        STOS,                       //default
         Water,
-        Store,
-        InfoStore = 19,
-        NoRainNoSun = 22,
+        Store,                      //default
+        InfoStore = 19,             //default
+        NoRainNoSun = 22,           //possible limited???? //TODO
+        WeatherChange,              
+        Restart_024,                //Restart
         SomeEvent_roadType = 29,
-        RadarEvent,
-        Spikes,
-        OtherBaza = 4095,
+        RadarEvent,                 //default -> RadarEvent
+        Spikes,                     //spikes
+        OtherBaza = 4095,           //OtherBaza
 
 
     }
-    public int b, paramCount;
+    public int b;
+    private int paramCount;
     public EventType eventType;
-    public List<float> Params = new List<float>();
+    private Block13SubclassBase eventTrigger;
+    private List<float> Params = new List<float>();
     GameObject _thisObject;
     public GameObject thisObject { get => _thisObject; set => _thisObject = value; }
 
@@ -33,11 +38,13 @@ class Block13 : BlockType, IBlocktype
         buffer.AddRange(new byte[16]);
         buffer.AddRange(System.BitConverter.GetBytes((int)eventType));
         buffer.AddRange(System.BitConverter.GetBytes(b));
-        buffer.AddRange(System.BitConverter.GetBytes(paramCount));
-        foreach (float p in Params)
-        {
-            buffer.AddRange(System.BitConverter.GetBytes(p));
-        }
+        // buffer.AddRange(System.BitConverter.GetBytes(paramCount));
+        // foreach (float p in Params)
+        // {
+        //     buffer.AddRange(System.BitConverter.GetBytes(p));
+        // }
+
+        buffer.AddRange(eventTrigger.GetByte());
 
         return buffer.ToArray();
     }
@@ -55,20 +62,44 @@ class Block13 : BlockType, IBlocktype
         }
         else
         {
-            Debug.LogWarning("no " + a + " event for ", gameObject);
+            Debug.LogWarning("no " + a + " event for " + gameObject, gameObject);
         }
         b = System.BitConverter.ToInt32(buffer, pos + 4);
-        int paramCount2 = System.BitConverter.ToInt32(buffer, pos + 8);
-        paramCount = paramCount2;
-        pos += 4;
-        pos += 8;
-        //int i_null = System.BitConverter.ToInt32(buff,0);
-        for (int i = 0; i < paramCount; i++)
+        pos += 8;//
+        System.Type componentType = null;
+        switch (eventType)
         {
-            Params.Add(System.BitConverter.ToSingle(buffer, pos));
-            pos += 4;
-        }
+            case EventType.Restart:
+                componentType = typeof(RestartSubclass);
+                break;
+            case EventType.Restart_024:
+                componentType = typeof(RestartSubclass);
+                break;
+            case EventType.OtherBaza:
+                componentType = typeof(OtherBazaSubclass);
+                break;
+            case EventType.Spikes:
+                componentType = typeof(SpikesSubclass);
+                break;
+            case EventType.NoRain:
+                componentType = typeof(Block13SubclassLimited09);
+                break;
+            case EventType.NoRainNoSun:
+                componentType = typeof(Block13SubclassLimited09);
+                break;
+            case EventType.Benzo_event:
+                componentType = typeof(Block13SubclassLimited09);
+                break;
+            default:
+                componentType = typeof(DefaultSubclass);
+                break;
 
+        }
+        if (componentType != null)
+        {
+            eventTrigger = gameObject.AddComponent(componentType) as Block13SubclassBase;
+            eventTrigger?.Read(buffer, ref pos);
+        }
     }
     public override void ClosingEvent()
     {

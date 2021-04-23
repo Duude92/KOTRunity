@@ -129,9 +129,10 @@ public class B3DScript : MonoBehaviour
                             newObject.transform.SetParent(rootObj.transform);
                             lastGameObject = rootObj;
                         }
-                        if (lastGameObject.GetComponent<BlockType>())
+                        var bt = lastGameObject.GetComponent<BlockType>();
+                        if (bt)
                         {
-                            if (lastGameObject.GetComponent<BlockType>().Type == 10)
+                            if (bt.Type == 10)
                             {
 
                                 /*float perc = Distance/(2000f+lodCnt);
@@ -142,7 +143,9 @@ public class B3DScript : MonoBehaviour
                                 rends = new List<Renderer>();
                                 lodCnt++;
                             }
+                            bt.ComaEvent();
                         }
+
 
                         /*if (curLodObj == lastGameObject)
                         {
@@ -203,340 +206,20 @@ public class B3DScript : MonoBehaviour
                         ((IBlocktype)blockType).Read(resource, ref pos);
                         //--------
 
-                        { //LEGACY commented
-                          // if (type == 0)
-                          // {
-                          //     bt.component = new Block00();
-                          //     bt.component.thisObject = newObject;
-                          //     pos += 16;
-                          //     pos += 28;
-                          // }
-                          // else if (type == 1)
-                          // {
-                          //     bt.component = new Block01();
-                          //     pos += 32;
-                          //     pos += 32;
-                          // }
-                          // else if (type == 2)
-                          // {
-                          //     bt.component = new Block02();
-                          //     pos += 16;
-                          //     pos += 20;
-                          // }
-                          // else if (type == 3)
-                          // {
-                          //     bt.component = new Block03();
-                          //     pos += 16;
-                          //     pos += 4;
-                          // }
-                          // else if (type == 4)
-                          // {
-                          //     Block04 block = newObject.AddComponent<Block04>();
-                          //     block.Read(resource, ref pos);
-                          //     bt.component = block;
-                          //     block.thisObject = newObject;
 
-                            // }
-                            // else if (type == 5)
-                            // {
-                            //     DestroyImmediate(bt);
-
-
-                            //     Block05 block = newObject.AddComponent<Block05>();
-                            //     block.Read(resource, ref pos);
-                            //     bt.component = block;
-                            //     block.thisObject = newObject;
-                            // }
-                            // else if (type == 6)
-                            // {
-                            //     DestroyImmediate(bt);
-                            //     bt = newObject.AddComponent<Block06>();
-                            //     bt.component = (IBlocktype)bt;
-                            //     bt.component.thisObject = newObject;
-                            //     bt.script = this;
-                            //     bt.component.Read(resource, ref pos);
-
-                            // }
-                            // else if (type == 7)
-                            // {
-                            //     DestroyImmediate(bt);
-                            //     bt = newObject.AddComponent<Block07>();
-                            //     bt.component = (IBlocktype)bt;
-                            //     bt.component.thisObject = newObject;
-                            //     bt.script = this;
-                            //     bt.component.Read(resource, ref pos);
-
-                            // }
-                            // else if (type == 8)
-                            // {
-                            //     bt.component = newObject.AddComponent<Block08>();
-                            //     ((Block08)bt.component).script = this;
-                            //     ((Block08)bt.component).vertices = vertices;
-                            //     ((Block08)bt.component).UV = UV;
-                            //     bt.component.Read(resource, ref pos);
-                            // }
-                            // else if (type == 9)
-                            // {
-                            //     DestroyImmediate(bt);
-                            //     bt = newObject.AddComponent<Block09>();
-                            //     bt.component = (IBlocktype)bt;
-                            //     bt.component.thisObject = newObject;
-                            //     ((Block09)bt.component).script = this;
-                            //     bt.component.Read(resource, ref pos);
-                            // }
-                            // else if (type == 10)
-                            // {
-                            //     DestroyImmediate(bt);
-                            //     bt = newObject.AddComponent<Block10>();
-                            //     bt.component = (IBlocktype)bt;
-                            //     bt.component.thisObject = newObject;
-                            //     bt.component.Read(resource, ref pos);
-
-
-                            // }
-                            // else if (type == 12)
-                            // {
-                            //     bt.component = new Block12();
-                            //     bt.component.thisObject = newObject;
-                            //     bt.component.Read(resource, ref pos);
-
-
-
-                            // }
-                            // else if (type == 13)
-                            // {
-                            //     DestroyImmediate(bt);
-                            //     bt = newObject.AddComponent<Block13>();
-                            //     bt.component = (IBlocktype)bt;
-                            //     bt.script = this;
-                            //     bt.component.thisObject = newObject;
-                            //     bt.component.Read(resource, ref pos);
-
-                            // }
-                            // else if (type == 14)
-                            // {
-                            //     bt.component = new Block14();
-                            //     bt.component.thisObject = newObject;
-                            //     bt.component.Read(resource, ref pos);
-
-                            // }
-                            // else if (type == 16)
-                            // {
-                            //     pos += 16;
-                            //     pos += 44;
-                            // }
-                            // else if (type == 17)
-                            // {
-                            //     pos += 16;
-                            //     pos += 44;
-                            // }
-                            // else if (type == 18)
-                            // {
-                            //     bt.component = new Block18();
-                            //     bt.component.thisObject = newObject;
-                            //     ((Block18)bt.component).script = this;
-                            //     bt.component.Read(resource, ref pos);
-                            // }
-                            // else if (type == 19)
-                            // {
-                            //     Block19 block = newObject.AddComponent<Block19>();
-                            //     bt.component = block;
-                            //     block.thisObject = newObject;
-                            //     block.room = newObject;
-                            //     rootObj.transform.parent.GetComponent<GameManager>().Rooms.Add(newObject);
-                            //     Rooms.Add(newObject);
-                            //     pos += 4;
-                            // }
-                            // else if (type == 20)
-                            // {
-                            //     DestroyImmediate(bt);
-                            //     bt = newObject.AddComponent<Block20>();
-                            //     bt.component = (IBlocktype)bt;
-                            //     bt.component.thisObject = newObject;
-                            //     bt.component.Read(resource, ref pos);
-
-                            // }
-                            // else if (type == 21)
-                            // {
-                            //     bt.component = new Block21();
-                            //     ((Block21)bt.component).script = this;
-                            //     bt.component.thisObject = newObject;
-                            //     bt.component.Read(resource, ref pos);
-
-
-
-                            // }
-                            // else if (type == 23)
-                            // {
-                            //     DestroyImmediate(bt);
-                            //     bt = newObject.AddComponent<Block23>();
-                            //     bt.component = (IBlocktype)bt;
-                            //     bt.component.thisObject = newObject;
-                            //     ((Block23)bt.component).script = this;
-                            //     bt.component.Read(resource, ref pos);
-                            // }
-                            // else if (type == 24)
-                            // {
-
-                            //     Block24 p = newObject.AddComponent<Block24>();
-                            //     bt.component = p;
-                            //     bt.component.thisObject = newObject;
-
-                            //     byte[] bts = new byte[12];
-
-                            //     System.Array.Copy(resource, pos, bts, 0, 12); pos += 12;
-                            //     //p.matrix = new [3][];
-                            //     p.matrix[0] = new Vector3(System.BitConverter.ToSingle(bts, 0), System.BitConverter.ToSingle(bts, 4), System.BitConverter.ToSingle(bts, 8));
-
-                            //     System.Array.Copy(resource, pos, bts, 0, 12); pos += 12;
-                            //     p.matrix[1] = new Vector3(System.BitConverter.ToSingle(bts, 0), System.BitConverter.ToSingle(bts, 4), System.BitConverter.ToSingle(bts, 8));
-                            //     System.Array.Copy(resource, pos, bts, 0, 12); pos += 12;
-                            //     p.matrix[2] = new Vector3(System.BitConverter.ToSingle(bts, 0), System.BitConverter.ToSingle(bts, 4), System.BitConverter.ToSingle(bts, 8));
-                            //     System.Array.Copy(resource, pos, bts, 0, 12); pos += 12;
-                            //     p.position = new Vector3(System.BitConverter.ToSingle(bts, 0), System.BitConverter.ToSingle(bts, 8), System.BitConverter.ToSingle(bts, 4));
-                            //     System.Array.Copy(resource, pos, buff, 0, 4);
-                            //     p.flag = System.BitConverter.ToInt32(resource, pos); pos += 4;
-                            //     pos += 4;
-                            // }
-                            // else if (type == 25)
-                            // {
-                            //     pos += 12;
-                            //     pos += 32;
-                            //     pos += 4;
-                            //     pos += 40;
-                            // }
-                            // else if (type == 28)
-                            // {
-                            //     DestroyImmediate(bt);
-                            //     bt = newObject.AddComponent<Block28>();
-                            //     bt.component = (IBlocktype)bt;
-                            //     bt.component.thisObject = newObject;
-                            //     ((Block28)bt).script = this;
-                            //     bt.component.Read(resource, ref pos);
-                            // }
-                            // else if (type == 29)
-                            // {
-                            //     pos += 16;
-                            //     System.Array.Copy(resource, pos, buff, 0, 4); pos += 4;
-                            //     int i_null = System.BitConverter.ToInt32(buff, 0);
-                            //     pos += 4;
-                            //     pos += 28;
-                            //     if (i_null == 4)
-                            //     {
-                            //         pos += 4;
-                            //     }
-                            //     else
-                            //     {
-                            //         ;
-                            //     }
-                            //     pos += 4;
-                            // }
-                            // else if (type == 30)
-                            // {
-                            //     bt.component = new Block30();
-                            //     bt.component.thisObject = newObject;
-                            //     ((Block30)bt.component).script = this;
-                            //     bt.component.Read(resource, ref pos);
-
-                            // }
-                            // else if (type == 31)
-                            // {
-                            //     pos += 16;
-                            //     pos += 20;
-                            //     pos += 20;
-                            //     for (int i = 0; i < 27; i++)
-                            //     {
-                            //         pos += 8; //
-                            //     }
-                            //     pos += 4;
-                            // }
-                            // else if (type == 33)
-                            // {
-                            //     bt.component = new Block33();
-                            //     bt.component.thisObject = newObject;
-                            //     bt.component.Read(resource, ref pos);
-                            // }
-                            // else if (type == 34)
-                            // {
-                            //     DestroyImmediate(bt);
-                            //     bt = newObject.AddComponent<Block34>();
-                            //     bt.component = (IBlocktype)bt;
-                            //     bt.component.thisObject = newObject;
-                            //     ((Block34)bt).script = this;
-                            //     bt.component.Read(resource, ref pos);
-
-
-                            // }
-                            // else if (type == 35)
-                            // {
-                            //     bt.component = newObject.AddComponent<Block35>();
-                            //     ((Block35)bt.component).script = this;
-                            //     bt.component.Read(resource, ref pos);
-                            // }
-                            // else if (type == 36)
-                            // {
-                            //     DestroyImmediate(bt);
-                            //     bt = newObject.AddComponent<Block36>();
-                            //     bt.component = (IBlocktype)bt;
-                            //     bt.component.thisObject = newObject;
-                            //     bt.script = this;
-                            //     bt.component.Read(resource, ref pos);
-
-                            // }
-                            // else if (type == 37)
-                            // {
-                            //     DestroyImmediate(bt);
-                            //     bt = newObject.AddComponent<Block37>();
-                            //     bt.component = (IBlocktype)bt;
-                            //     bt.component.thisObject = newObject;
-                            //     bt.script = this;
-                            //     bt.component.Read(resource, ref pos);
-
-                            // }
-                            // else if (type == 39)
-                            // {
-                            //     pos += 16;
-                            //     pos += 16;
-                            //     pos += 4;
-                            //     pos += 4;
-
-                            // }
-                            // else if (type == 40)
-                            // {
-                            //     bt.component = new Block40();
-                            //     bt.component.thisObject = newObject;
-                            //     ((Block40)bt.component).script = this;
-                            //     bt.component.Read(resource, ref pos);
-                            // }
-                            // else
-                            // {
-                            //     //Debug.Log("typeerror");
-                            //     Debug.LogError("Type Error " + type.ToString() + "	" + System.Text.Encoding.UTF8.GetString(blockName) + "	");
-                            //     break;
-                            // }
-                        }
+                        
 
                         if (curLodObj != null)
                         {
                             if (curLodObj != newObject)
                                 rends.Add(newObject.GetComponent<Renderer>());
                         }
-                        /*
-                        if (curSwitch != null)
-                        {
-                            //Debug.LogWarning(swIt);
-                            if (curSwitch!=newObject)
-                            {
-                                curSwitch.GetComponent<BlockSwitcher>().Gobs[swIt].Add(newObject);
-                            }
-                        }
-                        */
                         lastGameObject = newObject;
                     }
                     else
                     {
 
-                        Debug.LogError("Case Error", newObject);
+                        Debug.LogError("Case Error  at  " + pos, newObject);
                         break;
                     }
 

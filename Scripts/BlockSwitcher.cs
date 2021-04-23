@@ -91,6 +91,7 @@ public class GizmosSwitcher21 : Editor {
 
 	public override void OnInspectorGUI()
     {
+		base.OnInspectorGUI();
 		aaa = EditorGUILayout.TextField("Switch to state number:",aaa);
 		BlockSwitcher mySwitcher = (BlockSwitcher)target;
 
