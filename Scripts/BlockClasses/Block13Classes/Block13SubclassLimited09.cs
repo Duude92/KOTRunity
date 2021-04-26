@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 public class Block13SubclassLimited09 : Block13SubclassBase
 {
+    List<Vector3> rawVertices = new List<Vector3>();
     protected override byte[] InternalGetByte()
     {
         return new byte[0];
@@ -10,7 +11,7 @@ public class Block13SubclassLimited09 : Block13SubclassBase
     protected override void InternalRead(byte[] data, ref int pos)
     {
         Transform tr = transform;
-        List<Vector3> rawVertices = new List<Vector3>();
+        rawVertices = new List<Vector3>();
 
         while (tr.parent)
         {
@@ -62,5 +63,18 @@ public class Block13SubclassLimited09 : Block13SubclassBase
 
 
         return;
+    }
+
+
+    void OnDrawGizmos()
+    {
+        if(UnityEditor.Selection.activeGameObject != gameObject)
+        return;
+        Gizmos.color = Color.red;
+        foreach (var item in rawVertices)
+        {
+            var dir = item.normalized;
+            Gizmos.DrawCube(item,(Vector3.one-dir)*10000);
+        }
     }
 }

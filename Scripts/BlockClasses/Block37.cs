@@ -19,6 +19,8 @@ public class Block37 : BlockType, IVerticesBlock, IBlocktype
     public string collisionName;
     [SerializeField] private int i_null;
     [SerializeField] private bool bumped = false;
+    private bool flag = false;
+
 
     public byte[] GetBytes()
     {
@@ -34,7 +36,7 @@ public class Block37 : BlockType, IVerticesBlock, IBlocktype
         System.Text.Encoding.ASCII.GetBytes(collisionName).CopyTo(colName, 0);
         buffer.AddRange(colName);
         int i_null = 0;
-        if (false)//(mesh.Count == 0)
+        if (flag)//(mesh.Count == 0)
         {
             Debug.Log("This object have vertices block, but does not have faces", thisObject);
 

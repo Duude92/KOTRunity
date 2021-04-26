@@ -49,6 +49,7 @@ public class Block40 : BlockType, IBlocktype, IDisableable
     private Vector3 gPosition;
     public static Dictionary<string, System.Type> generators = new Dictionary<string, System.Type>();
     public EGenerator generatorType;
+    private bool flag = false;
 
     public void NewGenerator()
     {
@@ -138,7 +139,7 @@ public class Block40 : BlockType, IBlocktype, IDisableable
         gPosition = generator.position;
 
 
-        if (false)
+        if (flag)
         {
 
             int gType = System.BitConverter.ToInt32(buffer, pos); pos += 4;

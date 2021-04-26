@@ -5,8 +5,6 @@ class Block19 : BlockType, IBlocktype
 {
     UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
-
-    public GameObject room;
     public List<GameObject> hits = new List<GameObject>();
 
     public byte[] GetBytes()

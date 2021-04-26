@@ -67,8 +67,8 @@ public class SpikesSubclass : Block13SubclassBase
     protected override byte[] InternalGetByte()
     {
         System.Collections.Generic.List<byte> buffer = new System.Collections.Generic.List<byte>();
-        buffer.AddRange(Instruments.Vector3ToBytes(startPosition));
-        buffer.AddRange(Instruments.Vector3ToBytes(endPosition));
+        buffer.AddRange(Instruments.Vector3ToBytesZ(startPosition));
+        buffer.AddRange(Instruments.Vector3ToBytesZ(endPosition));
         buffer.AddRange(System.BitConverter.GetBytes(triggerWidth));
         return buffer.ToArray();
     }

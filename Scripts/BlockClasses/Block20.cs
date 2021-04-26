@@ -8,9 +8,28 @@ class Block20 : BlockType, IBlocktype
     MeshCollider col;
     List<Vector3> vertices = new List<Vector3>();
     [SerializeField] int a = 0, b = 0, c = 0;
-    [SerializeField] private char[] keyName = new char[12];
-    [SerializeField] private float height;
-    [SerializeField] private List<int> parameters = new List<int>();
+    [SerializeField] private string keyName = "";
+    private char[] _keyName = new char[12];
+    [SerializeField] private float _heith = 0;
+    [SerializeField]
+    private float height
+    {
+        get
+        {
+            return _heith;
+        }
+        set
+        {
+            _heith = value;
+        }
+    }
+    [SerializeField]
+    private List<int> parameters = new List<int>();
+
+    void OnDrawGizmos()
+    {
+        return;
+    }
     public byte[] GetBytes()
     {
         List<byte> buffer = new List<byte>();
@@ -40,6 +59,7 @@ class Block20 : BlockType, IBlocktype
         {
             buffer.AddRange(System.BitConverter.GetBytes(height));
             byte[] buff = new byte[12];
+
             System.Text.Encoding.ASCII.GetBytes(keyName).CopyTo(buff, 0);
             buffer.AddRange(buff);
         }
@@ -75,7 +95,7 @@ class Block20 : BlockType, IBlocktype
         List<int> faces = new List<int>();
         a = System.BitConverter.ToInt32(buffer, pos);
         pos += 4;
-        float height = 0;
+        height = 0;
         b = System.BitConverter.ToInt32(buffer, pos);
         pos += 4;
         int newParam = System.BitConverter.ToInt32(buffer, pos);
@@ -89,9 +109,10 @@ class Block20 : BlockType, IBlocktype
         {
             height = System.BitConverter.ToSingle(buffer, pos);
             pos += 4;
-            System.Array.Copy(buffer, pos, keyName, 0, 12);
+            System.Array.Copy(buffer, pos, _keyName, 0, 12);
             pos += 12;
 
+            keyName = new string(_keyName);
         }
         else
         {

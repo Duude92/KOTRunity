@@ -44,6 +44,18 @@ public static class Instruments
         bytes.CopyTo(buffer, 8);
         return buffer;
 
+    }    
+    public static byte[] Vector3ToBytesZ(Vector3 vector)
+    {
+        byte[] buffer = new byte[12];
+        byte[] bytes = BitConverter.GetBytes(vector.x);
+        bytes.CopyTo(buffer, 0);
+        bytes = BitConverter.GetBytes(vector.y);
+        bytes.CopyTo(buffer, 8);
+        bytes = BitConverter.GetBytes(vector.z);
+        bytes.CopyTo(buffer, 4);
+        return buffer;
+
     }
     public static byte[] Vector3ToBytesRevert(Vector3 vector)
     {

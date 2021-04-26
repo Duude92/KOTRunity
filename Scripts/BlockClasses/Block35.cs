@@ -241,10 +241,7 @@ public class Block35 : BlockType, IBlocktype, IMeshInfo
             List<int> nextFaces = new List<int>();
             nextFaces.AddRange(faces);
             nextFaces.AddRange(newFaces);
-            if (newFaces.Count > 0)
-            {
-                int i = 0;
-            }
+
             curMesh.vertices = newVector.ToArray();
             curMesh.triangles = nextFaces.ToArray();
             curMesh.uv = nextUvs.ToArray();

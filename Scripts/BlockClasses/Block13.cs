@@ -90,6 +90,9 @@ class Block13 : BlockType, IBlocktype
             case EventType.Benzo_event:
                 componentType = typeof(Block13SubclassLimited09);
                 break;
+                case EventType.RadarEvent:
+                componentType = typeof(RadarEvent);
+                break;
             default:
                 componentType = typeof(DefaultSubclass);
                 break;

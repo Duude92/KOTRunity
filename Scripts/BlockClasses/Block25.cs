@@ -6,8 +6,8 @@ class Block25 : BlockType, IBlocktype
 
     public byte[] GetBytes()
     {
-        throw new System.NotImplementedException();
         byte[] buffer = new byte[40];
+        Debug.LogWarning("Write is not implemented", gameObject);
         return buffer;
     }
 

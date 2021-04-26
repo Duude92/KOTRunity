@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class KOTRManager : EditorWindow
 {
+    private static bool flag = false;
     private static Shader _shader;
     private static Shader DefaultShader
     {
@@ -307,7 +308,7 @@ public class KOTRManager : EditorWindow
     }
     public void OnSceneGUI(SceneView view)
     {
-        if (false)//(target)
+        if (flag)//(target)
         {
             Block08 block = target.GetComponent<Block08>();
             if (block)
