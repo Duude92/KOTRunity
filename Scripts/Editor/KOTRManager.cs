@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 public class KOTRManager : EditorWindow
 {
-    private static bool flag = false;
     private static Shader _shader;
     private static Shader DefaultShader
     {

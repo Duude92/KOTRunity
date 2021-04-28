@@ -51,10 +51,10 @@ public class SpikesSubclass : Block13SubclassBase
         int[] quads = new int[] {
          0,1,3,2,   //near
          2,3,7,6,   //right
-         1,3,5,7,   //top
-         0,2,4,6,   //bot
-         0,1,5,4,   //left
-         4,5,7,6    //far
+         1,5,7,3,   //top
+         0,2,6,4,   //bot
+         0,4,5,1,   //left
+         4,6,7,5    //far
         };
 
         mesh.SetIndices(quads, MeshTopology.Quads, 0);
