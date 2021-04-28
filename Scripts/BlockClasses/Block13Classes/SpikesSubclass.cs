@@ -47,7 +47,7 @@ public class SpikesSubclass : Block13SubclassBase
         vertices[6] = endPosition + startRight * triggerWidth - Vector3.up * triggerWidth;//bot
         vertices[7] = endPosition + startRight * triggerWidth + Vector3.up * triggerWidth;//top
 
-        mesh.SetVertices(vertices);
+        mesh.vertices = vertices;
         int[] quads = new int[] {
          0,1,3,2,   //near
          2,3,7,6,   //right

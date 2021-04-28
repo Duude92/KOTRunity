@@ -66,16 +66,6 @@ public class KOTRManager : EditorWindow
             }
         }
     }
-    void OnEnable()
-    {
-        SceneView.duringSceneGui += OnSceneGUI;
-
-    }
-
-    void OnDisable()
-    {
-        SceneView.duringSceneGui -= OnSceneGUI;
-    }
 
     [MenuItem("KOTR Editor/KOTR Loader")]
     static void Init()
@@ -305,31 +295,6 @@ public class KOTRManager : EditorWindow
         // Set external depth on/off
         m_LineMaterial.SetInt("_ZTest", writeDepth ? 4 : 0);
         m_QuadMaterial.SetInt("_ZTest", writeDepth ? 4 : 0);
-    }
-    public void OnSceneGUI(SceneView view)
-    {
-        if (flag)//(target)
-        {
-            Block08 block = target.GetComponent<Block08>();
-            if (block)
-            {
-                foreach (Vector3 vector in block.vertices)
-                {
-                    Mesh now = new Mesh();
-                    now.vertices = new Vector3[4] { new Vector3(0, 0, 0), new Vector3(1, 0, 0), new Vector3(0, 0, 1), new Vector3(1, 0, 1) };
-                    now.triangles = new int[6] { 0, 2, 1, 3, 1, 2 };
-                    now.uv = new Vector2[4] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 1), new Vector2(1, 1) };
-
-                    now.RecalculateBounds();
-                    if (!m_QuadMaterial)
-                    {
-                        InitMaterial(true);
-                    }
-                    m_QuadMaterial.SetPass(0);
-                    Graphics.DrawMeshNow(now, vector, Quaternion.Euler(-Vector3.up), 0);
-                }
-            }
-        }
     }
     void ExportObject()
     {
