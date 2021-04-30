@@ -7,7 +7,7 @@ public class Block24 : BlockType, IBlocktype
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
 
     public Vector3[] matrix = new Vector3[3];
-    public Vector3 position = new Vector3();
+    public Vector3 position= Vector3.zero;
     public int flag = 0;
 
     public byte[] GetBytes()

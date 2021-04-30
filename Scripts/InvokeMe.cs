@@ -44,7 +44,7 @@ public class InvokeMe : MonoBehaviour
         Transform meT = null;
         GameObject SpcOb = null;
 
-        meT = GameManager.common.transform.Find(blocks);
+        meT = GameManager.common?.transform.Find(blocks);
         try
         {
 
@@ -74,7 +74,7 @@ public class InvokeMe : MonoBehaviour
 
 
 
-            if ((space != "$$world")||string.IsNullOrEmpty(space)||string.IsNullOrWhiteSpace(space))
+            if ((space != "$$world") || string.IsNullOrEmpty(space) || string.IsNullOrWhiteSpace(space))
             {
                 Transform tr = GO?.Find(space);
                 SpcOb = tr?.gameObject;
@@ -123,7 +123,9 @@ public class InvokeMe : MonoBehaviour
                         rotation.y = 0;
                     }
 
-                    ind.transform.position = Spc.position;
+                    //ind.transform.localPosition = Vector3.zero;
+
+                    ind.transform.localPosition = Spc.position;
                     ind.transform.eulerAngles = rotation;
                     ind.SetActive(true);
 
@@ -140,10 +142,13 @@ public class InvokeMe : MonoBehaviour
                 //GameObject ind = Instantiate(me,tempSpace,new Quaternion());
                 //ind.transform.localPosition = tempSpace;
                 ind.transform.SetParent(gameObject.transform);
-                ind.transform.localPosition = new Vector3(0, 0, 0);
+                ind.transform.position = new Vector3(0, 0, 0);
                 ind.SetActive(true);
 
             }
+            var a = ind.GetComponent<BlockType>();
+            a.RecursivelyInvoke();
+
         }
         else
         {

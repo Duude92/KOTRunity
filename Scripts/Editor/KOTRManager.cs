@@ -53,6 +53,7 @@ public class KOTRManager : EditorWindow
     private int submesh;
     private GameObject common, trucks, cabines;
     private List<GameObject> env = new List<GameObject>();
+    private List<GameObject> envToRemove = new List<GameObject>();
     private bool isDisabled
     {
         get { return _isDisabled; }
@@ -159,19 +160,27 @@ public class KOTRManager : EditorWindow
             GUI.backgroundColor = Color.red;
             if (GUILayout.Button("Close"))
             {
-                GameObject tempObject = item;
-                env.Remove(item);
-                DestroyImmediate(tempObject);
+                envToRemove.Add(item);
             }
             GUILayout.EndHorizontal();
             GUI.backgroundColor = Color.white;
         }
+        foreach (var item in envToRemove)
+        {
+            GameObject tempObject = item;
+            env.Remove(item);
+            DestroyImmediate(tempObject);
+        }
+        envToRemove.Clear();
+
+
         GUI.backgroundColor = Color.green;
 
         if (GUILayout.Button("Open B3D"))
         {
-            env.Add(OpenB3D());
-
+            var tempObj = OpenB3D();
+            if (tempObj)
+                env.Add(tempObj);
         }
         if (GUILayout.Button("New scene B3D"))
         {
@@ -434,7 +443,7 @@ public class KOTRManager : EditorWindow
     {
         GameObject tempObj = null;
         string path = EditorUtility.OpenFilePanel("Выберите B3D сцену", _lastPath, "b3d");
-        if (isCommon || !isCommon && GameManager.common)
+        //if (isCommon || !isCommon && GameManager.common)
             if (!string.IsNullOrEmpty(path))
             {
                 string[] splitted = path.Split('/');

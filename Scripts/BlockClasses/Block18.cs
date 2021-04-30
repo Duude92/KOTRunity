@@ -12,6 +12,7 @@ public class Block18 : BlockType, IBlocktype, IDisableable
     private InvokeMe me;
     private Vector3 gizmoPosition;
     public Block24 gizmosTransform;
+    [SerializeField] private Vector3 position = Vector3.zero;
     [SerializeField] private float scale;
     public Block18()
     {
@@ -60,7 +61,8 @@ public class Block18 : BlockType, IBlocktype, IDisableable
             if (tr)
             {
                 gizmosTransform = tr.GetComponent<Block24>();
-                transform.position = gizmosTransform.position;
+                position = gizmosTransform.position;
+                //transform.position = gizmosTransform.position;
             }
             else
             {
@@ -74,7 +76,7 @@ public class Block18 : BlockType, IBlocktype, IDisableable
         {
             Gizmos.DrawIcon(gizmosTransform.position + Vector3.up * 2, "Copy18", true);
             //gizmosTransform.position = transform.position;
-            transform.position = gizmosTransform.position;
+            //transform.position = gizmosTransform.position;
         }
     }
     public void Disable()
@@ -89,13 +91,16 @@ public class Block18 : BlockType, IBlocktype, IDisableable
 
     public void Enable()
     {
+        if(!me)
+        me = GetComponent<InvokeMe>();
         try
         {
             me.Invoke();
         }
         catch (System.Exception e)
         {
-            Debug.Log(e, this);
+            Debug.LogError(e, this);
+            throw e;
         }
     }
 }

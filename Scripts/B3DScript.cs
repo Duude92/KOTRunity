@@ -89,14 +89,12 @@ public class B3DScript : MonoBehaviour
             pos += 4;
             if (Ccase == SceneCase.SCENE_BEGIN)
             {
-                int lvl = 0;
                 GameObject lastGameObject = null;
                 GameObject newObject = null;
                 GameObject rootObj = gameObject;
 
                 for (; ; )
                 {
-                    lvl++;
                     Ccase = (SceneCase)System.BitConverter.ToInt32(resource, pos);
                     pos += 4;
                     if (Ccase == SceneCase.SCENE_END)

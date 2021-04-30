@@ -5,8 +5,10 @@ class Block13 : BlockType, IBlocktype
 {
     public enum EventType
     {
+        unknown = 0,
         NoRain = 4,                 //limit09
         Fon_Main = 6,
+        Restart_010 = 10,
         Restart = 11,               //Restart
         Room,
         Benzo_event = 14,           //limit09
@@ -17,6 +19,7 @@ class Block13 : BlockType, IBlocktype
         NoRainNoSun = 22,           //possible limited???? //TODO
         WeatherChange,              
         Restart_024,                //Restart
+        NoEntry = 27,               //unknown
         SomeEvent_roadType = 29,
         RadarEvent,                 //default -> RadarEvent
         Spikes,                     //spikes

@@ -6,7 +6,7 @@ class Block18Editor : Editor
     void OnSceneGUI()
     {
         target18 = (Block18)target;
-        target18.gizmosTransform.position = target18.transform.position;
+        //target18.gizmosTransform.position = target18.transform.position;
     }
 
 }
