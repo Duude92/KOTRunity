@@ -13,6 +13,6 @@ class Block02 : BlockType, IBlocktype
     public void Read(byte[] buffer, ref int pos)
     {
         pos += 36;
-        Debug.LogWarning("Read is not implemented", gameObject);
+        Debug.LogWarning("Read is not implemented", gameObject); //TODO:CE.B3D
     }
 }

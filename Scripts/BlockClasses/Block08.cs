@@ -3,6 +3,20 @@ using UnityEngine;
 using UnityEditor;
 public class Block08 : BlockType, IBlocktype, IMeshInfo
 {
+    public enum B08InternalType
+    {
+        VertexIndex = 0,                //
+        PossibleGlow = 1,               // glow? INTENCITY_VECTOR
+        AddUV = 2,                      //read UV
+        u4 = 4,
+        u8 = 8,
+        VertexIndex_SmokeShader = 16,   //HAS_INTENCITY
+        AddNormal = 32,                 //Read Normal 16+1 (Читаем, если нет 32 - читаем из iVerticesBloc? если 32+16 - читаем флоат)
+        u64 = 64,
+        j_nullPolygon = 128,            //polygon out of j_null?
+        PossibleUV2_1 = 256,
+        PossibleUV2 = 512
+    }
     UnityEngine.GameObject _thisObject;
     public UnityEngine.GameObject thisObject { get => _thisObject; set => _thisObject = value; }
     public List<int> Materials { get => matNum; set => matNum = value; }
@@ -18,6 +32,9 @@ public class Block08 : BlockType, IBlocktype, IMeshInfo
     [SerializeField] List<Vector3> newVertices = new List<Vector3>();
     [SerializeField] List<Vector3> newNormals = new List<Vector3>();
     [SerializeField] List<Vector2> uv_new = new List<Vector2>();
+    private List<B08InternalType> internalTypes = new List<B08InternalType>();
+    private static List<B08InternalType> internalTypesStatic = new List<B08InternalType>();
+
 
     public byte[] GetBytes()
     {
@@ -157,6 +174,13 @@ public class Block08 : BlockType, IBlocktype, IMeshInfo
             List<List<int>> facesOfFaces = new List<List<int>>();
             format = System.BitConverter.ToInt32(buffer, pos);
             formats.Add(format);
+            internalTypes.Add((B08InternalType)format);
+            if (!internalTypesStatic.Contains((B08InternalType)format)) //TODO: TO REMOVE
+            {
+                internalTypesStatic.Add((B08InternalType)format);
+                Debug.LogWarning(format, this);
+            }
+
             pos += 4;
             pos += 8;
 
@@ -258,7 +282,7 @@ public class Block08 : BlockType, IBlocktype, IMeshInfo
 
                 }
             }
-            else if (((format == 144) || (format == 129)) || (format == 128))
+            else if (((format == 144) || (format == 129)) || (format == 128))       //polygon loop
             {
                 List<int> ax = new List<int>();
                 for (int j = 0; j < j_null; j++)
@@ -357,6 +381,10 @@ public class Block08 : BlockType, IBlocktype, IMeshInfo
         curMesh.RecalculateBounds();
         gameObject.GetComponent<MeshFilter>().mesh = curMesh;
     }
+    public void BreakPoint()
+    {
+        return;
+    }
 }
 
 
@@ -381,5 +409,7 @@ public class Block08Editor : Editor
 
             PrefabUtility.SaveAsPrefabAsset(gob, $"Assets/Prefabs/{objectName}.prefab");
         }
+        if (GUILayout.Button("Breakpoint"))
+            ((Block08)target).BreakPoint();
     }
 }

@@ -7,25 +7,27 @@ class Block13 : BlockType, IBlocktype
     {
         unknown = 0,
         NoRain = 4,                 //limit09
-        Fon_Main = 6,
+        NoSunLins = 5,
+        FonMain = 6,
+        CheckPoint = 7,
         Restart_010 = 10,
         Restart = 11,               //Restart
         Room,
-        Benzo_event = 14,           //limit09
+        BenzoEvent = 14,           //limit09
         STOS,                       //default
         Water,
         Store,                      //default
         InfoStore = 19,             //default
         NoRainNoSun = 22,           //possible limited???? //TODO
-        WeatherChange,              
+        WeatherChange,
         Restart_024,                //Restart
+        StartSvetofor = 26,
         NoEntry = 27,               //unknown
-        SomeEvent_roadType = 29,
+        Unknown = 28,               //Unknown, BD.B3D
+        SomeEventRoadType = 29,
         RadarEvent,                 //default -> RadarEvent
         Spikes,                     //spikes
         OtherBaza = 4095,           //OtherBaza
-
-
     }
     public int b;
     private int paramCount;
@@ -90,10 +92,10 @@ class Block13 : BlockType, IBlocktype
             case EventType.NoRainNoSun:
                 componentType = typeof(Block13SubclassLimited09);
                 break;
-            case EventType.Benzo_event:
+            case EventType.BenzoEvent:
                 componentType = typeof(Block13SubclassLimited09);
                 break;
-                case EventType.RadarEvent:
+            case EventType.RadarEvent:
                 componentType = typeof(RadarEvent);
                 break;
             default:

@@ -2,6 +2,20 @@ using System.Collections.Generic;
 using UnityEngine;
 public class Block37 : BlockType, IVerticesBlock, IBlocktype
 {
+    public enum B37InternalType
+    {
+        PossibleSkip = 0,
+        NoNormals = 1, //no normal? //glow?
+        VerticesUvNormal = 2,
+        u4 = 4,
+        u8 = 8,
+        u16 = 16,
+        u32 = 32,
+        u64 = 64,
+        u128 = 128,
+        PossibleUV2_1 = 256,    //road_rain?
+        PossibleUV2 = 512       //bump_water
+    }
     GameObject _thisObject;
     public GameObject thisObject { get => _thisObject; set => _thisObject = value; }
     //-------- IVertices
@@ -19,7 +33,9 @@ public class Block37 : BlockType, IVerticesBlock, IBlocktype
     public string collisionName;
     [SerializeField] private int i_null;
     [SerializeField] private bool bumped = false;
+    public B37InternalType internalType;
     private bool flag = false;
+    private static List<B37InternalType> internalTypes = new List<B37InternalType>();
 
 
     public byte[] GetBytes()
@@ -153,6 +169,12 @@ public class Block37 : BlockType, IVerticesBlock, IBlocktype
         System.Array.Copy(buffer, pos, buff, 0, 4);
         pos += 4;
         j_null = System.BitConverter.ToInt32(buff, 0);
+        internalType = (B37InternalType)i_null;
+        if (!internalTypes.Contains(internalType)) //TODO: TO REMOVE
+        {
+            internalTypes.Add(internalType);
+            //Debug.LogWarning(i_null, this);
+        }
         if (i_null == 0)
         {
             ;
@@ -229,5 +251,21 @@ public class Block37 : BlockType, IVerticesBlock, IBlocktype
         pos += 4;
 
 
+    }
+    public void BreakPoint()
+    {
+        return;
+    }
+}
+[UnityEditor.CustomEditor(typeof(Block37))]
+public class Block37Editor : UnityEditor.Editor
+{
+    public override void OnInspectorGUI()
+    {
+        base.OnInspectorGUI();
+        if (GUILayout.Button("InternalType"))
+        {
+            ((Block37)target).BreakPoint();
+        }
     }
 }

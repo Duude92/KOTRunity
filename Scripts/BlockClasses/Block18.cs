@@ -56,7 +56,7 @@ public class Block18 : BlockType, IBlocktype, IDisableable
             Transform tr = GameManager.currentObject.transform.Find(space);
             if (!tr)
             {
-                tr = GameManager.common.transform.Find(space);
+                tr = GameManager.common?.transform.Find(space);
             }
             if (tr)
             {
