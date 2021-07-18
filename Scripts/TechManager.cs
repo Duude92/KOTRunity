@@ -22,9 +22,10 @@ public class TechManager : MonoBehaviour
     public int VehCount;
     public GameObject TRUCKS;
 
-    class TrucksBehaviour
+    class TrucksBehaviour : MonoBehaviour
     {
 		public List<GameObject> Trucks = new List<GameObject>();
+        
     }
     public void StartTech()
     {
@@ -72,7 +73,7 @@ public class TechManager : MonoBehaviour
 
 
 
-        TrucksBehaviour tb = TRUCKS.GetComponent<TrucksBehaviour>();
+        TrucksBehaviour tb = TRUCKS.AddComponent<TrucksBehaviour>();
         for (int i = 0; i < VehCount; i++)
         {
             //GameObject newOb = new GameObject();
